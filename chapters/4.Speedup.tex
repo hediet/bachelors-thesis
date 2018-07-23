@@ -1,0 +1,485 @@
+\chapter{Speedup-Konstruktionen}
+\label{chap:SpeedupKonstr}
+
+\section{Speedup um konstant viele Schritte}
+
+\begin{definition}[1-Schritt-Speedup-Konstruktion]
+
+    Sei $(Q, \delta) \in \CA$ ein Zellularautomat.
+    Definiere den Zellularautomaten $Sp(C) := (Q', \delta')$ mit $Q' := Q \times (Q^Q \cup \finset{ \perp })$.
+    Identifiziere $Q$ mit $Q \times \finset{ \perp }$.
+    Für ein Element $q \in Q'$ bezeichnen $q_q \in Q$ und $q_f \in Q^Q \cup \finset{ \perp }$ die erste \acs{bzw.} zweite Komponente, sodass gilt: $q = (q_q, q_f)$.
+    Die Zustandsübergangsfunktion $\delta'$ sei wie folgt definiert:
+    \[
+        \delta'((a_q, a_f), (b_q, b_f), (c_q, c_f)) :=
+        \begin{cases}
+            (\delta(a_q, b_q, c_q), \perp) & \text{falls } c_f = \perp \\
+            \phi_{c_f(b_q)}(\delta(a_q, b_q, c_q)) & \text{sonst} 
+        \end{cases}
+    \]
+    
+    Definiere weiter $\phi_c: Q \to Q'$ für ein $c \in Q$:
+    \[
+        \phi_c(b) := (b, \; Q \ni a \mapsto \delta(a, b, c) \in Q)
+    \]
+    
+    \begin{figure}[h!]
+        \begin{center}
+        \includesvg[width=190pt]{images/KonstanterSpeedup}
+        \end{center}
+        \caption{1-Schritt Speedup}
+        
+        Für einen Zustand $q$ beschreiben die eingezeichneten Pfeile die Abbildung $q_f$:
+        Der jeweils linke Zustand wird auf den unteren abgebildet, sofern der Zustand rechts
+        zum Zeitpunkt $0$ bekannt ist.
+        \label{fig:KonstanterSpeedup}
+    \end{figure}
+\end{definition}
+
+\begin{satz}[Korrektheit der 1-Schritt-Speedup-Konstruktion]
+    \label{satzSpeedupConstruction}
+    Sei $C = (Q, \delta) \in \CA$ ein Zellularautomat, $\# \in Q$ ein ausgezeichneter Zustand
+    und $c \in Q^{\Z}$ eine Konfiguration.
+    Setze $C' := Sp(C)$.
+    Sei $c' \in {Q_{C'}}^{\Z}$ eine Konfiguration mit $c'_j \in \finset{c_j, \phi_{\#}(c_j)}$ für alle $j \in \Z$. Sei $t \in \Nz$ und $i \in \Z$.
+    
+    \begin{enumerate}
+        \item
+            Falls $c'_{t+i} \in Q \times Q^Q$, dann $\Delta^t_{C'}(c')_i \in Q \times Q^Q$.
+        \item
+            Es gilt: $(\Delta^t_{C'}(c')_i)_q = \Delta^t_{C}(c)_i$.
+        \item
+            Falls $\Delta^t_{C'}(c')_i \in Q \times Q^Q$ und $c_{i+t+1} = \#$, dann gilt, wie in \cref{fig:KonstanterSpeedup} veranschaulicht:
+            \[(\Delta^t_{C'}(c')_i)_f((\Delta^t_{C'}(c')_{i-1})_q) = \Delta^{t+1}_C(c)_i\]
+    \end{enumerate}
+\end{satz}
+\begin{proof}
+    Führe für diesen Beweis folgende Notation ein: $c'^{t}_i := \Delta^{t}_{C'}(c')_i$ und $c^t_i := \Delta^{t}_{C}(c)_i$.
+
+    \begin{enumerate}
+        \item
+            Die Aussage gilt offensichtlich für $t = 0$. Angenommen, die Aussage gilt nun für ein $t \in \Nz$ und alle $i \in \Z$.
+            Sei $c'_{t+1+i} \in Q \times Q^Q$. Dann gilt nach Definition von $\delta_{C'}$ und wegen $c'^{t}_{i+1} \in Q \times Q^Q$:
+            \[
+                c'^{t+1}_i = \delta_{C'}(c'^{t}_{i-1}, c'^{t}_{i}, c'^{t}_{i+1}) \in Q \times Q^Q
+            \]
+            Damit gilt die Aussage auch für $t + 1$.
+            
+        \item Gilt offensichtlich.
+        
+        \item
+            Beweis durch Induktion über $t$.
+            Für $t = 0$ gilt mit $c'^0_i \in Q \times Q^Q$ und $c_{i+1} = \#$:
+            \begin{align*}
+                  && (c'^0_i)_f((c'^0_{i-1})_q) \\
+                = && (c'_i)_f((c'_{i-1})_q) \\
+                = && (\phi_s(c_i))_f(c_{i-1}) \\
+                = && \delta(c_{i-1}, c_i, c_{i+1}) = c^{1}_i
+            \end{align*}
+            
+            Es gelte nun die Behauptung für ein $t \in \Nz$ und alle $i \in \Z$.
+            Sei $c'^{t+1}_i \in Q \times Q^Q$ und $c_{i+(t+1)+1} = \#$.
+            
+            Nach Definition von $\delta_{C'}$ gilt $(c'^{t}_{i+1})_f \in Q^Q$.
+            Wegen $c_{(i+1)+t+1} = \#$ gilt nach Induktionsvoraussetzung:
+            \[
+                (c'^t_{i+1})_f((c'^t_{i})_q) = c^{t+1}_{i+1}
+            \]
+            
+            Es gilt:
+            \begin{align*}
+                  && (c'^{t+1}_i)_f = \delta_{C'}(c'^{t}_{i-1}, c'^{t}_{i}, c'^{t}_{i+1})_f \\
+                = && \phi_{(c'^{t}_{i+1})_f((c'^{t}_{i})_q)}(\delta((c'^{t}_{i-1})_q, (c'^{t}_{i})_q, (c'^{t}_{i+1})_q))_f \\
+                = && \phi_{c^{t+1}_{i+1}}(c^{t+1}_{i})_f \\
+                = && Q \ni a \mapsto \delta(a, c^{t+1}_{i}, c^{t+1}_{i+1}) \in Q
+            \end{align*}
+            
+            Und damit:
+            \begin{align*}
+                  && (c'^{t+1}_i)_f((c'^{t+1}_{i-1})_q) \\
+                = && \delta(c^{t+1}_{i-1}, c^{t+1}_{i}, c^{t+1}_{i+1}) \\
+                = && c^{t+2}_i
+            \end{align*}
+            
+            
+    \end{enumerate}
+\end{proof}
+
+\begin{satz}[$k$-Schritt Speedup]
+    \label{satzRealzeitSpeedup}
+    Es gilt:
+    \[
+        \CAL{\CART, \CALeft} =
+            \CAL{\CAT, \CALeft, \mathrm{time}(\set{ n \mapsto \max \finset{0,  n + k - 1} }{ k \in \Nz })}
+    \]
+\end{satz}
+\begin{proof}
+    Es reicht zu zeigen, dass für alle $k \in \Nz$ gilt:
+    \[
+        \CAL{\CAT, \CALeft, \mathrm{time}(
+                    n \mapsto \max \finset{0,  n + k - 1}
+                )
+            }
+        \supseteq
+        \CAL{\CAT, \CALeft, \mathrm{time}(
+                    n \mapsto n + k
+                )
+            }
+    \]
+    Induktiv gilt dann die Behauptung.
+
+    Sei $L \in \CAL{\CAT, \CALeft, \mathrm{time}(
+                    n \mapsto n + k  )}$.
+    Dann existiert ein $t$-haltender Zellularautomat $C$,
+    sodass $\Delta_C^{|w|+k}([w])_1 \in F^+_C \Leftrightarrow w \in L$.
+    Wegen \cref{satzRauteTot} kann angenommen werden, dass $\#_C$ ein toter Zustand ist.
+    
+    Setze $C' := Sp(C)$. Identifiziere $c \in \Sigma_C$ mit $\phi_{\#_C}(c)$ in $\Sigma_{C'}$ und setze $\#_{C'} := \phi_{\#_C}(\#_C)$.
+    Definiere $F_{C'}^+$ wie folgt: \[
+        F_{C'}^+ := \set{ q \in Q_C \times Q_C^{Q_C} }{ q_f({\#_C}) \in F_C^+ }
+    \]
+    
+    Es kann angenommen werden, dass $|w| + k - 1 \geq 0$, da mit \cref{endlichVieleAusnahmen} das leere Wort ignoriert werden kann.
+    Da $[w]_{|w|+k} \in Q_C \times Q_C^{Q_C}$, $[w]_{|w|+k+1} = \#_C$ und $\Delta^{|w|+k-1}_C([w])_0 = \#_C$, folgt mit \cref{satzSpeedupConstruction}
+    $\Delta_{C'}^{|w|+k-1}([w])_1 \in F'^+_C
+    \Leftrightarrow \Delta_C^{|w|+k}([w])_1 \in F^+_C
+    \Leftrightarrow w \in L$.
+    Also $L \in \CAL{\CAT, \CALeft, \mathrm{time}(
+                    n \mapsto \max \finset{0,  n + k - 1}
+                )}$.
+\end{proof}
+
+
+Mithilfe der Speedup-Sätze kann nun gezeigt werden, dass \acs{OBdA.} Wortlängen einer \CAM{\CART, \CALeft}-Sprache Vielfache einer beliebigen Zahl $k \in \N$ sind:
+\begin{satz}
+    \label{wrtRealtimeLengthIdeal}
+    Sei $L \subseteq \Sigma^*$ eine Sprache, $\chr{x} \not\in \Sigma$, $k \in \N$.
+    Definiere zu $L$:
+    \[
+        L(k) := \set{ w \chr{x}^{\min \set{i \in \Nz }{ (|w| + i) \in k\Nz }} } { w \in L }
+    \]
+    
+    Es gilt: $L(k) \in \CAL{\CART, \CALeft}$ genau dann, wenn $L \in \CAL{\CART, \CALeft}$.
+\end{satz}
+\begin{proof}
+    Angenommen $L(k) \in \CAL{\CART, \CALeft}$.
+    Dann existiert ein Echtzeit-Automat $C'$
+    mit $L_{C'} = L(k)$.
+    Da bei links-erkennenden Echtzeit-Zellularautomaten
+    das Akzeptanzverhalten unabhängig vom Verhalten des rechten
+    Rands ist, kann der rechte Rand mit \chr{x} identifiziert werden (\acs{OBdA.} kann der rechte Rand vom linken unterschieden werden).
+    Dieser Automat erkennt nun $L$
+    in $t$ Schritten mit $t \in \finset{n-1, ..., n-1+k-1}$.
+    Setze $C'_i$ auf den $i$-Schritt-Speedup-Automaten von $C'$
+    und konstruiere den Automaten $C$, der die endlich vielen Automaten
+    $C'_0$, $C'_1$ bis $C'_{k-1}$ parallel ausführt und genau
+    dann akzeptiert, wenn einer von ihnen akzeptiert.
+    Damit erkennt $C$ die Sprache $L$ in Echtzeit.
+    
+    Umgekehrt sei nun $L \in \CAL{\CART, \CALeft}$.
+    Dann existiert ein Echtzeit-Automat $C$
+    mit $L_C = L$.
+    Konstruiere den Automat $C'$ wie folgt:
+    $C'$ löscht in genau $k-1$ Schritten die
+    Zellen am rechten Rand im Zustand \chr{x}.
+    Sind es mehr als $k-1$ solcher Zellen, lehne das Wort ab, bei weniger
+    wird gewartet, bis die $k-1$ Schritte vorbei sind.
+    Anschließend wird auf dieser neuen Konfiguration
+    nun der Automat $C$ ausgeführt.
+    Parallel wird durch einen Automaten $X$ getestet,
+    ob die Länge des Wortes ein Vielfaches von $m$ ist.
+    Das Eingabewort soll nun genau dann von $C'$ akzeptiert werden,
+    falls $C$ und $X$ akzeptieren.
+    Dieser Automat $C'$ akzeptiert nun $L(k)$ in $n-1+k-1$
+    vielen Schritten.
+    Da $k$ fest ist, garantiert \cref{satzRealzeitSpeedup}
+    nun die Existenz eines $L(k)$-erkennenden Echtzeitautomaten.
+\end{proof}
+
+
+\section{Speedup für linksunabhängige Zellularautomaten}
+
+\begin{lemma}
+    \label{linksunabhaengigSpeedup}
+    Sei $C \in \CA$ ein links-unabhängiger Zellularautomat (wie in \cref{fig:LinUnabhSpeedup1}) und $2 \leq k \in \N$.
+    Sei ferner $\# \in Q_C$ ein passiver und initialer Zustand.
+    Dann gibt es einen links-unabhängigen Zellularautomaten
+    $C' \in \CA$, sodass für $i \in \Z$ mit $i \leq 0$ und $t \in \Nz$
+    und alle Konfigurationen $c$ mit $c_p = \#$ für $p \leq 0$ oder $p \geq p_0$ gilt:
+    \[
+        \Delta^{t}_{C'}(c)_i =
+            w \in Q^k
+            \text{ mit } w_j := \Delta^{ t + i - ki+k-j }_C(c)_{ ki-k+j }
+    \]
+    
+    Für $k = 2$ erhält man, wie in \cref{fig:LinUnabhSpeedup2} gezeigt:
+    \[
+        \Delta^{t}_{C'}(c)_i = ( \Delta^{ t - i+1 }_C(c)_{ 2i-1 },
+            \Delta^{ t - i }_C(c)_{ 2i })
+    \]
+
+    Für $k = 3$ ergibt sich:
+    \[
+        \Delta^{t}_{C'}(c)_i = ( \Delta^{t-2i+2}_C(c)_{3i-2},
+        \Delta^{t-2i+1}_C(c)_{3i-1},
+        \Delta^{t-2i}_C(c)_{3i}
+        )
+    \]
+    
+    \begin{figure}[!ht]
+        \centering
+        \includesvg[width=190pt]{images/LinUnabhSpeedup}
+        \caption{Teilweise Ausführung des Automaten $C$}
+        \label{fig:LinUnabhSpeedup1}
+    \end{figure}
+    \begin{figure}[!ht]
+        \centering
+        \includesvg[width=190pt]{images/LinUnabhSpeedup2}
+        \caption{Teilweise Ausführung des Automaten $C'$ für $k = 2$}
+        \label{fig:LinUnabhSpeedup2}
+    \end{figure}
+    
+\end{lemma}
+\begin{proof}
+    Definiere $\delta^{w} \in Q^{|w-1|}$ für $w \in Q^*$ mit $|w| \geq 2$ wie folgt:
+    \begin{align*}
+        \delta^{w}_i := \begin{cases}
+            \delta(\#, w_{|w|-1}, w_{|w|}) & \text{falls } i = |w| - 1 \\
+            \delta(\#, w_{i}, \delta^{w}_{i+1}) & \text{sonst}
+        \end{cases}
+    \end{align*}
+
+    Beispielsweise gilt $\delta^{q_1q_2q_3} = \delta(\#, q_1, \delta(\#, q_2, q_3))\delta(\#, q_2, q_3)$.
+    
+    Setze $Q' := Q_C \cup Q_C^k$. Identifiziere $\#$ mit $\#^k$. Definiere $\delta'$ wie folgt:
+    \begin{alignat*}{2}
+        & \delta'(\cdot, q_b \in Q_C \setminus \finset{\#}, & q_c \in Q_C) & := \delta(\#, q_b, q_c) \\
+        & \delta'(\cdot, w_b \in Q_C^k, & q_c \in Q_C) & := \delta^{w_bq_c} \\
+        & \delta'(\cdot, x_b \in Q', & w_c \in Q^k_C) & := \delta'(\#, x_b, (w_c)_1)
+    \end{alignat*}
+    
+    Da $\#$ ein initialer Zustand in $C$ ist und auch in $\delta'$ durch die Identifikation mit $\#^k$ passiv bleibt, verhält sich $\delta'$ für Zellen mit positiver Position genauso wie $\delta$.
+    
+    Definiere nun die Hilfsfunktionen $\psi$ und $\phi$:
+    \begin{alignat*}{2}
+        & \psi(i, j) && := ki+j-k \\
+        & \phi(t, i, j) && := t + i - \psi(i, j) \\
+        & c^t_i && := \Delta^t_i(c)
+    \end{alignat*}
+
+    Für $\phi$ und $\psi$ gelten für $j \in \finset{1, ..., k}$ folgende triviale Fakten, die im Folgenden verwendet werden:
+    \begin{alignat*}{2}
+        & \psi(i, j) && \leq 0 \\
+        & \phi(0, i, j) && \leq -\psi(i, j) \\
+        & \psi(1, 1) && = 1 \\
+        & \psi(i + 1, 1) && = \psi(i, k) + 1 \\
+        & \psi(i, j) && = \psi(i, j - 1) + 1 \\
+        & \phi(t, 1, 1) && = t \\
+        & \phi(t, i+1, 1) && = \phi(t, i, k) \\
+        & \phi(t + 1, i, j) && = \phi(t, i, j-1) \\
+    \end{alignat*}
+    Da im Beweis nur diese erwähnten Fakten über $\psi$ und $\phi$ verwendet werden, ist es nicht verwunderlich, dass diese Fakten $\psi$ und $\phi$ für $i \leq 0$ und $t \geq 0$ eindeutig bestimmen.
+
+    Für die Wahl $C' := (Q', \delta')$ ist nun zu für alle $i \leq 0$ und $t \in \Nz$ zeigen: \[
+        (\Delta^{t}_{C'}(c)_i)_j = c^{\phi(t, i, j)}_{\psi(i, j)}
+    \]
+    
+    Beweis der Aussage über Induktion nach $t \in \Nz$.
+    
+    Sei $t = 0$. Da $\#$ passiv ist, gilt $c^{t'}_{i'} = \#$ für $0 \leq t' \leq -i'$ und $i \leq 0$.
+    Wegen $\phi(0, i, j) \leq -\psi(i, j)$ und $\psi(i, j) \leq 0$ folgt
+    $(\Delta^{0}_{C'}(c)_i)_j = \# = c^{\phi(0, i, j)}_{\psi(i, j)}$ für alle $j \in \finset{1, ..., k}$.
+    
+    Die Aussage gelte nun für ein $t \in \Nz$.
+    
+    Sei $x_a := \Delta^{t}_{C'}(c)_i$ und $x_b := \Delta^{t}_{C'}(c)_{i+1}$.
+    Wegen $i \leq 0$ folgt $x_a \in Q^k_C$.
+    
+    
+    Nach Induktionsvermutung gilt $(x_a)_j = c^{\phi(t, i, j)}_{\psi(i, j)}$.
+    
+    Wähle $q :=
+    \begin{cases}
+        x_b & \text{falls } x_b \in Q_C \\
+        (x_b)_1 & \text{falls } x_b \in Q^k_C \\
+    \end{cases}$.
+    
+    Für diese Wahl von $q$ gilt nun $q = c^{\phi(t, i + 1, 1)}_{\psi(i + 1, 1)}$:
+    
+    Angenommen, $x_b \in Q_C$. Nach Definition von $\delta'$ folgt $i = 0$
+    und $q = x_b = c^t_1 = c^{\phi(t, 1, 1)}_{\psi(1, 1)} = c^{\phi(t, i + 1, 1)}_{\psi(i + 1, 1)}$.
+    
+    Andernfalls gilt $x_b \in Q^k_C$ und damit $i < 0$.
+    Nach Induktionsvermutung gilt dann
+    $q = (x_b)_1 = c^{\phi(t, i + 1, 1)}_{\psi(i + 1, 1)}$.
+    
+    Zeige $(\Delta^{t+1}_{C'}(c)_i)_j =  c^{\phi(t + 1, i, j)}_{\psi(i, j)}$ durch endliche, absteigende Induktion über $j$.
+    
+    Für $j = k$ gilt:
+    \begin{align*}
+        & (\Delta^{t+1}_{C'}(c)_i)_k \\
+        & = \delta'(\#, x_a, x_b)_k \\
+        & = \delta^{x_a q}_k \\
+        & = \delta(\#, (x_a)_k, q) \\
+        & = \delta(\#, c^{\phi(t, i, k)}_{\psi(i, k)}, c^{\phi(t, i + 1, 1)}_{\psi(i + 1, 1)}) \\
+        & = \delta(\#, c^{\phi(t, i, k)}_{\psi(i, k)}, c^{\phi(t, i, k)}_{\psi(i, k) + 1}) \\
+        & = c^{\phi(t + 1, i, k)}_{\psi(i, k)} \\
+    \end{align*}
+    
+    Es gelte die Induktionsvermutung nun für $1 < j \leq k$. Dann gilt:
+    \[
+    \delta^{x_a q}_j = (\Delta^{t+1}_{C'}(c)_i)_j = c^{\phi(t + 1, i, j)}_{\psi(i, j)}
+    \]
+    
+    Zeige nun die Vermutung für $j-1$:
+    \begin{align*}
+        & (\Delta^{t+1}_{C'}(c)_i)_{j-1} \\
+        & = \delta'(\#, x_a, x_b)_{j-1} \\
+        & = \delta^{x_a q}_{j-1} \\
+        & = \delta(\#, (x_a)_{j-1}, \delta^{(x_a q)}_j) \\
+        & = \delta(\#, c^{\phi(t, i, j-1)}_{\psi(i, j-1)}, c^{\phi(t + 1, i, j)}_{\psi(i, j)}) \\
+        & = \delta(\#, c^{\phi(t, i, j-1)}_{\psi(i, j-1)}, c^{\phi(t, i, j-1)}_{\psi(i, j-1)+1}) \\
+        & = c^{\phi(t + 1, i, j-1)}_{\psi(i, j - 1)} \\
+    \end{align*}
+    
+    Damit ist auch der Induktionsschritt gezeigt und der Beweis vollendet.
+\end{proof}
+
+
+\begin{satz}
+    \label{CAgfSpeedup}
+    Sei $C \in \CA$ ein Zellularautomat.
+    Dann gibt es einen Zellularautomaten $C''' \in \CA$ und Funktionen $g_1$ und $g_2$, sodass für alle $p \in \N$ gilt:
+    \begin{align*}
+        g_1(\Delta_{C'''}^{2p-1}(c)_p) & = \Delta_C^{3p-2}(c)_1 \\
+        g_2(\Delta_{C'''}^{2p}(c)_{p+1}) & = (\Delta_C^{3p-1}(c)_1, \Delta_C^{3p}(c)_1)
+    \end{align*}
+    
+    Ferner existiert dann ein Automat $C_1$ und eine Funktion $f$, sodass für $i \geq 1$ gilt:
+    \[
+        f(\Delta_{C_1}^{2i+1}(c)_i) = (\Delta_C^{3i-3}(c)_1, \Delta_C^{3i-2}(c)_1, \Delta_C^{3i-1}(c)_1)
+    \]
+    
+    \cref{fig:RealzeitSpeedup} zeigt die Zustands-Abhängigkeiten der Automaten zueinander.
+    Die Kreise stellen die Zustände der Ausführung des Automaten $C$ dar, die Sechsecke zeigen das Bild von $g_1$ bzw. $g_2$
+    der Zustände von $C'''$ und die Fünfecke das Bild von $f$ der Zustände von $C_1$. Die eingezeichneten Pfeile
+    zeigen, wodurch sich die Zustände ergeben.
+    
+    \begin{figure}[H]
+        \centering
+        \includesvg[width=175pt]{images/RealzeitSpeedup}
+        \caption{Visualisierung der Ausführung der Automaten $C$ (Zustände rund), $C'''$ (Zustände sechseckig) und $C_1$ (Zustände fünfeckig)}
+        \label{fig:RealzeitSpeedup}
+    \end{figure}
+\end{satz}
+\begin{proof}
+    Wähle $C'$ wie in \cref{zellautoZuLinksunabhaengig}, sodass
+    für $\forall c \in Q^{\Z}, \forall t \in \Nz, \forall i \in \Z$ gilt:
+    \[
+        \Delta_{C'}^{t}(c)_i =
+        \begin{cases}
+            \Delta_C^{\frac{t}{2}}(c)_{i+\frac{t}{2}} & \text{ falls } $t$ \text{ gerade } \\
+            (\Delta_C^{\frac{t - 1}{2}}(c)_{i+\frac{t - 1}{2}}, \Delta_C^{\frac{t-1}{2}}(c)_{i+\frac{t+1}{2}})  & \text{ sonst}
+        \end{cases}
+    \]
+    
+    Wähle $C''$ wie in \cref{linksunabhaengigSpeedup}, sodass für $i \in \Z$ mit $i \leq 0$ und $t \in \Nz$
+    und alle Konfigurationen $c$ mit $c_p = \#$ für $p \leq 0$ oder $p \geq p_0$ gilt:
+    \[
+        \Delta^{t}_{C''}(c)_i = ( \Delta^{t-2i+2}_{C'}(c)_{3i-2},
+        \Delta^{t-2i+1}_{C'}(c)_{3i-1},
+        \Delta^{t-2i}_{C'}(c)_{3i}
+        )
+    \]
+    
+    Wähle $C'''$ wie in \cref{linksunabhaengigZuZellauto}, sodass für $\forall c \in Q^{\Z}$,
+    $\forall t \in \Nz$, $\forall i \in \Z$ gilt:
+    \[
+        \Delta^t_{C'''}(c)_{i} = \Delta^{2t}_{C''}(c)_{i-t}
+    \]
+    
+    Wähle $g_1(q \in Q''') := q_3$ und $g_2(q \in Q''') := ((q_2)_1, q_1)$.
+    
+    Es gilt dann:
+    \begin{align*}
+          & g_1(\Delta_{C'''}^{2p-1}(c)_p) \\
+        = & (\Delta_{C''}^{4p-2}(c)_{1-p})_3 \\
+        = & \Delta_{C'}^{6p-4}(c)_{3-3p} \\
+        = & \Delta_{C}^{3p-2}(c)_1
+    \end{align*}
+    
+    Außerdem gilt:
+    \begin{align*}
+          & g_2(\Delta_{C'''}^{2p}(c)_{p+1}) \\
+        = & g_2(\Delta_{C''}^{4p}(c)_{1-p}) \\
+        = & ((\Delta_{C'}^{6p-1}(c)_{2-3p})_1, \Delta_{C'}^{6p}(c)_{1-3p}) \\
+        = & (\Delta_C^{3p-1}(c)_1, \Delta_C^{3p}(c)_1)
+    \end{align*}
+
+    Anhand von \cref{fig:RealzeitSpeedup} ist nun ersichtlich, wie $C_1$ und $f$ konstruiert werden müssen.
+\end{proof}
+
+
+
+
+
+
+\section{Speedup um einen Faktor durch Kompression}
+
+\begin{definition}[Speedup-Konstruktion $S_k(C)$, $S_k(c)$, $\gamma_q$]
+    \label{factorSpeedupConstruction}
+    Es sei ein Zellularautomat $C := (Q, \delta) \in \CA$ und ein $k \in \N$ gegeben.
+    Definiere $S_k(C) := (Q', \delta')$ mit $Q' := Q^k$.
+    
+    Definiere für $q \in Q$ und $l, r \in Q^*$ die Konfiguration $c(q, l, r) \in Q^{\Z}$:
+    \[
+        c(q, l, r)_i := \begin{cases}
+            (lr)_{i + |l|} & \text{ falls } 1-|l| \leq i \leq |r| \\
+            q & \text{ sonst}
+        \end{cases}
+    \]
+    
+    Wähle $q \in Q$ beliebig.
+    Definiere $\delta' : {Q'}^3 \to Q'$ wie folgt:
+    \[
+        \delta'(a, b, c) := \Delta_C^k(c(q, a, bc))[1..k]
+    \]
+    
+    Definiere die Konfigurationskomprimierung $S_k(c) \in Q'^\Z$ für eine Konfiguration $c \in Q^\Z$:
+    \[
+        S_k(c)_i := c_{k(i - 1) + 1}c_{k(i - 1) + 2}...c_{k(i - 1) + k} \in Q^k
+    \]
+    
+    Definiere außerdem noch $\gamma_q : Q' \to Q$ mit
+    $\gamma_q(a) := \Delta^{k-1}_C(c(q, \epsilon, a))_1$.
+\end{definition}
+
+
+\begin{satz}[Korrektheit der Speedup-Konstruktion]
+    \label{factorSpeedupConstructionCorrectness}
+    Es sei ein Zellularautomat $C := (Q, \delta) \in \CA$, ein $k \in \N$ und eine Konfiguration $c: \Z \to Q$ gegeben.
+    Für beliebige $t \in \Nz, i \in \Z$ und $j \in \finset{1, ..., k}$ gilt dann:
+    \[
+        (\Delta^t_{S_k(C)}(S_k(c))_i)_j = \Delta^{kt}_C(c)_{k(i-1)+j}
+    \]
+    Ferner gilt für $q := (\Delta^t_{S_k(C)}(S_k(c))_{i-1})_k$:
+    \[
+        \gamma_{q}( \Delta^t_{S_k(C)}(S_k(c))_{i} )
+        = \Delta^{kt+k-1}_C(c)_{k(i-1)+1}
+    \]
+\end{satz}
+\begin{proof}
+    Die Aussage kann durch einfaches Nachrechnen gezeigt werden, auf das an dieser Stelle verzichtet wird.
+\end{proof}
+
+
+
+\begin{satz}
+    \label{linSpeedup}
+    $\CAL{\CALT, \CALeft} = \CAL{\CAT, \CALeft, \mathrm{time}(\finset{ n \mapsto 2n }) }$
+\end{satz}
+\begin{proof}
+    Siehe Ibarra, Speedup-Theorem. Referenz folgt.
+    \cite{MAZOYER199259}
+\end{proof}
+

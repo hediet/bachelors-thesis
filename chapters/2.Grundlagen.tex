@@ -1,0 +1,543 @@
+\chapter{Grundlagen}
+\label{chap:Grundlagen}
+
+\section{Notation}
+
+In diesem Abschnitt werden Besonderheiten der in dieser Arbeit verwendeten Notation geklärt.
+
+Sofern nicht anders vermerkt, bezeichnen $\Sigma$ und $\Gamma$ beliebige endliche Mengen, auch Alphabete genannt.
+
+In dieser Arbeit werden die Zeichen eines Wortes mit 1 beginnend durchnummeriert.
+Für ein Wort $w \in \Sigma^*$ gilt also die Identität $w = w_1w_2...w_{|w|}$.
+Der Ausdruck $w[m...n]$ meint das Teilwort von $w$, das die Zeichen $w_m$, $w_{m+1}$, ... bis einschließlich $w_n$ umfasst.
+
+$\mathcal{P}(M)$ bezeichne die Potenzmenge einer Menge, also die Menge aller ihrer Teilmengen.
+
+Weiter bezeichne $\B := \finset{ \chr{0}, \chr{1}}$ das Binär-Alphabet.
+
+Wenn ein Tupel $T$ durch $T := (A, B, ..., Z)$ definiert wird, wobei $A$, $B$, ..., $Z$ symbolische Variablen sind,
+die sich auf einen entsprechenden Wert beziehen,
+bezeichnen $A_T$, $B_T$, ..., $Z_T$ die Komponenten des Tupels $T$. Es gilt dann offensichtlich: $T = (A_T, B_T, ..., Z_T)$.
+
+Für eine Fallunterscheidung
+\[
+    x = \begin{cases}
+        1 & \text{falls } A \\
+        2 & \text{sonst, falls } B \\
+        3 & \text{sonst, falls } C \\
+        4 & \text{sonst}
+    \end{cases}
+\]
+meint ein \enquote{sonst}, dass alle darüberstehenden Fälle nicht zutreffen.
+So ist $x = 2$, falls $B$ gilt, aber nicht $A$ und $x = 3$, falls weder $A$ noch $B$ gilt, aber $C$.
+
+\section{Definition Zellularautomat}
+
+In diesem Abschnitt werden grundlegende Objekte und Definitionen im Zusammenhang mit den in dieser Arbeit betrachteten Zellularautomaten eingeführt.
+
+\begin{definition}[Zellularautomat]
+    Ein eindimensionaler Zellularautomat mit einer Nachbarschaft von Radius 1 wird in dieser Arbeit als Tupel $(Q, \delta)$ definiert,
+    wobei $Q$ eine endliche, nicht-leere Menge ist und
+    $\delta$ eine Abbildung mit $\delta: Q^3 \to Q$.
+    $Q$ wird auch Zustandsmenge und $\delta$ lokale Überführungsfunktion genannt.
+    Es bezeichne $\CA$ die Menge aller solcher Tupel.
+    In dieser Arbeit werden nur solche Zellularautomaten betrachtet, weswegen die Dimension und Nachbarschaft im Folgenden nicht mehr erwähnt wird.
+\end{definition}
+
+Es werden nun Begriffe eingeführt, mithilfe derer bestimmte Verhaltensweisen von Zuständen in Zellularautomaten gefordert werden können.
+
+\begin{definition}
+    Sei $(Q, \delta) \in \CA$ ein Zellularautomat.
+    \begin{itemize}
+        \item $R \subseteq Q$ heißt passive Zustandsmenge, wenn $\forall a, b, c \in R: \delta(a, b, c) = b$.
+        \item $q \in Q$ heißt passiver Zustand, wenn $\finset{q}$ eine passive Zustandsmenge ist.
+        \item $R \subseteq Q$ heißt $\delta$-abgeschlossene Menge, wenn $\forall b \in R: \forall a, c \in Q: \delta(a, b, c) \in R$.
+        \item $q \in Q$ heißt toter Zustand, wenn $\finset{q}$ eine $\delta$-abgeschlossene Menge ist.
+        \item $\delta$ heißt links \acs{bzw.} rechts-unabhängig,
+            wenn $\forall a_1, a_2, b, c \in Q: \delta(a_1, b, c) = \delta(a_2, b, c)$
+            \acs{bzw.}
+            wenn $\forall a, b, c_1, c_2 \in Q: \delta(a, b, c_1) = \delta(a, b, c_2)$.
+        \item $q \in Q$ heißt initial, wenn
+            $\delta(a, b, c) = q \Rightarrow b = q$.
+    \end{itemize}
+\end{definition}
+
+Die globale räumliche Situation eines Zellularautomaten zu einem festen Zeitpunkt wird mithilfe einer Konfiguration beschrieben.
+
+\begin{definition}[Konfiguration]
+    Eine Konfiguration über einer endlichen Zustandsmenge $Q$ ist eine Abbildung $c \in Q^{\mathbb{Z}}$.
+    Der Zustand an Position $i$ einer Konfiguration $c$ wird durch $c_i := c(i)$ beschrieben.
+\end{definition}
+
+Die lokalen Regeln eines Zellularautomaten bestimmen, wie aus einer Konfiguration eine Folgekonfiguration entsteht.
+
+\begin{definition}[Folgekonfiguration]
+    Die Funktion $\Delta_C$ bildet in Abhängigkeit eines
+    Zellularautomaten $C = (Q, \delta) \in \CA$ eine Konfiguration $c$ auf die Folgekonfiguration $\Delta_C(c)$ ab:
+    \[ 
+        \Delta_C: Q^\Z \to Q^\Z, \;
+        (\Delta_C(c))(i) := \delta(c_{i - 1}, c_i, c_{i + 1})
+    \]
+    
+    $\Delta_C^t(c)$ bildet eine Konfiguration $c$ auf die $t$-te Folgekonfiguration für ein $t \in \Nz$ ab.
+    Es gilt $\Delta_C^0 = \mathrm{id}$ und $\Delta_C^t = \Delta_C \circ \Delta_C^{t-1}$.
+\end{definition}
+
+Ausgehend von einer Konfiguration und dem Begriff einer Folgekonfiguration kann ein Zellularautomat nun verwendet werden,
+um ein Berechnungsmodell zu bilden. Zunächst werden aber Objekte eingeführt, um von verschiedenen solcher Modelle abstrahieren zu können.
+
+\begin{definition}[$\Sigma^*$ erkennender Zellularautomat]
+    Ein $\Sigma^*$ erkennender Zellularautomat ist ein Tupel $C := (Q, \delta, \Sigma, \#, L, S)$ 
+    mit $(Q, \delta) \in \CA$, $\Sigma \subseteq Q$, $\# \in Q \setminus \Sigma$ und $L \subseteq \Sigma^*$ beliebig.
+    $S$ ist ein beliebiges Objekt derart, dass die Klasse aller solcher $S$ eine Menge bildet.
+    
+    Es bezeichne $\ECA$ die Menge aller solcher Tupel. Wegen der Forderung an $S$ ist diese Menge wohldefiniert, aber nicht notwendigerweise abzählbar.
+    Durch Spezialisierung der Sprache $L$, die in dieser Definition keiner Einschränkung unterliegt,
+    und dem ebenfalls frei wählbaren Objekt $S$ werden im Folgenden verschiedene Typen von Zellularautomaten eingeführt.
+    Die Menge $\ECA$ erlaubt es, von diesen Spezialisierungen zu abstrahieren.
+    
+    Für eine Teilmenge $M \subseteq \ECA$ definiere die von $M$ erzeugte Sprachklasse:
+    \[
+        \mathcal{L}(M) := \set{ L_C }{ C \in M }
+    \]
+\end{definition}
+
+\begin{definition}[$\ECA$-Funktor]
+    Eine Funktion $\mathcal{F}: \Pot(\ECA) \to \Pot(\ECA)$ heißt $\ECA$-Funktor.
+    Seien $\mathcal{F}_1, ..., \mathcal{F}_n$ $\ECA$-Funktoren. Definiere:
+    \[
+        \ECA^{ \mathcal{F}_1 \text{-...-} \mathcal{F}_n } := (\mathcal{F}_n \circ ... \circ \mathcal{F}_1)(\ECA)
+    \]
+    
+    Im Laufe dieser Arbeit werden eine Reihe solcher Funktoren eingeführt.
+    Funktoren ermöglichen es, bequem eine Klasse von Zellularautomaten zu spezialisieren oder in eine andere zu transformieren.
+\end{definition}
+
+Bisher wurde noch nicht beschrieben, wie Zellularautomaten mit endlichen Wörtern interagieren. Dazu werden diese zu einer Konfiguration fortgesetzt.
+
+\begin{definition}[Einbettung von Wörtern in Konfigurationen]
+   Für einen erkennenden Zellularautomaten $(Q, \delta, \Sigma, \#, L, S) \in \ECA$
+   lässt sich jedes Wort $w \in \Sigma^*$ wie folgt zu einer Konfiguration fortsetzen:
+   \[
+       [w]: \Z \to Q, \;
+       [w](p) :=
+       \begin{cases} 
+          w_p & p \geq 1 \land p \leq |w| \\
+          \# & \text{sonst}
+       \end{cases}
+   \]
+\end{definition}
+
+\begin{exmp}[Konfiguration]
+    Für $w = \chr{abc}$ wird $[w]$ durch folgende Tabelle dargestellt:
+    
+    \begin{center}
+        \addvbuffer[8pt 8pt]{\begin{tabular}
+           { | c | c | c | c | c | c | c | c | c | c | c | c | c  | c  | c |}\hline
+             $p$ & ... & -2 & -1 & 0 & 1 & 2 & 3 & 4 & 5 & 6 & ... \\ \hline
+          $[w]_p$ & ... & \# & \# & \# & \chr{a} & \chr{b} & \chr{c} & \# & \# & \# & ... \\ \hline
+        \end{tabular}}
+    \end{center}
+    
+    Die Position einer Zelle in einer Konfiguration wird hier durch die Variable $p$ beschrieben.
+\end{exmp}
+
+
+\subsection{Definition \texorpdfstring{$F$}{F}-haltender Zellularautomat}
+
+
+
+\begin{definition}[$F$-haltender Zellularautomat]
+    Es sei ein Zellularautomat $C := (Q, \delta, \Sigma, \#, L, (F, F^+, p)) \in \ECA$
+    mit $F \subseteq Q$, $F^+ \subseteq F$ und $p : \Nz \to \Nz$, $p(0) = 0$ gegeben.
+    
+    Anschaulich gesprochen, repräsentiert $F$ die Menge der finalen Zustände, $F^+$ die Menge der akzeptierenden finalen Zustände und
+    $F^- := F \setminus F^+$ die Menge der nicht-akzeptierenden finalen Zustände.
+    $p$ ist eine Funktion, die abhängig von der Länge des Eingabeworts die Position der Zelle
+    angibt, welche anzeigt, ob das Eingabewort akzeptiert wird.
+    
+    
+    Für ein Wort $w \in \Sigma^*$ gibt die Funktion $time_{C}$ an, wie viele Schritte der Zellularautomat $C$ braucht, um das Wort $w$ zu akzeptieren:
+    \[
+        \ctime_{C}: \Sigma^* \to \Nz \cup \{ \infty \}, \; w \mapsto \min (\set{ t \in \Nz }{ \Delta_C^t([w])_{p(|w|)} \in F } \cup \{ \infty \})
+    \]
+    
+    Dies lässt sich auf die Wortlänge übertragen:
+    \[
+        \operatorname{\cworsttime}_{C}: \Nz \to \Nz \cup \{ \infty \}, \;  n \mapsto \max \set{ \ctime_{C}(w) }{ w \in \Sigma^n }
+    \]
+    
+    $C$ heißt $F$-haltend, wenn $L = L'$ mit
+    \[
+        L' := \set{ w \in \Sigma^* }{ 
+            \ctime_{C}(w) \neq \infty \wedge \Delta_C^{\ctime_{C}(w)}([w])_{p(|w|)} \in F^+ }
+    \]
+    
+    Mit folgender Definition des $\ECA$-Funktors $\CAF$ bezeichnet $\ECA^\CAF$ die Menge aller $F$-haltenden Zellularautomaten:
+    \[
+        \CAF(M \subseteq \ECA) := \set{ C \in M }{ C \text{ ist $F$-haltend} }
+    \]
+    
+    Ist $\mathcal{F}$ ein $\ECA$-Funktor, sodass die Menge $\set{p_C}{C \in \ECA^{\CAF \text{-} \mathcal{F}}}$ abzählbar ist,
+    dann ist auch die Menge $\ECA^{\CAF \text{-} \mathcal{F}}$ abzählbar.
+    Die später eingeführten Funktoren $\CALeft$, $\CARight$ und $\CAMid$ haben diese Eigenschaft.
+\end{definition}
+
+\begin{comment}
+\begin{definition}[Entscheider]
+    Ein $F$-haltender Zellularautomat $C$ heißt Entscheider, wenn $\cworsttime_C(\Nz) \subseteq \Nz$,
+    $\ctime_C$ also nie den Wert $\infty$ annimmt.
+\end{definition}
+\end{comment}
+
+\subsection{Definition \texorpdfstring{$t$}{t}-haltender Zellularautomat}
+
+\begin{definition}[$t$-haltender Zellularautomat]
+    Gegeben ein Zellularautomat $C := (Q, \delta, \Sigma, \#, L, (F^+, t, p)) \in \ECA$
+    mit $F^+ \subseteq Q$ und $t, p: \Nz \to \Nz$, $t(0) = 0$, $p(0) = 0$.
+    $F^+$ repräsentiert die Menge der akzeptierenden Zustände und $t$ und $p$ Funktionen,
+    die abhängig von der Länge des Eingabeworts angeben,
+    wie viele Schritte auszuführen sind \acs{bzw.} welche Zelle entscheidet, ob das Wort zu akzeptieren ist.
+    
+    $C$ heißt $t$-haltend, wenn $L = L'$ mit
+    \[
+        L' := \set{ w \in \Sigma^+ }{ \Delta_C^{t(|w|)}([w])_{p(|w|)} \in F^+ }
+    \]
+    
+    Mit folgender Definition des $\ECA$-Funktors $\CAT$ bezeichnet $\ECA^\CAT$ die Menge aller $t$-haltender Automaten:
+    \[
+        \CAT(M \subseteq \ECA) := \set{ C \in M }{ C \text{ ist $t$-haltend} }
+    \]
+\end{definition}
+
+
+
+
+
+
+
+
+
+\begin{definition}[$\CALeft$-, $\CAMid$- und $\CARight$-\ECA-Funktoren]
+    Ein $t$- oder $F$-haltender Zellularautomat $C$ heißt
+    \begin{itemize}
+        \item \emph{links-erkennend}, falls $p_C(n) = 1$ (definiert $\ECA$-Funktor $\CALeft$),
+        \item \emph{mittig-erkennend}, falls $p_C(n) = \lceil n / 2 \rceil$ (definiert $\ECA$-Funktor $\CAMid$) und
+        \item \emph{rechts-erkennend}, falls $p_C(n) = n$ (definiert $\ECA$-Funktor $\CARight$).
+    \end{itemize}
+\end{definition}
+
+
+\begin{definition}[$\mathrm{time}$-, $\mathrm{\CART}$-, $\mathrm{\CALT}$- und $\mathrm{Mid}$-\ECA-Funktoren]
+
+    Sei $F \subseteq {\Nz}^{\Nz}$ eine Menge von Funktionen. Definiere:
+    \[
+        \mathrm{time}(F)(M \subseteq \ECA) := \set{ C \in \CAF(M) }{ \cworsttime_C \in F } \; \union \; \set{ C \in \CAT(M) }{ t_C \in F }
+    \]
+    
+    Mit folgenden Definitionen ist $\CAM{\CALeft, \CART}$ \acs{bzw.} $\CAM{\CALeft, \CALT}$ die Menge der links-erkennenden Realzeit- \acs{bzw.} Linearzeit-Zellularautomaten:
+
+    \begin{itemize}
+        \item $\mathrm{\CART} := \mathrm{time}(\finset{n \mapsto n - 1}) \circ \CAT$
+        \item $\mathrm{\CALT} := \mathrm{time}(O(n)) \circ \CAF$
+        \item $\mathrm{Mid} := \mathrm{time}(\finset{n \mapsto \lfloor n/2 \rfloor}) \circ \CAT \circ M $
+    \end{itemize}   
+\end{definition}
+
+
+\begin{definition}[$\LOCA$- und $\ROCA$-\ECA-Funktoren]
+    Der $\LOCA$ \acs{bzw.} $\ROCA$ Funktor wählt diejenigen links- \acs{bzw.} rechts-erkennenden Automaten aus, deren Zustandsübergangsfunktion links- \acs{bzw.} rechts-unabhängig ist.
+\end{definition}
+
+\section{Vergleich von \texorpdfstring{$t$}{t}-haltenden und \texorpdfstring{$F$}{F}-haltenden Automaten}
+
+\begin{lemma}[$F^+$ und $F^-$ können $\delta$-abgeschlossen gewählt werden]
+    \label{lemmaAbgeschlosseneMenge}
+    
+    Sei $C = (Q, \delta, \Sigma, \#, L, (F, F^+, p))$ ein $F$-haltender Zellularautomat.
+    Dann existiert ein $F$-haltender Zellularautomat $C' = (Q', \delta', \Sigma, \#, L', (F', F'^+, p))$ mit $\ctime_{C} = \ctime_{C'}$ und $L = L'$,
+    wobei $F'^+$ und $F'^-$ $\delta$-abgeschlossene Mengen sind.
+\end{lemma}
+\begin{proof}
+    Setze $Q' := Q \times \finset{{-1}, 0, 1}$ und identifiziere $\Sigma$ mit $\Sigma \times \finset{0}$ und $\#$ mit $(\#, 0)$.
+    Wähle $\delta'$ wie folgt:
+    \[
+       \delta'((a, f_a), (b, f_b), (c, f_c)) :=
+       \begin{cases}
+         (\delta(a, b, c), f_b)  & \text{falls } f_b \neq 0 \\
+         (\delta(a, b, c), {-1}) & \text{falls } f_b = 0 \text{ und } \delta(a, b, c) \in F^- \\
+         (\delta(a, b, c), {1}) & \text{falls } f_b = 0 \text{ und }  \delta(a, b, c) \in F^+ \\
+         (\delta(a, b, c), {0}) & \text{sonst}
+       \end{cases}
+    \]
+    
+    Setze $F' := Q \times \finset{{-1}, 1}$ und $F'^+ := Q \times \finset{1}$.
+    Dann sind die Mengen $F'^+$ und $F'^-$ offensichtlich $\delta$-abgeschlossen.
+    
+    Sei $w \in \Sigma^*, p \in \Z, t \in N_0$ und $(q, f) := \Delta_{C'}^t([w])_p$.
+    Dann gilt $q = \Delta_{C}^t([w])_p$ und $f \neq 0$ impliziert, dass $\forall k \in \finset{ 0, ..., t }: \Delta_{C}^k([w])_p \not\in F$.
+    
+    Daraus folgt, dass $\ctime_{C} = \ctime_{C'}$ und $L = L'$.
+\end{proof}
+
+
+
+\begin{satz}[$t$-haltende Automaten sind mindestens so mächtig wie $F$-haltende]
+    Sei $C = (Q, \delta, \Sigma, \#, L, (F, F^+, p))$ ein $F$-haltender Zellularautomat.
+    Dann gibt es einen $t$-haltenden Zellularautomat $C'$ mit $L_{C'} = L_C$ und $\forall n \in \Nz: t_{C'}(n) \leq \cworsttime_C(n)$.
+\end{satz}
+\begin{proof}
+    Wegen~\cref{lemmaAbgeschlosseneMenge} sind \acs{OBdA.} $F^+$ und $F^-$ $\delta$-abgeschlossene Mengen.
+    
+    Betrachte folgende Funktion $t$:
+    \[
+        t: \Nz \to \Nz, \; n \mapsto \max(\finset{ 0 } \cup \set{ \ctime_C(w) }{ w \in \Sigma^n, \; \ctime_C(w) \neq \infty })
+    \]
+    
+    Wähle $C' := (Q, \delta, \Sigma, \#, L', (F^+, t)) \in \ECA^\CAT$.
+    
+    Es gilt offensichtlich $\forall n \in \Nz: t(n) \leq \cworsttime_C(n)$.
+    
+    Sei $w \in L_C$. Dann gilt $\ctime_C(w) \neq \infty$ und $\Delta_{C}^{\ctime_C(w)}([w])_{p(|w|)} \in F^+$.
+    Wegen $t(|w|) \geq \ctime_C(w)$ und weil $F^+$ $\delta$-abgeschlossen ist, folgt $\Delta_{C'}^{t(|w|)}([w])_{p(|w|)} \in F^+$,
+    also $w \in L_{C'}$.
+    
+    Sei $w \in L(C')$. Dann gilt $f_1 := \Delta_{C'}^{t(|w|)}([w])_{p(|w|)} \in F^+$. Dann ist $\ctime_C(w) \leq t(|w|)$
+    und $f_2 := \Delta_{C}^{\ctime_C(w)}([w])_{p(|w|)} \in F$.
+    Wäre $f_2 \in F^-$, dann wäre auch $f_1 \in F^- = F \setminus F^+$, da auch $F^-$ $\delta$-abgeschlossen ist.
+    Also folgt $f_2 \in F^+$. Also $w \in L_{C'}$.
+    
+    Es folgt $L_C = L_{C'}$.
+    
+\end{proof}
+
+\begin{satz}[$F$-haltende Automaten sind unter Annahmen mindestens so mächtig wie $t$-haltende]
+    Sei $C$ ein $t$-haltender Zellularautomat.
+    Wenn es einen $F$-haltenden Zellularautomaten $X$ gibt
+    mit $|\Sigma_X| = 1$ und $\cworsttime_X = t_C$,
+    dann gibt es auch einen $F$-haltenden Zellularautomat $C'$ mit $L(C) = L(C')$ und $\cworsttime_{C'} = t_C$.
+\end{satz}
+\begin{proof}
+    Führe $X$ und $C$ parallel aus, indem $\delta_{C'}$ durch $\delta_X$ und $\delta_C$ auf $Q_{C'} := Q_X \times Q_C$ definiert wird.
+    
+    Benutze $X$, um zu erkennen, wann eine Zelle in einen Final-Zustand gehen soll,
+    indem $F_{C'} := \set{ (q_1, q_2) }{ (q_1, q_2) \in Q_X \times Q_C, \; q_1 \in F_X } $ gewählt wird.
+    
+    Benutze $C$, um zu erkennen, ob dieser Final-Zustand akzeptierend oder ablehnend sein soll,
+    indem $F_{C'}^+ := \set{ (q_1, q_2) }{ (q_1, q_2) \in Q_X \times Q_C, \; q_1 \in F_X, q_2 \in F_C^+} $ gewählt wird.
+    Der so definierte Automat $C'$ erfüllt die Behauptung.
+\end{proof}
+
+\begin{proposition}[$t$-haltende Automaten sind mächtiger als $F$-haltende]
+    Es gibt einen $t$-haltenden links-erkennenden Zellularautomaten mit
+    $t(n) \in \finset{0, 1}$,
+    welcher eine nicht-semientscheidbare Sprache erkennt.
+    Diese Sprache kann offensichtlich nicht
+    von einem $F$-haltenden Automaten erkannt werden,
+    da sie sonst semientscheidbar wäre.
+\end{proposition}
+\begin{proof}
+    Sei $L \subseteq \Sigma^*$ eine nicht-semientscheidbare Sprache und $\mathrm{cod}: \Nz \to \Sigma^*$ eine berechenbare surjektive Funktion.
+    Dann ist $L' := \set{ w \in \Sigma^* }{ \mathrm{cod}(|w|) \in L }$ auch nicht-semientscheidbar.
+    Setze $t(n) := 1_{cod(n) \in L}$.
+    Konstruiere $t$-haltenden Zellularautomat mit $\Sigma \cap F^+ = \emptyset$ und $\delta(\cdot, \cdot, \cdot) \in F^+$.
+    Dieser Automat erkennt dann offensichtlich $L'$.
+\end{proof}
+
+\begin{comment}
+    \begin{proposition}
+        Sei $C$ ein $F$-haltender links-erkennender Zellularautomat und $n_0 \in \N$ so, dass $\cworsttime_C(n_0) < n_0$.
+        Dann $\forall n \geq n_0: \cworsttime_C(n) = \cworsttime_C(n_0)$.
+    \end{proposition}
+    \begin{proof}
+        Bei der Eingabe eines Wortes $w$ der Länge $n_0$ merkt $C$ nicht mehr, wenn $w$ verlängert wird.
+        Ausführlicherer Beweis folgt.
+    \end{proof}
+\end{comment}
+
+\section{Nützliche Eigenschaften}
+
+\begin{satz}[Wahl eines passiven und initialen Randes]
+    Sei $C = (Q, \delta, \Sigma, \#, L, (F, F^+, p)) \in \ECA^\CAF$. Dann kann $C$ so zu $C'$ mit $L(C) = L(C')$ umgebaut werden, dass $\#_{C'}$ ein passiver und initialer Zustand ist.
+    Gleichzeitig bleibt dabei die Links- \acs{bzw.} Rechts-Unabhängigkeit von $\delta_C$ erhalten.
+\end{satz}
+\begin{proof}
+    Setze $Q_{C'} := Q^2 \cup \finset { \#_{C'} }$. Identifiziere $\Sigma$ mit $ \Sigma \times \finset{\#}$ und $\#_{C'}$ mit $\Spvek{\perp; \perp}$, $\perp \not\in Q$.
+
+    Für $q \in Q \cup \finset{\perp}$ und $p \in Q$ definiere folgende abkürzende Notation $q^p \in Q$:
+    \[
+        q^p := 
+        \begin{cases}
+            q & \text{falls } q \neq \perp \\
+            p & \text{sonst}
+        \end{cases}
+    \]
+    
+    Es sei $\delta_{C'}$ definiert durch:
+    \[
+       \delta'(\Spvek{a_1; a_2}, \Spvek{b_1; b_2}, \Spvek{c_1; c_2}) :=
+       \begin{cases}
+         \Spvek{  \delta(a_1 ^ {x}, b_1 ^ {x}, c_1 ^ {x}); \delta(x, x, x)  } 
+         & \text{falls }
+         \finset{x} = \finset{a_2, b_2, c_2} \setminus \finset{ \perp } \\
+         \#'
+         & \text{sonst}
+       \end{cases}
+    \]
+    Falls $\delta$ links-unabhängig ist, streiche $a_2$ aus der Menge in obiger Definition.
+    Falls $\delta$ rechts-unabhängig ist, streiche $c_2$.
+    
+    Offensichtlich ist nach dieser Konstruktion $\#_C'$ sowohl passiv als auch initial.
+    
+    Setze $t_r := t_l := t$.
+    Falls $\delta$ links-unabhängig ist, setze jedoch $t_l := 0$.
+    Falls $\delta$ rechts-unabhängig ist, setze stattdessen $t_r := 0$.
+    
+    Es reicht nun, für alle $t \in \Nz$ und $i \in \Z$ Folgendes zu zeigen:
+    \[
+        \Delta_{C'}^t([w])_i = \begin{cases}
+            \Spvek{\Delta_C^t([w])_i; \Delta^t_{C}([\varepsilon])} &
+                \text{falls } -t_r < i \leq t_l + |w| \\
+            \#' & \text{sonst}
+        \end{cases}
+    \]
+    
+    Definiere $c^t_i := \Delta_{C'}^t([w])_{i-1}$.
+    Die Behauptung gilt offensichtlich für $t = 0$.
+    Die Behauptung gelte nun für ein $t \in \Nz$.
+    Angenommen, $-(t+1)_r < i \leq (t+1)_l + |w|$.
+    Dann folgt nach Induktionsvermutung und Definition von $\delta'$: \[
+    \finset{ (c^t_{i-1})_2, (c^t_{i})_2, (c^t_{i+1})_2} \setminus \finset{ \perp } = \finset{ \Delta^t_{C}([\varepsilon])} =: \finset{x}
+    \]
+    
+    Angenommen, $i - 1 \leq -t_r$. Dann folgt mit der Induktionsvermutung $((c^t_{i-1})_1)^x = \Delta^t_{C}([\varepsilon]) = \Delta^t_{C}([w])_{i-1}$.
+    Ansonsten $((c^t_{i-1})_1)^x = \Delta^t_C([w])_{i-1}$.
+    
+    Angenommen, $i + 1 > t_l + |w|$. Dann $((c^t_{i+1})_1)^x = \Delta^t_{C}([\varepsilon]) = \Delta^t_{C}([w])_{i+1}$.
+    Ansonsten $((c^t_{i+1})_1)^x = \Delta^t_C([w])_{i+1}$.
+    
+    Analog gilt für $i = -t_r$, $i = t + 1 + |w|$ und alle anderen $i$ im angenommenen Intervall $(c^t_{i})^x = \Delta^t_C([w])_i$
+    
+    Folglich $c^{t+1}_i = \Spvek{\Delta^{t+1}_C([w])_i; \Delta^{t+1}_{C}([\varepsilon])}$
+    
+    Angenommen, $i \leq -(t+1)_r$. Dann folgt mit der Induktionsannahme $c^t_{i} = c^t_{i-1} = \#'$.
+    Außerdem gilt $c^t_{i+1} = \#'$ oder $\delta$ ist rechts-unabhängig.
+    Angenommen, $i > (t+1)_l + |w|$. Auch dann gilt nach Induktionsannahme $c^t_{i} = c^t_{i+1} = \#'$.
+    Analog gilt dann $c^t_{i-1} = \#'$ oder $\delta$ ist links-unabhängig.
+    
+    In allen Fällen gilt dann $c^{t+1}_i = \#'$.
+\end{proof}
+
+\begin{satz}[Wahl eines toten Randes bei Linearzeitzellularautomaten]
+    \label{satzRauteTot}
+    Sei $C \in \CAM{\CALeft, \CALT}$ ein Linearzeit-Zellularautomat.
+    Dann kann $C$ ohne Veränderung der Laufzeit so zu $C'$ mit $L(C) = L(C')$ umgebaut werden, dass $\#_{C'}$ ein toter Zustand ist.
+    Für eine passive Zustandsmenge $M \subseteq \Sigma_C$ mit $\#_C \in M$ ist
+    die entsprechende Teilmenge von $\Sigma_{C'}$ auch passiv.
+\end{satz}
+\begin{proof}
+    Da $C$ ein Linearzeit-Zellularautomat ist, gibt
+    es ein $k \in \Nz$, sodass $\forall n \in \Nz: \cworsttime_C(n) \leq kn$.
+    Setze $K := \finset{-k, ..., k}$ und  $Q' := Q_C^K \cup \finset{ \# }$.
+    Die Elemente von $f \in Q_C^K$ können auf $\Z$ durch $f(n \in \Z \setminus K) := \#_C$ fortgesetzt werden.
+
+    Für $i \in K$, $q \in Q'$ und $c \in Q_C$ definiere folgende abkürzende Notation:
+    \[
+        q_i^c :=
+        \begin{rcases}
+            \begin{dcases}
+                c & \text{falls } q = \# \\
+                q(i) & \text{sonst.}
+            \end{dcases}
+        \end{rcases}
+        \in Q_C
+    \]
+
+    Definiere $\delta'$ für $a, c \in Q'$ und $b \in Q^K_C$ durch
+    
+    \begin{alignat*}{2}
+        & \delta'(a, \#, c) & := & \; \# \\
+        & \delta'(a, b, c)(i \in K) & := &
+        \begin{cases}
+            \delta(a_i^{b(i - 1)}, b(i), c_i^{b(i + 1)}) & \text{falls } i \text{ gerade ist.} \\
+            \delta(c_i^{b(i - 1)}, b(i), a_i^{b(i + 1)}) & \text{sonst.}
+        \end{cases}
+    \end{alignat*}
+    
+    Bette $c \in \Sigma$ in $Q'$ ein durch $\phi(c)(i \in K) := \begin{cases} c & \text{ falls } i = 0 \\ \#_C & \text { sonst.} \end{cases}$, $\phi(c) \in Q'$.
+    Setze $F' := \set{ q \in Q_C^K }{ q(0) \in F }$
+    und $F'^+ := \set{ q \in Q_C^K }{ q(0) \in F^+ }$.
+    
+    Es bleibt nun die Korrektheit dieser Konstruktion zu zeigen.
+    
+    Setze $f_{n \in \Nz}(i \in \Z) :=
+    \begin{cases} 
+        ((i - 1) \; \mathrm{mod} \; n) + 1  & \textrm{ falls } (i \; \mathrm{mod} \; 2n) \leq n \\
+        n - ((i - 1) \; \mathrm{mod} \; n)  & \textrm{ sonst}
+    \end{cases}$
+    .
+    \newline
+    
+    Folgende Tabelle zeigt einige Werte von $f_4$:
+    \begin{center}
+        \addvbuffer[8pt 8pt]{\begin{tabular}
+           { | c | c | c | c | c | c | c | c | c | c | c | c | c  | c  | c |}\hline
+             $i$ & -1 & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\ \hline
+          $f_4(i)$ & 2 & 1 & 1 & 2 & 3 & 4 & 4 & 3 & 2 & 1 & 1 & 2  & 3  & 4  \\ \hline
+        \end{tabular}}
+    \end{center}
+    
+    $f_n$ hat einen steigenden und einen fallenden Teil, die Funktion pendelt zwischen $1$ und $n$
+    und es gilt stets $|f_n(i) - f_n(i+1)| \leq 1$.
+    
+    Für die Korrektheit reicht es nun zu zeigen, dass für $w \in \Sigma^*$, $t \in \finset{0, ..., k|w|}$ und $p \in \finset{-k|w|+t, ..., k|w|-t}$ gilt:
+    \[
+        \Delta_C^t([w])_p
+            = (\Delta_{C'}^t([w])_{f_{|w|}(p)})(\lfloor \frac{p - 1}{|w|} \rfloor)
+    \]
+    Diese Aussage kann leicht induktiv gezeigt werden.
+    Dabei müssen die Fälle betrachtet werden,
+    dass $f_{|w|}(p+1)$ \acs{bzw.} $f_{|w|}(p+1)$
+    kleiner, größer oder gleich $f_{|w|}(p)$ sein kann.
+    Abhängig davon befindet sich die Zelle mit Position $p$ dann direkt neben dem Rand $\#_{C'}$ \acs{bzw.}
+    entscheidet sich die Parität von $\lfloor \frac{p - 1}{|w|} \rfloor$.
+    
+    \begin{comment}
+    $P_{t \in \Nz, n \in \N} := \finset{-kn+t, ..., kn-t}$.
+    
+        Sei $w \in \Sigma^*$.
+        Beweis der Behauptung durch Induktion über $t$.
+
+        Sei $t = 0$, $p \in \finset{1, ..., |w|}$.
+        Dann $\Delta_{C'}^0([w])_p = w_p
+        = \phi(w_p)(0)
+        = (\Delta_{C'}^t([w])_{p})(0)
+        = (\Delta_{C'}^t([w])_{f_{|w|}(p)})(\lfloor \frac{p - 1}{|w|} \rfloor)$.
+        Sei nun $p \in P_{0,|w|} \setminus \finset{1, ..., |w|}$.
+        Dann $\lfloor \frac{p - 1}{|w|} \rfloor \in K \setminus \finset{0}$ und
+        $\Delta_{C'}^0([w])_p = \#_C =
+        (\Delta_{C'}^t([w])_{f_{|w|}(p)})(\lfloor \frac{p - 1}{|w|} \rfloor)$.
+    
+    
+        Sei $1 \leq t \leq k|w|$.
+        Dann gilt das auch, ist aber mühselig. Am liebsten
+        würde ich ja einen formalen, Computer-gestützten Beweis führen...
+    \end{comment}
+\end{proof}
+
+
+\begin{satz}
+    \label{endlichVieleAusnahmen}
+    Sei $C$ ein Zellularautomat,
+    $L \subseteq \Sigma^*$ eine Sprache und $M \subseteq \Sigma^*$, $|M| \leq \infty$  eine endliche Menge von Wörtern, sodass $L_C \setminus M = L \setminus M$.
+    Dann existiert ein Zellularautomat $C'$, der $L$ in der selben Zeit erkennt.
+\end{satz}
+\begin{proof}
+    Offensichtlich sind dann $M_1 := L \cap M$ und $M_2 := (\Sigma^* \setminus L) \cap M$ auch endlich.
+    $M_1$ und $M_2$ sind disjunkt und ihre Vereinigung ist genau $M$.
+    $M_1$ enthält die Wörter, die $L$ hat, aber $L_C$ möglicherweise nicht, während $M_2$ die Wörter enthält, die $L$ nicht hat, $L_C$ aber möglicherweise schon.
+    Da endliche Sprachen regulär sind und reguläre Sprache von Echtzeit-Zellularautomaten erkannt werden können,
+    existieren Zellularautomaten $C_1$ und $C_2$ mit $L_{C_1} = M_1$ und $L_{C_2} = M_2$.
+    Akzeptiert weder $C_1$ noch $C_2$ ein Wort $w$, dann akzeptiert es $C$ genau dann, wenn $w \in L$.
+    Werden also die Automaten $C$, $C_1$ und $C_2$ parallel ausgeführt, kann leicht ein Echtzeit-Zellularautomat $C'$ konstruiert werden mit $L_{C'} = L$.
+\end{proof}

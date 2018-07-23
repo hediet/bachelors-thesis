@@ -1,0 +1,635 @@
+\chapter{Advice-Zellularautomaten}
+\label{chap:AdvAuto}
+
+Dieses Kapitel beschäftigt sich damit, inwiefern die Mächtigkeit bestimmter Klassen von Zellularautomaten verändert wird,
+wenn der Automat zusätzlich zum Eingabewort ein vom Eingabewort abhängiges Unterstützungswort (im Folgenden Advice genannt) erhält.
+Insbesondere wird gezeigt, dass bestimmte solcher Klassen unter Zuhilfenahme ausgewählter Advices abgeschlossen sind.
+Solche Advices heißen dann verträglich bezüglich dieser Klasse.
+Diese Abschlusseigenschaft ist nützlich, um die Konstruktion einiger Realzeit-Zellularautomaten zu vereinfachen.
+
+\section{Definition}
+
+\begin{definition}
+    Ein $\Sigma$-$\Gamma$-Advice (Hinweis) $\mathcal{A}$ ist eine Abbildung
+        $\mathcal{A}: \Sigma^* \to \Pot(\Gamma^*)$ mit $\forall w \in \Sigma^*: \mathcal{A}(w) \subseteq \Sigma^{|w|}$.
+    Wenn $\forall w \in \Sigma^*: |\mathcal{A}(w)| = 1$, kann $\mathcal{A}$ auch
+    als Abbildung $\mathcal{A} : \Sigma^* \to \Gamma^*$ aufgefasst werden.
+\end{definition}
+
+\begin{definition}
+    Definiere injektive Funktion $\comp: (\Sigma \times \Gamma)^* \to (\Sigma^* \times \Gamma^*)$
+    um ein Wort über zwei Alphabete in zwei Wörter über je ein Alphabet zu zerlegen:
+    \[
+        \forall v \in \Sigma^*, w \in \Gamma^{|v|}: \comp(\Spvek{v_1; w_1}...\Spvek{v_{|v|}; w_{|v|}}) := \Spvek{v; w}
+    \]
+    
+    Definiere $\comb: \comp((\Sigma \times \Gamma)^*) \to (\Sigma \times \Gamma)^*$,
+    um zwei Wörter über je ein Alphabet zu einem Wort über zwei Alphabete zusammenzufügen:
+    \[
+        \comb(w) := \comp^{-1}(w)
+    \]
+    
+\end{definition}
+
+\begin{exmp}
+    \[
+        \comp(\Spvek{\chr{1}; \chr{a}}\Spvek{\chr{2}; \chr{b}}\Spvek{\chr{3}; \chr{c}}) = \Spvek{\chr{123}; \chr{abc}}
+    \]
+    
+    \[
+        \comb(\Spvek{\chr{123}; \chr{abc}}) = \Spvek{\chr{1}; \chr{a}}\Spvek{\chr{2}; \chr{b}}\Spvek{\chr{3}; \chr{c}}
+    \]        
+\end{exmp}
+
+\begin{definition}
+    Es sei ein Advice $\mathcal{A}$ und ein Zellularautomat $C \in \ECA$ gegeben. Mit Unterstützung des Advices $\mathcal{A}$ kann $C$ nun folgende Sprache erkennen:
+    \[
+         L_{\mathcal{A}, C} := \set{ w \in \Sigma^*}{\exists v \in \mathcal{A}(w): \comb(\Spvek{w; v}) \in L(C)}
+    \]
+    
+    Für $M(\mathcal{A}) := \set{ \comb(\Spvek{ w; v}) }
+        { w \in \Sigma^* \land v \in \mathcal{A}(w) }$
+    kann $L_{\mathcal{A}, C}$ auch wie folgt aufgefasst werden:
+    \[
+        L_{\mathcal{A}, C} = \comp(
+            L(C) \cap M(\mathcal{A})
+        )_1
+    \]
+    
+    Folgender $\ECA$-Funktor stellt einer Klasse von Zellularautomaten ein gegebenes Advice zur Verfügung:
+    \[
+        \orakel(\mathcal{A})(M \subseteq \ECA) := \set{ (Q_C, \delta_C, \Sigma, \#_C, L_{\mathcal{A}, C}, (S_C, C))} { C \in M, \; \Sigma_C = \Sigma \times \Gamma }
+    \]
+\end{definition}
+
+\section{Ergebnisse}
+
+\begin{satz}
+    Seien $\mathcal{A}_1$ und $\mathcal{A}_2$ zwei Advices.
+    Definiere $(\mathcal{A}_1 \cup \mathcal{A}_2)(w) := \mathcal{A}_1(w) \cup \mathcal{A}_2(w)$ und 
+    $(\mathcal{A}_1 \cap \mathcal{A}_2)(w) := \mathcal{A}_1(w) \cap \mathcal{A}_2(w)$.
+    
+    Sind $\mathcal{A}_1$ und $\mathcal{A}_2$ $\CAM{\CART, \CALeft}$-verträglich, so sind
+    auch $\mathcal{A}_1 \cup \mathcal{A}_2$ und $\mathcal{A}_1 \cap \mathcal{A}_2$
+    $\CAM{\CART, \CALeft}$-verträglich.
+\end{satz}
+\begin{proof}
+    Es werden entsprechend zwei Ausführungen simuliert - je eine auf einem 
+    
+\end{proof}
+
+\begin{satz}
+    Sei $(\Sigma \cup \finset{\Box}) ^2 \subseteq \Gamma, \Box \not\in \Sigma$.
+    Definiere den \enquote{Komprimierungs}-Advice $\mathcal{A}_K$:
+    \[
+        \mathcal{A}_K(w) := 
+                  \Spvek{w_1; w_2} \Spvek{w_3; w_4} ... \Spvek{w_{|w-1|}; w_{|w|}}
+                        \; \Spvek{\Box; \Box}^\frac{|w|}{2}
+    \]
+    Falls $|w|$ ungerade, setze $w := w\Box$.
+    Unter dem Advice $\mathcal{A}_K$ fällt Realzeit mit Linearzeit zusammen:
+    \[
+        \CAL{\CART, \CALeft, \orakel({\mathcal{A}})} = \CAL{\CALT, \CALeft}
+    \]
+\end{satz}
+\begin{proof}
+    Die Inklusion \enquote{$\subseteq$} ist klar.
+    Sei $L \in \CAL{\CALT, \CALeft}$.
+    Nach \cref{linSpeedup} existiert ein Zellularautomat $C$, der $L$ in $2n$ Schritten erkennt.
+    Der Automat $C' := S_2(C)$ aus \cref{factorSpeedupConstruction}
+    erkennt $L$ dann in $n$ Schritten auf der komprimierten Konfiguration $S_2([w])$.
+    Da die komprimierte Konfiguration durch das Advice bereitgestellt wird, kann $L$ mithilfe des Advices in Echtzeit erkannt werden.
+\end{proof}
+
+
+\begin{comment}
+    \begin{satz}
+        Sei $(\Sigma \cup \finset{\Box}) ^2 \subseteq \Gamma, \Box \not\in \Sigma$.
+        
+        \begin{enumerate}
+            \item  $\mathcal{A}_1(w) := \Gamma^{|w|}$
+        \end{enumerate}
+        
+        Es gilt jeweils:
+        \[
+            \CAL{\CART, \orakel({\mathcal{A}_i})} = \CAL{\CALT, \orakel({\mathcal{A}_i})}
+        \]
+        
+    \end{satz}
+
+    \begin{definition}
+        Seien $\mathcal{A}_1$ und $\mathcal{A}_2$ zwei Orakel, $M \subseteq \ECA$ (falls nicht angegeben, $M := \ECA^\CART$).
+        \[
+            \mathcal{A}_1 \leq_M \mathcal{A}_2 \; :\Leftrightarrow \; \mathcal{L}(M^{\orakel(\mathcal{A}_1)}) \subseteq \mathcal{L}(M^{\orakel(\mathcal{A}_2)})
+        \]        
+    \end{definition}
+    
+    \begin{lemma}
+        Es gibt kein maximales Orakel.
+    \end{lemma}
+    
+\end{comment}
+
+\begin{satz}
+    Sei $\mathcal{A}$ ein Advice mit $\CAL{\CART, \CALeft, \orakel({\mathcal{A}})} \neq \CAL{\CALT, \CALeft, \orakel({\mathcal{A}})}$.
+    Dann $\CAL{\CART, \CALeft} \neq \CAL{\CALT, \CALeft}$.
+\end{satz}
+\begin{proof}
+    Angenommen $\CAL{\CART, \CALeft, \orakel({\mathcal{A}})} \neq \CAL{\CALT, \CALeft, \orakel({\mathcal{A}})}$.
+    
+    Wegen $\CAL{\CART, \CALeft, \orakel({\mathcal{A}})} \subseteq \CAL{\CALT, \CALeft, \orakel({\mathcal{A}})}$
+    gibt es laut Annahme ein $L \in \CAL{\CALT, \CALeft, \orakel({\mathcal{A}})} \setminus \CAL{\CART, \CALeft, \orakel({\mathcal{A}})}$.
+    Dann gibt es einen Automaten $C \in \CAM{\CALT, \CALeft}$ mit
+    
+    \[
+        L = L_{\mathcal{A}, C} = \set{ w \in \Sigma^*}{\exists v \in \mathcal{A}(w): \comb(\Spvek{w; v}) \in L(C)}
+    \]
+    
+    Angenommen, es gäbe einen Automaten $C' \in \CAM{\CART, \CALeft}$ mit $L_{C'} = L_C$.
+    Dann $L_{\mathcal{A}, C} = \set{ w \in \Sigma^*}{\exists v \in \mathcal{A}(w): \comb(\Spvek{w; v}) \in L(C')} = L_{\mathcal{A}, C'}$ und damit
+    $L \in \CAL{\CART, \CALeft, \orakel({\mathcal{A}})}$.
+    Widerspruch zur Annahme! Also $L(C) \in \CAL{\CALT, \CALeft} \setminus \CAL{\CART, \CALeft}$.
+\end{proof}
+
+
+\section{\texorpdfstring{$\CAM{\CART, \CALeft}$}{CA\^RT-L}-verträgliche Advices}
+
+\begin{definition}[$\mathcal{A}$ ist $M$-verträglich]
+    Sei $M \subseteq \ECA$ eine Menge von Zellularautomaten und $\mathcal{A}$ ein Advice.
+    $\mathcal{A}$ heißt $M$-verträglich, falls gilt:
+    \[
+        \mathcal{L}(M) = \mathcal{L}(M^\mathcal{A})
+    \]
+\end{definition}
+
+\begin{satz}
+    \label{lemmaIgnoriereAdvice}
+    Sei ein Advice $\mathcal{A}$ und eine Menge 
+    $F \subseteq {\Nz}^{\Nz}$ von Funktionen gegeben.
+    Dann gilt: $\mathcal{L}(\CAM{ \mathrm{time}(F), \CALeft }) \subseteq  \mathcal{L}(\CAM{ \mathrm{time}(F), \CALeft, \orakel(\mathcal{A})})$.
+\end{satz}
+\begin{proof}
+    Der Advice kann ignoriert werden, indem $\Sigma \times \Gamma$ auf $\Sigma$ reduziert wird.
+\end{proof}
+
+
+
+
+
+
+
+\begin{definition}
+    Seien $k, n \in \Nz$ zwei Zahlen. Die Funktion $\mathrm{ones}$ gibt ein Wort der Länge $n$ zurück, sodass die $k$ ersten Zeichen Einsen sind.
+    \[
+        \mathrm{ones}(k, n) := (\chr{1}^k \chr{0}^n)[1..n]
+    \]
+\end{definition}
+
+\begin{exmp}
+    \[
+        \mathrm{ones}(2, 5) = \chr{11000}
+    \]
+    \[
+        \mathrm{ones}(6, 5) = \chr{11111}
+    \]        
+\end{exmp}
+
+\begin{definition}
+    Sei $\Gamma$ ein endliches Alphabet.
+    Ein $F$-haltender Zellularautomat $C \in \ECA^\CAF$ berechnet eine Funktion $f: \Sigma^* \to \Gamma^*$, wenn
+    $\Gamma \subseteq Q_C$, $\#_C \not\in \Gamma$ und 
+    \[
+        \forall w \in \Sigma^*: \Delta^{\ctime_C(w)}_{C}([w]) = [f(w)]
+    \]
+    gilt.
+\end{definition}
+
+\begin{satz}
+    \label{lemmaEinfachesOrakel}
+    Wenn $\mathcal{A}: \Sigma^* \to \Gamma^*$ eine Funktion ist mit $\forall w \in \Sigma^*: |f(w)| = |w|$,
+    die von einem $F$-haltenden Zellularautomaten $B$ mit
+    $\ctime_C(\cdot) = k$ und $k \in \Nz$ berechnet wird,
+    dann ist $\mathcal{A}$ $\CAM{\CART, \CALeft}$-verträglich.
+\end{satz}
+\begin{proof}
+    Die Inklusion \enquote{$\subseteq$} der $\CAM{\CART, \CALeft}$-Verträglichkeit folgt durch ~\cref{lemmaIgnoriereAdvice}.
+    
+    Sei nun $L \in \CAL{\CART, \CALeft, \orakel({\mathcal{A}})}$, $\bar{C} \in \CAM{\CART, \CALeft, \orakel({\mathcal{A}})}$ sodass $L_{\bar{C}} = L$.
+    Sei $C := C_{\bar{C}}$ der zugrundeliegende $\Sigma \times \Gamma$ erkennende Zellularautomat,
+    der mithilfe des Advices $\mathcal{A}$ die Sprache $L$ in Realzeit erkennt.
+    
+    Es gibt einen Zellularautomaten $I$, der in $k$ Schritten die Identität berechnet. Folglich gibt es einen Zellularautomaten $A$, der die Funktion $f: \Sigma^* \to (\Sigma \times \Gamma)^*$ mit
+    $f(w) = \comb(\Spvek{w; f(w)})$ in $k$ Schritten berechnet, in dem $I$ und $B$ für $k$ Schritte parallel ausgeführt werden.
+    
+    Konstruiere den Automaten $C'$ durch Hintereinanderausführung der Automaten $A$ und $C$.
+    Für ein Wort $w \in \Sigma^*$ braucht der Automat $C'$ $k + |w|$ viele Schritte und es gilt $L_{C'} = L$.
+    
+    Nach \cref{satzRealzeitSpeedup} gibt es nun einen Automaten $C'' \in \CAM{\CART, \CALeft}$
+    mit $L_{C''} = L_{C'}$.
+    Also $L \in \CAL{\CART, \CALeft}$.
+\end{proof}
+
+\begin{corollary}
+    Sei $\Gamma = \B$, $k \in \Nz$.
+    Folgende Advices sind $\CAM{\CART, \CALeft}$-verträglich:
+    \begin{enumerate}
+        \item $\mathcal{A}_1(w) := \mathrm{ones}(k, |w|)$ 
+        \item $\mathcal{A}_2(w) := \mathrm{ones}(k, |w|)^{\mathrm{Rev}}$
+    \end{enumerate}
+\end{corollary}
+\begin{proof}
+    Die Funktionen $\mathcal{A}_i$ können offensichtlich
+    von einem $F$-haltenden Zellularautomat in $k$ Schritten berechnet werden.
+    Mit ~\cref{lemmaEinfachesOrakel} folgt die Behauptung.
+\end{proof}
+
+\begin{comment}
+        $Q' := (Q_C \times \finset{ 0, \dots, c })$. Identifiziere $\Sigma' := \Sigma_C$ mit $(\finset{\chr{0}} \times \Sigma_C) \times \finset{0} $. Setze $\#' := (\#_C, 0)$.
+        
+        $\delta'(\Spvek{\#_C; k_a}, \Spvek{\Spvek{ \gamma_b; c_b}; k_b}, c) := \Spvek{ \Spvek{\chr{1}; c_b}; k_b + 1}$
+        
+        $\delta'(\Spvek{\Spvek{\gamma_a; c_a}; k_a}, \Spvek{\Spvek{\gamma_b; c_b}; k_b}, c)
+            := \Spvek{ \Spvek{ \max \finset{\gamma_a, \gamma_b}; c_b}; k_b + 1}$
+        
+        $\delta'(a, \Spvek{q_b; k_b}, c) := \Spvek{q_b; k_b + 1}$
+\end{comment}
+
+
+
+\begin{comment}
+    \begin{satz}
+        Für $\mathcal{A}(w) := a_1...a_{|w|} \in \B^*$ mit \[
+           a_i :=
+           \begin{cases}
+             \chr{1} & \text{falls } \exists j \in \Nz: i = 2^j \\
+             \chr{0} & \text{sonst}
+           \end{cases}
+        \]
+        gilt $\CAL{\CART, \orakel({\mathcal{A}})} = \CAL{\CART}$.
+    \end{satz}
+    
+    
+    
+    \begin{definition}
+        Setze $C_{exp} := (Q, \delta)$ mit $Q := \B \times (\B \cup \finset{ \perp })$.
+        $Q$ setzt sich aus zwei Komponenten zusammen.
+        Die erste Komponente eines Zustands zu einem Zeitpunkt $t$ an der Position $i$ signalisiert, ob $i+t$ eine Zweierpotenz sein kann.
+        In der Abbildung wird dies durch die Farbe blau dargestellt.
+        Die zweite Komponente bestimmt den Zustand des Filters. In der Abbildung kennzeichnet Grün einen geöffneten Filterzustand (1), Rot einen geschlossenen (0)
+        und keine Markierung einen nicht initialisierten Filter ($\perp$).
+        
+        Die Zustandsübergangsfunktion $\delta$ ist dann wie folgt definiert:
+        \[
+            \delta(\cdot, (e, f), (e_R, f_R)) :=
+            \begin{cases}
+                (e_R, \perp) & \text{ falls } f = \perp \text{ und } f_R \neq 0 \\
+                (e_R, 1) & \text{ falls } f = \perp \text{ und } f_R = 0 \\
+                (0, f) & \text{ falls } f \neq \perp \text{ und } e_R = 0 \\
+                (f, 1 - f) & \text{ falls } f \neq \perp \text{ und } e_R = 1
+            \end{cases}
+        \]
+        
+        Für eine Start-Konfiguration
+        ${c_{exp}}_i = \begin{cases} (0, \perp) & \text{ falls } i < 1  \\ (1, 1) & \text{ falls } i = 1 \\ (1, \perp) & \text{ falls } i > 1 \end{cases}$
+        ergibt sich folgendes Zustands-Zeit-Diagramm:
+        
+        \includegraphics[scale=.5]{exp1}
+        
+        Offensichtlich ist $\delta$ links-unabhängig.
+        
+        Nach Anwendung von \cref{linksunabhaengigSpeedup} ergibt sich folgendes Zustands-Zeit-Diagramm:
+        \includegraphics[scale=.5]{exp2}
+    \end{definition}
+    
+    
+    \begin{lemma}
+        \label{lemmaCExpDetail}
+        Setze $c^t_i := \Delta^t_{C_{exp}}(c_{exp})_i$.
+        Es bezeichne $(c^t_i)_e$ die erste Komponente 
+        und $(c^t_i)_f$ die zweite Komponente des Tupels $c^t_i$.
+        Es gilt:
+        \begin{itemize}
+            \item[1)] $(c^t_i)_e = 1$, falls $i \geq 2$.
+            \item[2)] $(c^t_i)_e = 1$, falls $i+t \in 2^{2-i}\N$.
+            \item[3)] $(c^t_i)_e = 1$, falls $i+t \in \set{2^k}{0 \leq k \leq 1-i}$.
+            \item[4)] $(c^t_i)_e = 0$, falls $i < 2$ und $i+t \not\in 2^{2-i}\N \cup \set{2^k}{0 \leq k \leq 1-i}$.
+            \item[5)] $(c^t_i)_f = \perp$, falls $i \geq 2$.
+            \item[6)] $(c^t_i)_f = \perp$, falls $i + t < 2^{1-i}$.
+            \item[7)] $(c^t_i)_f = \lfloor \frac{i+t}{2^{1-i}} \rfloor \; \mathrm{mod} \; 2$, falls $i < 2$ und $i + t \geq 2^{1-i}$.
+        \end{itemize}
+        
+        
+        \[
+            (c^t_i)_e = \begin{cases}
+                1 & \text{falls } 
+            i \geq 2 \text{ oder } i+t \in (2^{2-i})\N \text{ oder } i+t \in \set{2^k}{0 \leq k \leq 1-i} \\
+                0 & \text{sonst}
+            \end{cases}
+        \]
+        und
+        \[
+            (c^t_i)_f = \begin{cases}
+                \perp & \text{ falls } i \geq 2 \text{ oder } i + t < 2^{1-i} \\
+                \lfloor \frac{i+t}{2^{1-i}} \rfloor \; \mathrm{mod} \; 2 & \text{ sonst }
+            \end{cases}
+        \]
+    \end{lemma}
+    \begin{proof}
+        Beweis aller Aussagen durch simultane Induktion über $t$.
+        Einsetzen zeigt, dass alle Aussagen für $t = 0$ gelten.
+        
+        Es gelten nun alle Aussagen für ein $t \geq 0$.
+        
+        \begin{itemize}
+            \item[1), 5)]
+                Sei $i \geq 2$.
+                
+                Wegen 1) und 5) gilt $(c^t_{i+1})_e = 1$,
+                $(c^t_{i})_f = \perp$ und $(c^t_{i+1})_f = \perp \neq 0$.
+                Damit $c^{t+1}_i = \delta_{C_{exp}}(?, (?, \perp), (1, \perp)) = (1, \perp)$.
+            
+            \item[2)]
+                Sei $i+(t+1) = 2^{2-i}k$ für ein $k \in \N$. OBdA ist $i < 2$.
+                
+                Wegen $i+t \geq 2^{2-i} - 1 \geq 2^{1-i}$ folgt mit 7)
+                \begin{align*}
+                (c^t_i)_f
+                & = \lfloor \frac{i+t}{2^{1-i}} \rfloor \; \mathrm{mod} \; 2 \\
+                & = \lfloor \frac{2^{2-i}k - 1}{2^{1-i}} \rfloor \; \mathrm{mod} \; 2
+                = \lfloor 2k - \frac{1}{2^{1-i}} \rfloor \; \mathrm{mod} \; 2 \\
+                & = 2k-1 \; \mathrm{mod} \; 2 = 1
+                \end{align*}
+                
+                Weiter gilt wegen 2)
+                $(c^t_{i+1})_e = 1$, da $(i + 1) + t \in 2^{2-i}\N$.
+                Also gilt $(c^{t+1}_i)_e = \delta_{C_{exp}}(?, (?, 1), (1, ?)) = 1$.
+                
+            \item[3)]
+                Sei nun $i + (t + 1) \in \set{2^k}{0 \leq k \leq 1-i}$. OBdA ist $i < 2$.
+                
+                Wegen 6) gilt $(c^t_i)_f = \perp$, da $i + t < i + t + 1 \leq 2^{1 - i}$.
+                Außerdem gilt wegen 3)
+                $(c^t_{i+1})_e = 1$, da $i + t + 1 \in \set{2^k}{0 \leq k \leq 1-(i+1)} \; \cup \; \finset{2^{2-(i+1)}}$.
+                Damit folgt $(c^{t+1}_i)_e = \delta_{C_{exp}}(?, (?, \perp), (1, ?))_e = 1$.
+                
+            \item[4)]
+                Sei $i < 2$, $i + (t+1) \not\in 2^{2-i}\N \cup \set{2^k}{0 \leq k \leq 1-i}$.
+                
+                Angenommen, $(c^{t+1}_i)_e = 1$.
+                Nach Definition von $\delta_{C_{exp}}$ folgt
+                $(c^t_{i+1})_e = 1$ und $(c^t_i)_f \neq 0$.
+                Wegen 4) gilt $i+1 \geq 2$ oder $(i+1)+t \in 2^{2-(i+1)}\N \; \cup \; \set{2^k}{0 \leq k \leq 1-(i+1)}$.
+                Folglich $i = 1$ oder $i+t+1 \in (2^{2-i}\N) + 2^{1-i}$.
+                Letzteres gilt auch im Fall $i = 1$.
+                Damit gibt es ein $k \in \N$, sodass $i+t = 2^{2-i}k + 2^{1-i} - 1$.
+                Da insbesondere $i + t \geq 2^{2-i} + 2^{1-i} - 1 > 2^{1-i}$ gilt, ergibt sich mit 7) folgendes:
+                \begin{align*}
+                    (c^t_i)_f
+                    & = \lfloor \frac{i+t}{2^{1-i}} \rfloor \; \mathrm{mod} \; 2 \\
+                    & = \lfloor \frac{2^{2-i}k + 2^{1-i} - 1}{2^{1-i}} \rfloor \; \mathrm{mod} \; 2
+                    = \lfloor 2k + 1 - \frac{1}{2^{1-i}} \rfloor \; \mathrm{mod} \; 2 \\
+                    & = 2k \; \mathrm{mod} \; 2
+                    = 0
+                \end{align*}
+                Was der Annahme widerspricht. Damit gilt $(c^{t+1}_i)_e = 0$.
+            
+            \item[6)]
+                Sei nun $i + (t+1) < 2^{1 - i}$.
+                Mit 6) folgt wegen $i + t < 2^{1 - i}$, dass $(c^t_i)_f = \perp$.
+                
+                Angenommen, $(i+1)+t < 2^{1-(i+1)}$. Dann gilt wegen 6) $(c^t_{i+1})_f = \perp \neq 0$.
+                Andernfalls, $(i+1)+t \geq 2^{1-(i+1)}$. Dann $2^{1-(i+1)} \leq (i+1)+t < 2^{1-i}$.
+                Daraus folgt $\lfloor \frac{(i+1)+t}{2^{1-(i+1)}} \rfloor = 1$.
+                Auch hier gilt mit 7) dann $(c^t_{i+1})_f = 1 \neq 0$.
+                
+                Es folgt $(c^{t+1}_i)_f = \delta_{C_{exp}}(?, (?, \perp), (?, ? \neq 0))_f = \perp$.
+            
+            \item[7)]
+                Sei nun $i < 2$ und $i + (t + 1) \geq 2^{1-i}$.
+                \begin{itemize}
+                    \item[Fall 1)] $(c^t_i)_f = \perp$.
+                        Wegen 7) gilt $i + t + 1 = 2^{1-i}$.
+                        Dann $(c^t_{i+1})_f = \lfloor \frac{(i+1)+t}{2^{1-(i+1)}} \rfloor \; \mathrm{mod} \; 2 = 0$,
+                        also $(c^{t+1}_i)_f = \delta_{C_{exp}}(?, (?, \perp), (?, 0))_f = 1 = \lfloor \frac{i+(t+1)}{2^{1-i}} \rfloor \; \mathrm{mod} \; 2$.
+                    \item[Fall 2)] $(c^t_i)_f \neq \perp$.
+                        \begin{itemize}
+                            \item[Fall 2.1)] $(c^t_{i+1})_e = 0$.
+                                Wegen 4) gilt dann $(i + 1) + t \not\in (2^{2-(i+1)})\N$.
+                                Nach Definition von $\delta_{C_{exp}}$ gilt $(c^{t+1}_i)_f = (c^t_i)_f$.
+                                
+                                Angenommen $
+                                (c^{t+1}_i)_f
+                                = (c^t_i)_f
+                                = \lfloor \frac{i+t}{2^{1-i}} \rfloor \; \mathrm{mod} \; 2
+                                \neq \lfloor \frac{i+(t+1)}{2^{1-i}} \rfloor \; \mathrm{mod} \; 2
+                                $.
+                                Dann ergibt sich durch $i+(t+1) \in 2^{1-i}\N$ ein Widerspruch.
+                            
+                            \item[Fall 2.2)] $(c^t_{i+1})_e = 1$.
+                                Wegen 4) ist dann $(i+1)+t \in 2^{2-(i+1)}\N$.
+                                Nach Definition gilt $(c^{t+1}_i)_f = 1 - (c^t_i)_f$.
+                                
+                                Es bleibt also zu zeigen, dass
+                                $\lfloor \frac{i+(t+1)}{2^{1-i}} \rfloor \; \mathrm{mod} \; 2
+                                \neq \lfloor \frac{i+t}{2^{1-i}} \rfloor \; \mathrm{mod} \; 2$.
+                                
+                                Diese Ungleichung gilt wegen $i+1+t \in 2^{1-i}\N$.
+                        
+                        \end{itemize}
+                \end{itemize}
+                
+                
+                
+            
+        \end{itemize}
+    \end{proof}
+    \begin{lemma}
+        \label{lemmaCExpProp2}
+        Für $i < 2$ und $t < 3*2^{2-i} - i$ gilt: 
+        \[
+            (\Delta_{C_{exp}}^t(c_{exp})_i)_e = 1 \Leftrightarrow \exists k \in \Nz: i + t = 2^k
+        \]
+    \end{lemma}
+    \begin{proof}
+        Folgt direkt aus \cref{lemmaCExpDetail}.
+    \end{proof}
+    
+    
+    \begin{lemma}
+        \label{lemmaNumberTheoryInequality}
+        Sei $t, i \in \Nz$ mit $i \geq 1$ und $t \geq 2i - 2$.
+        Dann $i - 2 < t < 3 * 2 ^ {2+t-i}-i$.
+    \end{lemma}
+    \begin{proof}
+        Die erste Ungleichung ist trivial.
+        Es gilt $1 \leq i \leq \frac{t}{2} + 1$.
+        Wenn die zweite Ungleichung nicht gilt, gilt sie insbesondere für solche $i$ nicht, 
+        die für ein festes $t$ maximal gewählt werden und damit für $i = \frac{t}{2} + 1$.
+        Es bleibt zu zeigen, dass $\frac{3}{2}t + 1 < 6 * 2^{\frac{t}{2}}$.
+        Diese Ungleichung gilt offensichtlich für $t = 0$ und $t = 1$ und kann
+        leicht induktiv mit Schrittweite 2 auf alle natürlichen Zahlen fortgesetzt werden.
+    \end{proof}
+    
+    \begin{satz}
+        Es gibt einen Zellularautomaten $C$,
+        sodass für $i \in \Z$ und $t \in \Nz$ mit $i - 2 < t < 3*2^{2-i+t}-i$ gilt:
+        \[
+            (\Delta^{t}_{C}(c_{exp})_i)_e = 1 \Leftrightarrow \exists k \in \Nz: i + t = 2^k
+        \]
+        Wegen \cref{lemmaNumberTheoryInequality} gilt die Aussage insbesondere,
+        falls $i \geq 1$ und $t \geq 2i - 2$.
+    \end{satz}
+    \begin{proof}
+        Nach \cref{linksunabhaengigSpeedup} gibt es einen Zellularautomaten $C$,
+        sodass $\Delta^t_{C}(c_{exp})_i = \Delta^{2t}_{C_{exp}}(c_{exp})_{i-t}$.
+        Aus den Voraussetzungen folgt, dass $i-t < 2$ und $2t < 3 * 2^{2-(i-t)}-(i-t)$.
+        Es gilt damit mit \cref{lemmaCExpProp2}:
+        \[
+            i + t = (i-t) + 2t = 2^k
+            \Leftrightarrow(\Delta^{2t}_{C_{exp}}(c_{exp})_{i-t})_e = 1
+            \Leftrightarrow (\Delta^t_{C}(c_{exp})_{i})_e = 1
+        \]        
+        
+    \end{proof}
+
+\end{comment}
+
+\begin{definition}[Präfixstabil]
+    Ein Advice $\mathcal{A}$ heißt präfixstabil, wenn für alle $w, s \in \Sigma^*$ gilt:
+    \[
+        \mathcal{A}(w) =
+        \set{ v[1, ..., |w|] } { v \in \mathcal{A}(ws) }
+    \]
+\end{definition}
+
+\begin{lemma}
+    \label{wrtRealtimeLengthIdealAdvice}
+    
+    Sei $\mathcal{A}$ ein präfixstabiles Advice, $k \in \N$ und $L \in \CAL{\CART, \CALeft, \orakel({\mathcal{A}})}$.
+    Dann gilt für $L(k)$ aus \cref{wrtRealtimeLengthIdeal}:
+    \[
+        L(k) \in \CAL{\CART, \CALeft, \orakel({\mathcal{A}})}
+    \]
+    
+    Sei $\mathcal{M}_k$ die Menge alle Sprachen, deren Wortlängen Vielfache von k sind.
+    Es gilt dann folgende Implikation:
+    \begin{align*}
+        \CAL{\CART, \CALeft, \orakel({\mathcal{A}})} \cap \mathcal{M}_k  & = \CAL{\CART, \CALeft} \cap \mathcal{M}_k \\
+        \Rightarrow
+        \CAL{\CART, \CALeft, \orakel({\mathcal{A}})} & = \CAL{\CART, \CALeft}
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    Analog zum Beweis von \cref{wrtRealtimeLengthIdeal}:
+    Da $\mathcal{A}$ präfixstabil ist, können Zeichen am Ende des Wortes gelöscht werden, ohne dass sich
+    das Advice auf dem übrig gebliebenen Teil des Wortes ändert.
+    
+    Ist nun $L \in \CAL{\CART, \CALeft, \orakel({\mathcal{A}})}$,
+    gilt $L(k) \in \CAL{\CART, \CALeft, \orakel({\mathcal{A}})} \cap \mathcal{M}_k$
+    und damit auch
+    $L(k) \in \CAL{\CART, \CALeft} \cap \mathcal{M}_k$.
+    Mit \cref{wrtRealtimeLengthIdeal} folgt dann $L \in \CAL{\CART, \CALeft}$.
+\end{proof}
+
+
+\begin{theorem}
+    \label{thmAdviceMain}
+    Sei $H = (Q, \delta) \in \CA$ ein Zellularautomat mit $\Sigma \subseteq Q$.
+    Der folgende Advice $\mathcal{A}_H$ ist $\CAM{\CART, \CALeft}$-verträglich:
+    \[
+        \mathcal{A}_H(w) := v \in Q^{|w|} \text{ mit } v_i := \Delta_A^{i-1}([w])_1 \\
+    \]
+\end{theorem}
+\begin{proof}
+    Die Inklusion \enquote{$\subseteq$} der $\CAM{\CART, \CALeft}$-Verträglichkeit folgt durch ~\cref{lemmaIgnoriereAdvice}.
+    Sei nun $L \in \CAL{\CART, \CALeft, \orakel({\mathcal{A}_H})}$.
+    Da $\mathcal{A}_H$ präfixstabil ist, kann wegen \cref{wrtRealtimeLengthIdealAdvice} und \cref{endlichVieleAusnahmen}
+    \ac{OBdA.} angenommen werden,
+    dass die Wortlängen von $L$ alle Vielfache von $3$ sind und dass $L$ nicht das leere Wort enthält.
+
+    Es existiert also ein Echtzeit-Zellularautomat $C$ mit $L_{\mathcal{A}, C} = L$. Nach \cref{satzRauteTot} kann der Rand von $C$ tot gewählt werden.
+    Sei $w \in \Sigma^*$ mit $|w| \in 3\N$, $c := [w]$, $v := \mathcal{A}_H(w)$ und $c' := [\comb(\Spvek{ w; v})]$.
+    Nach \cref{CAgfSpeedup} gibt es einen Automaten $C_1$ und eine Funktion $f_1$, sodass für $i \in \N$ gilt:
+    \[
+        f_1(\Delta_{C_2}^{2i+1}(c)_i) = (\Delta_C^{3i-3}(c)_1, \Delta_C^{3i-2}(c)_1, \Delta_C^{3i-1}(c)_1)
+    \]
+    
+    Ferner lässt sich leicht ein Automat $K$ konstruieren und eine Funktion $f_2$ angeben, sodass für $i \geq 1$ gilt:
+    \[
+        f_2(\Delta_{K}^{2i+1}(c)_i) = (c_{3i-2}, c_{3i-1}, c_{3i})
+    \]
+    
+    Indem $C_1$ und $K$ gleichzeitig ausgeführt werden, lässt sich ein Automat $M$ konstruieren und eine Funktion $f$ angeben,
+    sodass für $n := \frac{|w|}{3}$ gilt:
+    \[
+        f(\Delta_M^t(c)_i) =
+        \begin{cases}
+            \mathrm{reset} & \text{falls } t = 0 \text{ und } i \in \finset{1, .., n} \\
+            \mathrm{set}(\#\#\#) & \text{falls } t = 0 \text{ und } i \not\in \finset{1, .., n} \\
+            \mathrm{set}(s_i)
+                & \text{falls } i \in \finset{1, ..., n} \text{ und } t = 2 * i + 1 \\
+            \mathrm{step} & \text{sonst}
+        \end{cases}
+    \]
+    Wobei $s_i$ für $i \in \Z$ wie folgt definiert ist:
+    \[
+        s_i := \begin{cases}
+                    \Spvek{ c_{3i-2} ; \Delta_C^{3i-3}(c)_1 }
+                        \Spvek{ c_{3i-1} ; \Delta_C^{3i-2}(c)_1} 
+                        \Spvek{ c_{3i} ; \Delta_C^{3i-1}(c)_1}
+                        \in (\Sigma \times Q_H)^3
+                        & \text{falls } i \in \finset{ 1, ..., n } \\
+                    \#\#\# \in Q_C & \text{sonst} 
+                \end{cases}
+    \]
+    
+    Damit gilt aber gerade $s = S_3(c')$ wobei $S_3(c')$ die komprimierte $c'$-Konfiguration aus \cref{factorSpeedupConstruction} ist.
+    Setze $S := S_3(C)$ auf die Speedup-Konstuktion, die drei Schritte in einem simuliert. Setze nun $A := A(M, f, S, \finset{\#})$.
+    Dann gilt nach \cref{timeNakamuraConstruction}:
+    \[
+        (\Delta^{ |w| }_A(c)_1)_a = \Delta_S^{n - 1}(s)
+    \]
+    Da $\#$ in $C$ und damit auch $\#\#\#$ in $S$ tot ist, gilt damit nach \cref{factorSpeedupConstructionCorrectness}:
+    \[
+        \gamma_\#((\Delta^{ |w| }_A(c)_1)_a) = \gamma_\#(\Delta_S^{n-1}(s)) = \Delta_C^{|w| - 1}(c')
+    \]
+    
+    Mit entsprechender Wahl der akzeptierenden Zustände und einem konstanten Speedup von einem Schritt
+    folgt damit $L \in \CAL{\CART, \CALeft}$.
+\end{proof}
+
+\begin{corollary}
+    Sei $L \in \CAL{\CART, \CALeft}$.
+    Der folgende Advice $\mathcal{A}_L$ ist $\CAM{\CART, \CALeft}$-verträglich:
+    \[
+        \mathcal{A}_L(w) := v \in \B^{|w|} \text{ mit } v_i :=
+        \begin{cases}
+            1 & \text{ falls } w_{[1...i]} \in L \\
+            0 & \text{ sonst }
+        \end{cases}
+    \]
+\end{corollary}
+\begin{proof}
+    Nach Wahl von $L$ gibt es einen Zellularautomaten $C \in \CAM{\CART, \CALeft}$
+    mit $L_C = L$. Damit gilt für ein $w \in \Sigma_C^*$ und alle $t \in \finset{0, ..., |w|-1}$:
+    \[
+        \Delta_C^{t}([w])_1 \in
+        \begin{cases}
+            F_C^+ & \text{falls } w_{[1...t+1]} \in L \\
+            Q \setminus F_C^+ & \text {sonst}
+        \end{cases}
+    \]
+    Indem Zustände aus $F_C^+$ als $1$ und Zustände aus $Q \setminus F_C^+$ als $0$ aufgefasst werden, 
+    folgt mit \cref{thmAdviceMain} die Behauptung.
+\end{proof}
+
+
+\begin{satz}
+    Der folgende Advice $\mathcal{A}$ ist $\CAM{\CART, \CALeft}$-verträglich:
+    \[
+        \mathcal{A}(w) := \mathrm{ones}(2^{\lfloor \log_2{|w|} \rfloor - 1}, |w|) \in \B^*
+    \]
+\end{satz}
+\begin{proof}
+    
+\end{proof}

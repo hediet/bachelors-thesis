@@ -1,0 +1,58 @@
+
+\section{Kanäle}
+
+\begin{definition}
+    Sei $C \in \ECA$ ein $\B^*$-erkennender Zellularautomat, $w \in \B^+$ und $\tilde{k} \in (\N)^+$.
+    Definiere: $w^{\sim j} := w_1...w_{j-1}(1 - w_j)w_{j+1}...w_{|w|}$.
+    
+    Ein Kanal $k$ ist ein Tupel $k := (C, w, \tilde{k})$ mit 
+    
+    \[
+        \forall i \in \finset{1, ..., |\tilde{k}|}: \Delta_C^i([w])(\tilde{k}_i) \neq \Delta_C^i([w ^ {\sim \tilde{k}_0 }])(\tilde{k}_i)
+    \]
+    
+\end{definition}
+
+\begin{satz}
+    Mithilfe der Anzahl der so definierten Kanäle eines Automaten kann nicht argumentiert werden, um $\CAL{\CART}$ von $\CAL{\CALT}$ zu trennen.
+    Beweis + formalerer Satz folgt. Dies widerlegt Nakamuras "Beweis".
+\end{satz}
+
+
+
+
+
+
+\section{Beispiele, die $\CAL{\CALT}$ von $\CAL{\CART}$ trennen können}
+
+\begin{definition}
+
+    Definiere $f: \bins \to \mathbb{N}_0$,
+    $f(w) := \sum_{i = 1}^{k}{  ({\bigoplus_{j = 0}^{ \lceil \frac{|w|}{k} \rceil - 1}{(w \chr{0}^k)_{jk + i} } }) * 2^{i - 1}  } $
+    
+    mit $k := \lceil \log_2(|w|) \rceil$. $\oplus$ bezeichne die bitweise XOR-Operation.
+
+    
+    Definiere $L_1 := \{ w \in (\bin \times \bin)^* \; | \; \exists (\mathit{ptr}, \mathit{data}) = \comp(w): \mathit{data}_{f(\mathit{ptr}) + 1} = \chr{1}  \}$.
+\end{definition}
+
+\begin{satz} $L_1$ ist nicht kontextfrei.\end{satz}
+\begin{proof}
+
+    Angenommen, $L_1$ wäre kontextfrei.
+    Betrachte $L_2 := (L_1 \cap (\Spvek{1; 1}\Spvek{1; 0}^*))[ \; \Spvek{1; 1} \mapsto 1, \; \Spvek{1; 0} \mapsto 1 \; ] $.
+    Dann ist $L_2$ auch kontextfrei und da die Wörter von $L_2$ unär sind, ist $L_2$ sogar regulär.
+    
+    Es gilt $L_2 = \{ \chr{1}^i \; | \;  2i \equiv 0 \;\; (\mathrm{mod} \; {\lceil \log_2{i} \rceil }) \}$.
+    
+    Betrachte $M_k := \{ \chr{1}^i \; | \; \lceil \log_2{i} \rceil = k \}$ für ein $k \equiv 1 \;\; (\mathrm{mod} \; 2)$.
+    
+    % 2^{k-1} + 1 \leq |w| \leq 2^k It follows that $\forall w \in M_k: \lceil \log_2{|w|} \rceil = k $.
+    
+    Dann $| L_2 \cap M_k | = | \{ 1^i \; | \;  \lceil \log_2{i} \rceil = k, \;  2i \equiv 0 \;\; (\mathrm{mod} \; k) \} | \in \{ \lfloor \frac{2^{k-1}-1}{k} \rfloor, \lceil \frac{2^{k-1}-1}{k} \rceil \}$.
+    
+    Allerdings, da $L_2$ regulär ist, gilt $|L_2 \cap M_k| \in \{ \lfloor \frac{2^{k-1}-1}{q} \rfloor, \lceil \frac{2^{k-1}-1}{q} \rceil \}$ für ein $q \in \mathbb{N}$. Widerspruch für $k$ groß genug!
+    
+\end{proof}    
+
+

@@ -1,0 +1,294 @@
+\chapter{Eingeschränkte Zellularautomaten}
+\label{chap:EingeschrAuto}
+
+\section{Definition}
+
+\begin{definition}
+    Zu einer gegebenen Funktion $d: \Nz \to \N$ kann ein $\Sigma$-$\B$-Advice $d^*$ wie folgt konstruiert werden:
+    \[
+        d^*(w) := \mathrm{ones}(d(|w|), |w|)^{Rev}
+    \]        
+
+    Dies definiert den $\CARestr$-$\ECA$-Funktor:
+    \[
+        \CARestr(d)(M \subseteq \ECA) := \set{ C \in \orakel(d^*)(M) }{ (\Sigma_C \times \finset{ \texttt{0} }) \union \finset{ \#_C } \text{ ist eine passive Zustandsmenge} }
+    \]
+\end{definition}
+
+\section{Ergebnisse}
+
+\begin{satz}[$k$-Schritt Speedup für eingeschränkte Zellularautomaten]
+    \label{satzEingeschraenktRealzeitSpeedup}
+    Sei $d$ eine Funktion $d: \Nz \to \N$. Es gilt:
+    \[
+        \CAL{\CART, \CALeft, \CARestr(d)} = \CAL{\CAT, \CALeft, \mathrm{time}(\set{ n \mapsto \max \finset{0,  n + k - 1} }{ k \in \Nz }), \CARestr(d)}
+    \]
+\end{satz}
+\begin{proof}
+    Siehe Beweis von \cref{satzRealzeitSpeedup}:
+    \cref{satzRauteTot} erhält passive \#-enthaltende Mengen und 
+    in der Konstruktion des Automaten $C'$ in \cref{satzRealzeitSpeedup}
+    kann $\Sigma_C \times \finset{\chr{0}}$ mit sich selbst und
+    $q \in \Sigma_C \times \finset{\chr{1}}$ mit $\phi_{\#}(q)$ identifiziert werden, ohne dass der Beweis seine Gültigkeit verliert.
+    Die Zelle am rechten Rand ist schließlich immer Element von $q \in \Sigma_C \times \finset{\chr{1}}$.
+    Passive \#-enthaltende Mengen bleiben also insgesamt erhalten, sodass der konstruierte Automat
+    den Bedingungen eingeschränkter Zellularautomaten entspricht.
+\end{proof}
+
+\subsection{Relation \texorpdfstring{$\sim_{k,d,L}$}{sim_kdL}}
+
+\begin{definition}
+    Seien $k \in \Nz$, $d$ eine Funktion $d: \Nz \to \N$ und $L \subseteq \Sigma^*$.
+    Angelehnt an die Nerode-Äquivalenzrelation wird auf $\Sigma^*$ die Relation $\sim_{k,d,L}$ definiert.
+    Seien dazu $v_1, v_2 \in \Sigma^*$.
+    \[
+        v_1 \sim_{k,d,L} v_2 \; :\Leftrightarrow \; \forall w \in \Sigma^*: d(|wv_1|) = d(|wv_2|) = k \Rightarrow (wv_1 \in L \Leftrightarrow wv_2 \in L)
+    \]
+    Anmerkung: $\sim_{k,d,L}$ ist im Allgemeinen keine Äquivalenzrelation!
+\end{definition}
+
+\begin{definition}
+    Sei $C \in \CAM{\CART, \CALeft, \CARestr(d)}$ für ein $d: \Nz \to \N$. Definiere die Funktion $f_{C, k}: \Sigma^* \to Q_C^*$
+    wie in \cref{fig:RestrAutomata_fCk} gezeigt:
+    \[
+        f_{C, k}(v) := w[1..\min(k+1, |v|)] \; \text{ mit } \; w := \Delta_C^{\max(0, |v|-k-1)}(  \comb(\Spvek{ v; \mathrm{ones}(k, |v|)^{Rev} })  )
+    \]
+    
+    \begin{figure}[h!]
+        \centering
+        \includesvg{fCk}
+        \caption{Berechnung von $f_{C,k}(v)$ für $k = 2$}
+        \label{fig:RestrAutomata_fCk}
+    \end{figure}
+    
+\end{definition}
+
+\begin{satz}
+    \label{satzFEqualsImpliesEquiv}
+    Sei $C \in \CAM{\CART, \CALeft, \CARestr(d)}$ für ein $d: \Nz \to \N$. Es gilt für alle $k \in \Nz$ und $v_1, v_2 \in \Sigma^*$:
+    \[
+        f_{C, k}(v_1) = f_{C, k}(v_2) \Rightarrow v_1 \sim_{k,d,L} v_2
+    \]
+\end{satz}
+\begin{proof}
+    Sei $k \in \Nz$. Seien $v_1, v_2 \in \Sigma^*$ so, dass $f_{C, k}(v_1) = f_{C, k}(v_2)$.
+    Sei $w \in \Sigma^*$ mit $d(|wv_1|) = d(|wv_2|) = k$.
+    Es bleibt zu zeigen, dass $wv_1 \in L$ genau dann, wenn $wv_2 \in L$.
+    
+    Angenommen, $|v_1| < k + 1$. Dann 
+    \[
+        |f_{C, k}(v_2)| = |f_{C, k}(v_1)| = |v_1| < k + 1
+    \]
+    und damit $|f_{C, k}(v_2)| = \min(k+1, |v_2|) = |v_2|$, also $|v_1| = |v_2|$.
+    Wegen $\max(0, |v_{i \in \finset{1,2}}|-k-1) = 0$ folgt $v_1 = v_2$, also gilt offensichtlich $v_1 \sim_{k,d,L} v_2$.
+    
+    Seien nun \acs{OBdA.} $|v_1|, |v_2| > k$.
+    Setze $u_{i \in \finset{1, 2}} := \comb(\Spvek{ wv_i; d^*(wv_i) })$
+    und $c^t_i := \Delta_C^{t}( u_i )$.
+    
+    Es gilt wegen der Forderung nach passiven Zuständen (rote Markierung in \cref{fig:RestrAutomata_fCk_Equiv}, graue Zellen sind passiv): 
+    \[(c_1^{|v_1|-k-1})_{[1..|w|]} = \comb(\Spvek{ w; \chr{0}^{|w|} }) = (c_2^{|v_2|-k-1})_{[1..|w|]}\]
+    
+    Und es gilt (blaue Markierung in \cref{fig:RestrAutomata_fCk_Equiv}): 
+    \[(c_1^{|v_1|-k-1})_{[|w|+1..|w|+k+1]} = |f_{C, k}(v_1)| = |f_{C, k}(v_2)| = (c_2^{|v_2|-k-1})_{[|w|+1..|w|+k+1]}\]
+    
+    
+    Also gilt zusammen (grüne Markierung in \cref{fig:RestrAutomata_fCk_Equiv}): 
+    \[(c_1^{|v_1|-k-1})_{[1..|w|+k+1]} = (c_2^{|v_2|-k-1})_{[1..|w|+k+1]}\]
+    
+    \begin{figure}[h!]
+        \centering
+        \includesvg[width=380pt]{fCkImpliesEquiv}
+        \caption{$f_{C,k}(v_1) = f_{C,k}(v_2) \Rightarrow v_1 \sim_{k,d,L} v_2$}
+        \label{fig:RestrAutomata_fCk_Equiv}
+    \end{figure}
+    
+    Und damit ist auch der Zustand $f$ aus \cref{fig:RestrAutomata_fCk_Equiv} ein beiden Fällen gleich,
+    es folgt also schließlich $wv_1 \in L \; \Leftrightarrow \; wv_2 \in L$.
+\end{proof}
+
+\begin{corollary}
+    \label{satzanzahleqivclass}
+    Sei $C \in \CAM{\CART, \CALeft, \CARestr(d)}$ für ein $d: \Nz \to \N$, $k \in \Nz$ und
+    $M \subseteq \Sigma^*$ eine Menge paarweiser nicht-äquivalenter Wörter bezüglich $\sim_{k,d,L}$. Es gilt:
+    \[
+        |M| \leq |f_{C, k}(\Sigma^*)| \leq |Q_C|^{k + 2}
+    \]
+\end{corollary}
+\begin{proof}
+    Angenommen, $|M| > |f_{C, k}(\Sigma^*)|$. Wegen des Schubfachprinzips gibt es $m_1, m_2 \in M$ mit $f_{C,k}(m_1) = f_{C,k}(m_2)$ und wegen \cref{satzFEqualsImpliesEquiv} folgt mit $m_1 \sim_{k,d,L} m_2$ ein Widerspruch zur Wahl von $M$.
+    
+    Die zweite Ungleichung folgt aus $|f_{C,k}(\cdot)| \leq k + 1$.
+\end{proof}
+
+\subsection{Konstante Einschränkung}
+
+\begin{satz}
+    $\forall c \in \N, d(\cdot) := c: \CAL{\CART, \CALeft, \CARestr(d)} = \textrm{REG}$
+\end{satz}
+\begin{proof}
+    Da $\sim_{c,d,L}$ für eine Sprache $L$ gerade mit der Nerode-Äquivalenzrelation übereinstimmt,
+    folgt aus \cref{satzanzahleqivclass}, dass es nur endlich viele Nerode-Äquivalenzklassen gibt und damit die Regularität von $L$.
+    
+    Umgekehrt ist die rechteste Zelle der Eingabe nie passiv.
+    Zum Erkennen einer regulären Sprache $L$ kann dann der endliche Automat, der $L^{Rev}$ erkennt, benutzt werden,
+    um einen entsprechenden Zellularautomaten zu konstruieren, der dann trotz Einschränkung $L$ erkennt.
+\end{proof}
+
+\begin{satz}
+    \label{einschraenkungUnentscheidbar}
+    $\exists d: \Nz \to \N$ mit $d(\cdot) \leq 2$, sodass $\CAL{\CART, \CALeft, \CARestr(d)}$ eine unentscheidbare Sprache enthält.
+\end{satz}
+\begin{proof}
+    Es gibt einen Zellularautomaten, der das Eingabewort genau dann akzeptiert, wenn vom Advice genau zwei Zellen mit einer $\chr{1}$ markiert wurden.
+    Die Funktion $d$ kann so abhängig von der Länge des Wortes Informationen über unentscheidbare Sprachen an den Zellularautomaten weitergeben.
+\end{proof}
+
+\subsection{Vergleich verschiedener Einschränkungen}
+
+\begin{satz}
+    \label{d1WenigerAlsd2}
+    Seien $d_1, d_2: \Nz \to \N$ zwei Funktionen, sodass $d_1(n) \leq \frac{n}{2}$ und $\liminf\limits_{n \rightarrow \infty} \frac{d_2(n)}{d_1(n)} = 0$.
+    Dann gibt es ein $L \in \CAL{\CART, \CALeft, \CARestr(d_1)}$, sodass $L \not\in \CAL{\CART, \CALeft, \CARestr(d_2)}$.
+\end{satz}
+\begin{proof}
+    Wähle $L := \set{ w^{Rev}vw }{ v, w \in \B^*, \; |w| = d_1(|wvw|) }$. Offensichtlich gilt $L \in \CAL{\CART, \CALeft, \CARestr(d_1)}$.
+    
+    Es gilt aber auch $L \not\in \CAL{\CART, \CALeft, \CARestr(d_2)}$:
+    Sei $n \in \Nz$ und $k := d_1(n)$. Wegen $d_1(n) \leq \frac{n}{2}$ gibt es ein $v \in \B^*$, sodass $n = |v| + 2k$.
+    Seien $w_1, w_2 \in \B^k$ zwei verschiedene Wörter der Länge $k$.
+    Dann gilt $w_1^{Rev}vw_1 \in L$, aber $w_2^{Rev}vw_1 \not\in L$, also $w_1 \not\sim_{d_2(n),d,L} w_2$.
+    Damit ist $\B^k$ eine Menge paarweiser nicht-verwandter Wörter und $|\B^k| = 2^k$.
+    
+    Angenommen, es gibt ein $C \in \CAM{\CART, \CALeft, \CARestr(d_2)}$ mit $L_C = L$.
+    
+    Nach \cref{satzanzahleqivclass} gilt:
+    \[
+        \forall n \in \Nz:  2^{d_1(n)} = |\B^k| \leq {|Q_C|}^{d_2(n)+2} = 2^{\log_2(|Q_C|)(d_2(n)+2)}
+    \]
+    
+    Also gilt: 
+    \[
+        1 \leq \log_2(|Q_C|) ( \frac{ d_2(n) }{ d_1(n) } + \frac{ 2 }{ d_1(n) })
+    \]
+    Laut Annahme gibt es nun eine monoton steigende Folge $a_n$, sodass $\frac{d_2(a_n)}{d_1(a_n)}$ beliebig klein wird.
+    Da dafür $d_1(a_n)$ beliebig groß wird, folgt ein Widerspruch zur Annahme.
+\end{proof}
+
+\begin{remark}
+    \cref{d1WenigerAlsd2} besagt allerdings nicht, dass die Sprachklassen für langsamer wachsende Einschränkungen Teilmengen sind:
+    \cref{einschraenkungUnentscheidbar} zeigt ja gerade, dass selbst Automaten mit fast konstanter Einschränkung
+    unentscheidbare Sprachen entscheiden können, die offensichtlich nicht von Automaten mit Einschränkung $d(n) = \frac{n}{2}$ erkannt werden können.
+\end{remark}
+
+\begin{comment}
+
+\begin{satz}
+    $\forall d \in O(n): \CAL{\CALT, \CALeft, \CARestr(d)} = \CAL{\CALT, \CALeft, \orakel(d^*)}$
+\end{satz}
+
+\begin{satz}
+    $\forall c \in \Nz, d(n) := n - c: \CAL{\CART, \CALeft, \CARestr(d)} = \CAL{\CART, \CALeft}$
+\end{satz}
+
+\begin{satz}
+    $d(n) := \lceil n / 2 \rceil: \CAL{\CART, \CALeft \CARestr(d)}  \supseteq \CAL{\CART, \CALeft}$
+\end{satz}
+\end{comment}
+
+\begin{comment}
+\begin{satz}
+    $\forall c \in \N, d(n) := \lceil n / c \rceil: \CAL{\CART, \CALeft \CARestr(d)}  \supseteq \CAL{\CART, \CALeft}$
+\end{satz}
+\begin{proof}
+    Bisher nur für $c = 2$.
+\end{proof}
+
+\begin{satz}
+    $\forall c \in \N, d(n) := n - 2^{\lfloor \log_2{n} \rfloor - 1}: \CAL{\CART, \CALeft, \CARestr(d)} = \CAL{\CART, \CALeft}$
+\end{satz}
+\begin{proof}
+    Kompliziert.
+\end{proof}
+\end{comment}
+
+
+
+\begin{comment}
+    \begin{definition}[Zeit-Zustands-Sequenz]
+        Seien $C \in \CAM{\CART, \CALeft}$, $w \in \Sigma^*$ und $p \in \finset{1, ..., |w|}$.
+        Eine Zeit-Zustands-Sequenz $S_C^p(w) \in Q_C^{|w| - p + 1}$ ist ein Wort der Länge $|w| - p + 1$ mit
+        \[
+            \forall t \in \finset{1...|w| - p + 1}: S_C^p(w)_{t} := \Delta_C^{t-1}([w])_p
+        \]
+    \end{definition}
+    
+    \begin{lemma}
+        \label{swapWordsInTimeStateSequence}
+        Seien $C \in \CAM{\CART}$ und $v_1, v_2, w_1, w_2 \in \Sigma^+$ mit $|v_1| = |w_1|$ und $|v_2| = |w_2|$ gegeben,
+        sodass $S_C^{|v_1|+1}(v_1v_2) = S_C^{|w_1|+1}(w_1w_2)$.
+        Dann $S_C^{|v_1|+1}(v_1v_2) = S_C^{|v_1|+1}(v_1w_2)$.
+    \end{lemma}
+    \begin{proof}
+        Klar: $(v_2)_1 = (w_2)_1$, also $S_C^{|v_1|+1}(v_1v_2)_1 = S_C^{|w_1|+1}(v_1w_2)_1$.
+        Induktiv kann dann Folgendes gezeigt werden:
+        \[
+            \forall t \in \finset{0...|v_1|}:
+            \forall i \in \Z:
+            \Delta_C^t([v_1w_1])_i = 
+            \begin{cases}
+                \Delta_C^t([v_1v_2])_i & \text{falls } i \leq |v_1| + 1 \\
+                \Delta_C^t([v_1w_2])_i & \text{sonst}
+            \end{cases}
+        \]
+        Daraus folgt die Behauptung.
+    \end{proof}
+    
+    \begin{lemma}
+        \label{timeStateSequenceEquiv}
+        Seien $C \in \CAM{\CART}$ und $u, v, w \in \Sigma^+$ mit $|v| = |w|$ gegeben, sodass $S_C^{|u|}(uv) = S_C^{|u|}(uw)$.
+        Dann $uv \in L(C) \Leftrightarrow uw \in L(C)$.
+    \end{lemma}
+    \begin{proof}
+        Induktiv kann gezeigt werden, dass $\Delta_C^{|uv|}([uv])_1 = \Delta_C^{|uw|}([uw])_1$.
+    \end{proof}
+    
+    
+    \begin{lemma}
+        \label{timeStateSequenceInjective}
+        Seien $\Sigma := \finset{ \chr{a}, \chr{b}, \chr{c} }$, $C \in \CAM{\CART}$ mit $L(C) = \set{ v \chr{c} v }{ v \in \Sigma^* }$ und $v \in \Sigma^*$.
+        Dann ist die Funktion $f_C: \finset{ \chr{a}, \chr{b} }^* \to Q_C^*$ mit $f_C(w) := S_C^{|w| + 1}(w \chr{c} w)$ injektiv.
+    \end{lemma}
+    \begin{proof}
+        Seien $w_1, w_2 \in \finset{ \chr{a}, \chr{b} }^*$ mit $f_C(w_1) = f_C(w_2)$.
+        Dann $S_C^{|w_1| + 1}(w_1 \chr{c} w_1) = S_C^{|w_2| + 1}(w_2 \chr{c} w_2)$.
+        Es gilt $|w_1| = |w_2|$, andernfalls hätten die Zeit-Zustands-Sequenzen unterschiedliche Länge.
+        Nach \cref{swapWordsInTimeStateSequence} gilt $S_C^{|w_1| + 1}(w_1 \chr{c} w_1) = S_C^{|w_1| + 1}(w_1 \chr{c} w_2)$.
+        Nach \cref{timeStateSequenceEquiv} gilt dann $w_1 \chr{c} w_1 \in L(C) \Leftrightarrow w_1 \chr{c} w_2 \in L(C)$.
+        Daraus folgt $w_1 = w_2$.
+    \end{proof}
+    
+    
+    \begin{lemma}
+        Sei $C \in \CAM{\CART, \CARestr(d)}$ für ein $d \in \Z^{\Nz}$ und $k, p \in \Nz, 1 \leq p \leq k - d(k)$.
+        Dann $|\set{ S_C^p(w) }{ w \in \Sigma^k }| \leq |\Sigma_C| \cdot |Q_C|^{d(k)}$
+    \end{lemma}
+    \begin{proof}
+        Es gilt: (TODO: Extra Lemma)
+        \[
+            \forall w \in \Sigma^*: \forall p, t \in \N, p + t \leq |w| - d(|w|) + 1:
+                S_C^p(w)_{t + 1} = S_C^p(w)_1 \in \Sigma_C
+        \]
+        TODO Beweis beenden.
+    \end{proof}
+    
+    \begin{lemma}
+        $\forall d \in o(n): \CAL{\CART} \setminus \CAL{\CART, \CARestr(d)} \neq \emptyset $
+    \end{lemma}
+    \begin{proof}
+        Wähle $L := \set{ wcw }{ w \in \finset{ a, b }^* }$.
+        Angenommen, es gibt ein $C \in \CAM{\CART, \CARestr(d)}$ mit $L(C) = L$.
+        
+        Dann ist die Funktion $f_C$ aus \cref{timeStateSequenceInjective} injektiv.
+    \end{proof}
+\end{comment}

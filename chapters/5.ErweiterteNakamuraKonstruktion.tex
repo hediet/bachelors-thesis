@@ -1,0 +1,254 @@
+\chapter{Erweiterte Nakamura-Konstruktion zur asynchronen Synchronisation}
+\label{chap:ErweiterteNakamuraKonstr}
+
+\section{Definition}
+
+\begin{definition}[Erweiterte Nakamura-Konstruktion $A(M, f, C, P)$]
+    \label{erweiterteNakamuraKonstruktion}
+    Es seien zwei Zellularautomaten $M, C \in \CA$, eine Funktion $f: Q_M \to \mathrm{Op}$ mit $\mathrm{Op} := \set{
+        \mathrm{reset}, \mathrm{set}(q), \mathrm{step} }{ q \in Q_C }$ und eine Menge $P \subseteq Q_C$ von passiven, initialen Zuständen gegeben.
+    Der Automat $M$ gibt Steuerbefehle über die Funktion $f$ und der Automat $C$ ist der asynchron simulierte Automat.
+    Mithilfe der Menge $P$ lässt sich in bestimmten Fällen
+    die benötigte Zeit zum Simulieren verbessern.
+    
+    Setze $N := \finset{ 0, ..., 5 }$, $Q' := (Q_C^3 \times N \times \Nz) \cup \finset{ \perp }$ und $Q := Q' \times Q_M$.
+    Die Komponenten eines Elements $q \in Q_C^3$ seien symbolisch mit $q_a$, $q_{a-1}$ und $q_0$ bezeichnet: $q = (q_a, q_{a-1}, q_0)$.
+    $q_a$ meint dabei den aktuellen Zustand des simulierten Automaten, $q_{a-1}$ den Zustand des vorherigen Schrittes (sofern dieser existiert) und $q_0$ den Zustand der simulierten Zelle in der Anfangskonfiguration.
+    Diese Notation lässt sich auf die erste Komponente von $Q'$ und dann $Q$ übertragen. Die zweite Komponente eines Elements $q \in Q' \setminus \finset{ \perp }$ wird mit $q_t$ und die dritte mit $q_{t'}$ bezeichnet. $q_t$ speichert \enquote{grob}, wieviele Schritte im simulierten Automaten für diese Zelle schon berechnet wurden. $q_{t'}$ speichert diese Zahl exakt und dient nur zur Beweisführung. Da die Komponente $q_{t'}$
+    nach Konstruktion nicht relevant für das sichtbare Verhalten des Automaten sein wird, existiert ein äquivalenter Automat, der ohne diese Komponente auskommt. Dessen Zustandsmenge ist dann endlich.
+    Für $q \in Q$ bezeichne mit $q_q$ die erste Komponente und mit $q_m$ die zweite.
+    
+    Definiere zunächst $\delta': {Q'}^3 \to Q'$ für $a, b, c \in Q'$ für den Fall $\perp \in \finset{ a, b, c }$:
+    \[
+        \delta'(a, b, c) := 
+        \begin{cases}
+            \perp & \text{falls } b = \perp \\
+            ((b_0, b_0, b_0), 0, 0) & \text{sonst}
+        \end{cases}
+    \]
+    Dem Zustand $\perp \in Q'$ kommt damit die Bedeutung zu, nichts über den Zustand der Zelle im simulierten Automaten zu wissen.
+    Die Nachbarn einer Zelle in diesem Zustand können dann offensichtlich keinen Schritt berechnen.
+    
+    Definiere für $t \in N$ die Funktion $s(t)$ zur Bestimmung eines Nachfolgers in $N$ (siehe \cref{wirkungVonS}):
+    \[
+        s(t) :=
+        \begin{cases}
+            t + 1 & \text{falls } t < 5 \\
+            3 & \text{falls } t = 5
+        \end{cases}
+    \]
+    
+    \begin{figure}[h]
+        \centering
+        \includesvg{Nakamura_s.svg}
+        \caption{Wirkung von s}
+        \label{wirkungVonS}
+    \end{figure}
+    
+    
+    Definiere $q^t$ zum Zugriff auf den möglicherweise in $q$ gespeicherten Zustand der Zelle zum Zeitpunkt $t'$ mit $s(t') = t$
+    für $q \in Q'$ und $t \in N$:
+    \[
+        q^{t} :=
+        \begin{cases}
+            q_{0} & \text{falls } q_0 \in P \text{ und } q_t = 0 \\
+            q_{a-1} & \text{falls } q_0 \not\in P \text{ und } q_t = t \\
+            q_a & \text{falls } q_0 \not\in P \text{ und } s(q_t) = t \\
+            \perp & \text{sonst}
+        \end{cases}
+    \]
+    
+    Falls $q_0$ von Anfang an tot ist,
+    beinhaltet $q$ Zustandsinformationen
+    der simulierten Zelle für alle Zeitpunkte,
+    da tote Zustände in jedem Schritt gleich bleiben.
+    
+    Definiere nun $\delta'$ für $a, b, c \in Q'$ falls $\perp \not\in \finset{ a, b, c}$:
+    \[
+        \delta'(a, b, c) := 
+        \begin{cases}
+            \Spvek{(b_0, b_0, b_0), 0, 0}
+            & \text{ falls } b_0 \in P \text{ und } b_t = 0 \\
+            \Spvek{(\delta(a^t, b^t, c^t), b^t, b_0), t, b_{t'} + 1}
+            & \text{ sonst, falls } \perp \not\in \finset{ a^t, c^t } \text{ für } t := s(b_t) \\
+            \Spvek{(\delta(a^t, b^t, c^t), b^t, b_0), t, b_{t'}}
+            & \text{ sonst, falls } \perp \not\in \finset{a^t, c^t} \text{ für } t := b_t \\
+            \Spvek{(\delta(a_0, b_0, c_0), b_0, b_0), 1, 1}
+            & \text{ sonst}
+        \end{cases}
+    \]
+    
+    Der erste Fall hält tote Zustände in der Simulation fest, da sie nach Definition konstant sind. Dies ermöglicht nach Definition von $q^t$ eine schnellere Simulation, da nicht auf Zellen in solch einem Zustand gewartet werden muss. Aus Komplexitätsgründen werden nur solche toten Zustände berücksichtigt, die von $M$ mit $\mathrm{set(q)}$ schon direkt gesetzt wurden, was die Bedingung $b_t = 0$ erklärt.
+    
+    Im zweiten Fall wird der nächste Schritt des simulierten Automaten für die zu aktualisierende Zelle berechnet.
+    Dies ist offensichtlich nur möglich, wenn
+    die Nachbarzellen Informationen zum aktuellen Schritt gespeichert haben.
+    
+    Andernfalls, wenn die Nachbarzellen nur Informationen zum letzten Schritt gespeichert haben, greift Fall drei und zu aktualisierende Zelle berechnet den aktuellen Schritt neu.
+    Dies ist wichtig, falls sich Zellen zurücksetzen.
+    
+    Im vierten Fall setzt die Zelle die Simulation
+    lokal zurück und berechnet wieder den ersten Schritt der Simulation.
+    
+    
+    Abschließend ist $\delta$ für $a, b, c \in Q$ nun wie folgt definiert:
+    \[
+        \delta(\Spvek{a_q, a_m}, \Spvek{b_q, b_m}, \Spvek{c_q, c_m}) := 
+        \begin{cases}
+            \text{Setze } c := \delta_M(a_m, b_m, c_m) \\
+            \Spvek{((q, q, q), 0, 0), c} & \text{falls } f(c) = \mathrm{set}(q) \\
+            \Spvek{\perp, c} & \text{falls } f(c) = \mathrm{reset} \\
+            \Spvek{\delta'(a_q, b_q, c_q), c} & \text{falls } f(c) = \mathrm{step}
+        \end{cases}
+    \]
+    
+    Damit kann der Automat $M$ die Simulation kontrollieren
+    und diese für einzelne Zellen auf einen neuen Anfangszustand zurücksetzen. Die Konstruktion stellt sicher,
+    dass sich benachbarte Zellen einer solchen zurückgesetzten Zelle
+    korrekt verhalten.
+    
+    Definiere nun $A(M, f, C, P) := (Q, \delta)$.
+    
+    Wenn nun eine Konfiguration $c_M : \Z \to Q_M$ von $M$
+    gegeben ist, kann sie als Konfiguration $c: \Z \to Q$ von $A(M, f, C, P)$
+    aufgefasst werden:
+    \[
+        c_i :=
+        \begin{cases}
+            (((q, q, q), 0, 0), (c_M)_i) & \text{falls } f((c_M)_i) = \mathrm{set}(q) \\
+            (\perp, (c_M)_i) & \text{ sonst}
+        \end{cases}
+    \]
+\end{definition}
+
+\begin{definition}[Sichtbare Startzustandszeit $st_o(t, i)$ und Startkonfiguration $c(t, i)$, sichtbare aktiven Zellen $A(t, i)$]
+    Es seien $M, C \in \CA$, $f$ und $P$ wie in \cref{erweiterteNakamuraKonstruktion} und eine Konfiguration $c_M: \Z \to Q_M$ gegeben.
+    Seien $t \in \Nz$, $i \in \Z$ und $o \in \mathrm{Op}$.
+    Definiere die sichtbare Startzustandszeit $\mathrm{st}_{M, C, f, P, o}(t, i) := \mathrm{st}_o(t, i)$:
+    \[
+        \mathrm{st}_o(t, i) :=
+        \begin{cases}
+            t' &
+                \text{falls } f(\Delta_M^{t'}(c_M)_i) = o
+                \text{ für } t' := \max \set{ k \in \finset{0, ..., t} }{ f(\Delta_M^{k}(c_M)_i) \neq \mathrm{step} }
+            \\
+            \infty & \text{sonst}
+        \end{cases}
+    \]
+    
+    Definiere die von $(t, i)$ aus sichtbare Startkonfiguration $c_{M, f, \#}(t, i)_j := c(t, i)$
+    für $\# \in Q_C$, $t \in \Nz$ und $p \in \Z$ wie folgt:
+    \[
+        c(t, i)_j :=
+        \begin{cases}
+            q & 
+                \text{falls } \mathrm{st}_{\mathrm{set}(q)}(t - |i-j|, j) \neq \infty
+             \\
+            \# & \text{sonst}
+        \end{cases}
+    \]
+    
+    Definiere die von $(t, i)$ aus sichtbare tote rechte Zelle $\mathrm{dR}(t, i)$ und linke Zelle $\mathrm{dL}(t, i)$:
+    \[
+        \mathrm{dR}(t, i) := \min (\set{ j \in \Z}{j \geq i \land c(t, i)_j \in P} \cup \finset{ \infty })
+    \]
+    und
+    \[
+        \mathrm{dL}(t, i) := \max (\set{ j \in \Z}{j \leq i \land c(t, i)_j \in P} \cup \finset{ -\infty })
+    \]
+    
+    Definiere damit die von $(t, i)$ aus sichtbaren aktiven Zellen $A(t, i)$:
+    \[
+        A(t, i) := \finset{ \mathrm{dL}(t, i), ..., \mathrm{dR}(t, i)}
+    \]
+\end{definition}
+
+\section{Korrektheit und Eigenschaften}
+
+\begin{satz}[Korrektheit der erweiterten Nakamura-Konstruktion]
+    Es seien $M, C \in \CA$, $f$ und $P$ wie in \cref{erweiterteNakamuraKonstruktion} und eine Konfiguration $c_M: \Z \to Q_M$ gegeben.
+    Sei $c$ die Auffassung von $c_M$ als Konfiguration von $A := A(M, f, C, P)$.
+    
+    Es gelten folgende Aussagen für $t \in \Nz$, $i \in \Z$:
+    
+    \begin{enumerate}
+        \item
+            $A$ führt $M$ korrekt aus:
+            \[
+                (\Delta_A^t(c)_i)_m = \Delta_M^t(c)_i
+            \]
+        \item
+            Sei $c \in \finset{-1, 1}$ mit $\perp \not \in \finset{a := (\Delta_A^t(c)_i)_q, b := (\Delta_A^t(c)_{i+c})_q}$.
+            Benachbarte Zellen mit ähnlicher \enquote{groben} Zeit haben ähnliche \enquote{exakte} Zeit:
+            \[
+                s(a_{t}) = s(b_{t}) \Rightarrow a_{t'} = b_{t'} \text{ und }  a_{t} = s(b_{t}) \Rightarrow a_{t'} = b_{t'} + 1
+            \]
+            Für $t \in \finset{0, 1, 2}$ gilt offensichtlich:
+            \[
+                a_{t} = t \Rightarrow a_{t'} = t
+            \]
+        \item
+            Sei $q := (\Delta_A^t(c)_i)_q$ mit $q \neq \perp$.
+            Dann reflektiert $q_a$ aus Sicht von $(t, i)$ den korrekt simulierten Zustand:
+            \[
+                q_a = \Delta_C^{q_{t'}}(c_{M, f, \#}(t, i))_i
+            \]
+            Analog reflektiert $q_{a-1}$ den vorherigen Zustand, falls $q_t > 0$:
+            \[
+                q_{a-1} = \Delta_C^{q_{t' - 1}}(c_{M, f, \#}(t, i))_i
+            \]
+            Für $q_t = 0$ gilt $q_{a-1} = q_a$.
+    \end{enumerate}
+    
+\end{satz}
+
+\begin{satz}[Zeitbedarf der erweiterten Nakamura-Konstruktion in einfachen Fällen]
+    \label{timeNakamuraConstruction}
+    Es seien $M, C \in \CA$, $f$ und $P$ wie in \cref{erweiterteNakamuraKonstruktion} und eine Konfiguration $c_M: \Z \to Q_M$ gegeben.
+    Sei außerdem $c$ die Auffassung von $c_M$ als Konfiguration von $A := A(M, f, C, P)$.
+    
+    Für $t \in \Nz$, $i \in \Z$ und $q := (\Delta_{A}^t(c)_i)_q$ setze:
+    \[
+        \mathrm{tc}(t, i) := \max \set{ \hat{t} \in \Nz}
+            {
+                \forall k \in \finset{-\hat{t}, ..., \hat{t} } \cap A(t, i):
+                \mathrm{st}_{\mathrm{set}}(t-|k|, i+k) \leq t - \hat{t}
+            }
+    \]
+    \begin{enumerate}
+        \item
+            Für $q \neq \perp$ gilt $q_{t'} \leq \mathrm{tc}(t, i)$.
+        \item
+            Für $q \neq \perp$ gilt sogar  $q_{t'} = \mathrm{tc}(t, i)$, falls für alle $k \in \finset{-\hat{t}, ..., \hat{t} } \cap A(t, i)$ gilt:
+            \[
+                t_1(t, k) > t_2(t, k)
+                \; \land \;
+                st_{\mathrm{reset}}(t_1(t, k) - 1, i + k) \leq t_2(t, k)
+            \]
+            Wobei
+            \[
+                t_1(t, k) := \min \finset{ t_2(t, k - 1), t_2(t, k + 1) }
+            \]
+            und
+            \[
+                t_2(t, k) := st_{\mathrm{set}}(t - |k|, i + k)
+            \]
+        \item
+            Sei $c': \Z \to Q_C$ eine Konfiguration von $C$ und $n$ so, dass $c'_i \neq \# \Leftrightarrow i \in \finset{ 1, ..., n }$.
+            Angenommen, $P \subseteq \finset{ \# } $ und für $i \in \Z$ und $t \in \Nz$ gelte:
+            \[
+                f(\Delta_M^t(c_M)_i) =
+                \begin{cases}
+                    \mathrm{reset} & \text{falls } t = 0 \text{ und } i \in \finset{1, .., n} \\
+                    \mathrm{set}(c'_i) & \text{falls } t = 0 \text{ und } i \not\in \finset{1, .., n} \\
+                    \mathrm{set}(c'_i) & \text{falls } i \in \finset{1, ..., n} \text{ und } t = 2 * i + 1 \\
+                    \mathrm{step} & \text{sonst}
+                \end{cases}
+            \]
+            
+            Dann gilt für $3 \leq t \leq 3n$:
+            \[
+                (\Delta^{t}_A(c)_1)_a = \Delta^{\lfloor \frac{t}{3} \rfloor - 1}_C(c')
+            \]
+     \end{enumerate}
+\end{satz}

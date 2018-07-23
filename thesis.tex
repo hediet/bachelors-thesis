@@ -1,0 +1,205 @@
+\documentclass{template/wissdoc}
+
+% ------------------------------------------------------------------
+% Weitere packages:
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{svg}
+\usepackage[utf8]{inputenc}
+\usepackage{etoolbox}
+\usepackage{amsmath,amssymb,amsthm,mathrsfs,amsfonts,dsfont,mathtools,stmaryrd,verbatim,faktor,fancyhdr,verbatimbox,csquotes}
+\usepackage{courier}
+\usepackage[ngerman]{babel}
+\usepackage{wrapfig}
+\usepackage[nohyperlinks,nolist]{acronym}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{cleveref}
+
+%% ---------------- end of usepackages -------------
+
+%% Informationen für die PDF-Datei
+\hypersetup{
+ pdfauthor={Henning Dieterichs},
+ pdftitle={Not set}
+ pdfsubject={Not set},
+ pdfkeywords={Not set}
+}
+
+% Macros, nicht unbedingt notwendig
+\input{template/macros}
+
+% Print URLs not in Typewriter Font
+\def\UrlFont{\rm}
+
+\newcommand{\blankpage}{% Leerseite ohne Seitennummer, nächste Seite rechts
+ \clearpage{\pagestyle{empty}\cleardoublepage}
+}
+
+%% +++++++++++++++++++++++++++++++++++++++++++
+%% Setup
+%% +++++++++++++++++++++++++++++++++++++++++++
+
+\newtheorem{lemma}{Lemma}[section]
+
+\theoremstyle{definition}
+\newtheorem{definition}[lemma]{Definition}
+
+\theoremstyle{plain}
+\newtheorem{theorem}[lemma]{Theorem}
+\newtheorem{corollary}[lemma]{Korollar}
+\newtheorem{satz}[lemma]{Satz}
+\newtheorem{proposition}[lemma]{Proposition}
+
+\theoremstyle{remark}
+\newtheorem{exmp}[lemma]{Beispiel}
+\newtheorem*{remark}{Anmerkung}
+
+
+\crefname{figure}{Abbildung}{Abbildungen}
+\crefname{theorem}{Theorem}{Theoreme}
+\crefname{corollary}{Korollar}{Korollare}
+\crefname{lemma}{Lemma}{Lemmas}
+\crefname{satz}{Satz}{Sätze}
+\crefname{definition}{Definition}{Definitionen}
+\crefname{chapter}{Kapitel}{Kapitel}
+
+\let\Proof=\proof
+\let\endProof\endproof 
+\renewenvironment{proof}{\begin{Proof}[\bfseries\proofname]}{\end{Proof}}
+\renewcommand\qedsymbol{$\square$}
+
+\renewcommand{\labelenumi}{\Roman{enumi}.}
+
+\graphicspath{{images/}}
+
+\input{macros}
+
+%% Einstellungen für das gesamte Dokument
+
+% Trennhilfen
+% Wichtig! 
+% Im ngerman-paket sind zusätzlich folgende Trennhinweise enthalten:
+% "- = zusätzliche Trennstelle
+% "| = Vermeidung von Ligaturen und mögliche Trennung (bsp: Schaf"|fell)
+% "~ = Bindestrich an dem keine Trennung erlaubt ist (bsp: bergauf und "~ab)
+% "= = Bindestrich bei dem Worte vor und dahinter getrennt werden dürfen
+% "" = Trennstelle ohne Erzeugung eines Trennstrichs (bsp: und/""oder)
+
+% Trennhinweise fuer Woerter hier beschreiben
+\hyphenation{
+% Pro-to-koll-in-stan-zen
+% Ma-na-ge-ment  Netz-werk-ele-men-ten
+% Netz-werk Netz-werk-re-ser-vie-rung
+% Netz-werk-adap-ter Fein-ju-stier-ung
+% Da-ten-strom-spe-zi-fi-ka-tion Pa-ket-rumpf
+% Kon-troll-in-stanz
+}
+
+% Index-Datei öffnen
+\ifnotdraft{\makeindex}
+%%%%%%%%%%%%%% includeonly %%%%%%%%%%%%%%%%%%%
+% Es werden nur die Teile eingebunden, die hier 
+% aufgefuehrt sind!
+% \includeonly{%
+% titelseite,%
+% erklaerung,% Ist in KA Pflicht für Diplomarbeiten
+% einleitung,% Motivation, Zielsetzung, Gliederung
+% grundlagen,% Grundlagen 
+% analyse,   % Problembeschreibung (Detail) und Related Work
+% entwurf,   % Beschreibung der Problemlösung (Konzepte, allg. Architektur, ...)
+% implemen,  % Beschreibung der Umsetzung/Implementierung
+% eval,      % Nachweis und Auswertung
+% zusammenf  % Zusammenfassung der Ergebnisse und Ausblick
+% }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\frontmatter
+\pagenumbering{roman}
+\ifnotdraft{
+ \include{template/titelseite}
+ \blankpage % Leerseite auf Titelrückseite
+ \include{template/erklaerung}
+ \blankpage % Leerseite auf Erklärungsrückseite
+}
+%
+%% *************** Hier geht's ab ****************
+%% ++++++++++++++++++++++++++++++++++++++++++
+%% Verzeichnisse
+%% ++++++++++++++++++++++++++++++++++++++++++
+\ifnotdraft{
+{\parskip 0pt\tableofcontents} % toc bitte einzeilig
+\blankpage
+%\listoffigures
+%\blankpage
+%\listoftables
+%\blankpage
+}
+
+%% ++++++++++++++++++++++++++++++++++++++++++
+%% Akronyme
+%% ++++++++++++++++++++++++++++++++++++++++++
+\begin{acronym}
+ \acro{bzw.}{Beziehungsweise}
+ \acro{OBdA.}{Ohne Beschränkung der Allgemeinheit}
+\end{acronym}
+
+
+%% ++++++++++++++++++++++++++++++++++++++++++
+%% Hauptteil
+%% ++++++++++++++++++++++++++++++++++++++++++
+
+\mainmatter
+\pagenumbering{arabic}
+\include{chapters/1.Einleitung}
+\include{chapters/2.Grundlagen}
+\include{chapters/3.LinksunabhAutomaten}
+\include{chapters/4.Speedup}
+\include{chapters/5.ErweiterteNakamuraKonstruktion}
+\include{chapters/6.AdviceZellularautomaten}
+\include{chapters/7.EingeschrAutomaten}
+\include{chapters/8.Zusammenfassung}
+
+% \include{chapters/einleitung}  % Einleitung
+% \include{chapters/grundlagen}  % Grundlagen
+% \include{chapters/analyse}     % Analyse
+% \include{chapters/entwurf}     % Entwurf
+% \include{chapters/implemen}    % Implementierung
+% \include{chapters/eval}        % Evaluierung
+% \include{chapters/zusammenf}   % Zusammenfassung und Ausblick
+
+%% ++++++++++++++++++++++++++++++++++++++++++
+%% Anhang
+%% ++++++++++++++++++++++++++++++++++++++++++
+
+\appendix
+%\include{anhang_a}
+%\include{anhang_b}
+
+%% ++++++++++++++++++++++++++++++++++++++++++
+%% Literatur
+%% ++++++++++++++++++++++++++++++++++++++++++
+%  mit dem Befehl \nocite werden auch nicht 
+%  zitierte Referenzen abgedruckt
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{\bibname}
+%%
+\nocite{*} % nur angeben, wenn auch nicht im Text zitierte Quellen 
+           % erscheinen sollen
+\bibliographystyle{template/itmabbrv} % mit abgekürzten Vornamen der Autoren
+%\bibliographystyle{gerplain} % abbrvnat unsrtnat
+% spezielle Zitierstile: Labels mit vier Buchstaben und Jahreszahl
+%\bibliographystyle{itmalpha}  % ausgeschriebene Vornamen der Autoren
+\bibliography{thesis}
+%% ++++++++++++++++++++++++++++++++++++++++++
+%% Index
+%% ++++++++++++++++++++++++++++++++++++++++++
+\ifnotdraft{
+\cleardoublepage
+\phantomsection
+\printindex            % Index, Stichwortverzeichnis
+}
+\end{document}
+%% end of file

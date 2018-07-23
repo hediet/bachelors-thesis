@@ -1,0 +1,85 @@
+\newcommand{\bin}{\ensuremath{\mathbb{B}}}
+\newcommand{\bins}{\ensuremath{\mathbb{B}^*}}
+\newcommand{\finset}[1]{\{ {#1} \}}
+
+\newcommand{\set}[2]{ \{ {#1} \; | \; {#2} \} }
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Nz}{\mathbb{N}_0}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\B}{\mathbb{B}}
+
+\newcommand{\chr}[1]{\texttt{#1}}
+
+
+
+
+\makeatletter
+\newcommand{\Spvek}[2][r]{%
+  \gdef\@VORNE{1}
+  \left(\hskip-\arraycolsep%
+    \begin{array}{#1}\vekSp@lten{#2}\end{array}%
+  \hskip-\arraycolsep\right)}
+
+\def\vekSp@lten#1{\xvekSp@lten#1;vekL@stLine;}
+\def\vekL@stLine{vekL@stLine}
+\def\xvekSp@lten#1;{\def\temp{#1}%
+  \ifx\temp\vekL@stLine
+  \else
+    \ifnum\@VORNE=1\gdef\@VORNE{0}
+    \else\@arraycr\fi%
+    #1%
+    \expandafter\xvekSp@lten
+  \fi}
+\makeatother
+
+
+\newcommand{\Pot}{\mathcal{P}}
+\newcommand{\union}{\cup}
+\newcommand{\intersect}{\cap}
+
+
+
+\newcommand{\comp}{\textrm{split}}
+\newcommand{\comb}{\textrm{join}}
+
+
+\newcommand{\CA}{\textrm{CA}^*}
+
+
+\newcommand{\sep}[2][\text{-}]{%
+  \def\nextitem{\def\nextitem{#1}}% Separator
+  \renewcommand*{\do}[1]{\nextitem{##1}}% How to process each item
+  \docsvlist{#2}% Process list
+}
+
+\newcommand{\CAL}[1]{\ensuremath{\mathcal{L}( \ECA^{ \sep{#1} } })}
+\newcommand{\CAM}[1]{\ensuremath{\ECA^{ \sep{#1} }}}
+
+\newcommand{\ECA}{\textrm{CA}}
+
+
+% F-haltende Automaten
+\newcommand{\CAF}{\textrm{FH}}
+
+% t-haltende Automaten
+\newcommand{\CAT}{\textrm{TH}}
+
+\newcommand{\CALeft}{\textrm{L}}
+\newcommand{\CARight}{\textrm{R}}
+\newcommand{\CAMid}{\textrm{M}}
+
+\newcommand{\CART}{\textrm{RT}}
+\newcommand{\CALT}{\textrm{LT}}
+
+
+\newcommand{\ctime}{\operatorname{time}}
+\newcommand{\cworsttime}{\operatorname{worst-time}}
+
+
+\newcommand{\LOCA}{\operatorname{OCA}_L}
+\newcommand{\ROCA}{\operatorname{OCA}_R}
+
+
+\newcommand{\CARestr}{\mathrm{Restr}}
+
+\newcommand{\orakel}{\textrm{Adv}}

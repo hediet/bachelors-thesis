@@ -1,0 +1,92 @@
+
+
+\newcommand{\CAMH}{\textrm{MH}}
+
+\begin{definition}[Echtzeit-Mitte-erkennender Zellularautomat]
+    Gegeben ein Zellularautomat $C := (Q, \delta, \Sigma, \#, L, F^+) \in \ECA$
+    mit $F^+ \subseteq (Q \cup Q^2)$.
+    $F^+$ repräsentiert die Menge der akzeptierenden finalen Zustände.
+    
+    $C$ heißt Echtzeit-Mitte-erkennend, wenn $L = L'$ mit
+    \begin{align*}
+        L' := & \set{ w \in \Sigma^+, |w| \textrm{ ungerade} }{ \Delta_C^{(|w| - 1) / 2}([w])_{(|w| + 1) / 2} \in F^+ } \\
+     \cup & \set{ w \in \Sigma^+, |w| \textrm{ gerade} }{ \Delta_C^{|w| / 2 - 1}([w])_{[|w| / 2, \; |w| / 2 + 1]} \in F^+ }
+    \end{align*}
+    
+    Mit folgender Definition des $\ECA$-Funktors $\CAMH$ bezeichnet $\ECA^\CAMH$ die Menge aller Echtzeit-Mitte-erkennender Automaten:
+    \[
+        \CAMH(M \subseteq \ECA) := \set{ C \in M }{ C \text{ ist Echtzeit-Mitte-erkennend} }
+    \]
+\end{definition}
+
+
+
+\begin{proposition}
+    Es gilt: $\CAL{\CAMH} = \operatorname{Rev}(\CAL{\CAMH})$.
+\end{proposition}
+\begin{proof}
+    Folgt direkt aus der Symmetrie der Definition.
+\end{proof}
+
+\begin{satz}
+    Es gilt: $\CAL{\CAMH} = \CAL{\CART, \LOCA} = \CAL{\CART, \ROCA}$.
+\end{satz}
+\begin{proof}
+    Sei $L \in \CAL{\CAMH}$. Dann gibt es einen Realzeit-Mitte-erkennenden Automaten $C$ mit $L_C = L$.
+    Nach \cref{zellautoZuLinksunabhaengig} gibt es nun einen 
+\end{proof}
+
+
+
+
+\begin{definition}
+    Sei $L$ eine Sprache. $\sim_L$ bezeichne die Nerode-Äquivalenzrelation auf $\Sigma^*$ der Sprache $L$.
+    Notiere die Menge der durch $\sim_L$ induzierten Äquivalenzklassen mit $K(L) := \faktor{L}{\sim_L}$.
+\end{definition}
+
+\newcommand{\rev}{\mathrm{Rev}}
+\newcommand{\equivcl}[2]{[{#1}]_{\sim_{#2}}}
+
+\begin{lemma}
+    \label{lemmaNerodeR}
+    Sei $L$ eine Sprache. Dann existiert eine Menge $R \subseteq K(L) \times K(L^\rev)$, sodass $\forall u, v \in \Sigma^*: (uv \in L \; \Leftrightarrow \; (\equivcl{u}{L}, \equivcl{\rev(v)}{L^\rev}) \in R)$.
+\end{lemma}
+\begin{proof}
+    Definiere
+    \[
+        R := \set{(X, Y)}{ X \in K(L), Y \in K(L^\rev), \forall x \in X, y \in Y: x \rev(y) \in L }
+    \]
+    
+    Seien $u, v \in \Sigma^*$ beliebig.
+    
+    Angenommen, $(\equivcl{u}{L}, \equivcl{\rev(v)}{L^\rev}) \in R$.
+    Dann $\forall x \in \equivcl{u}{L}, y \in \equivcl{\rev(v)}{L^\rev}: x\rev(y) \in L$.
+    Wegen $u \in [u]$, $\rev(v) \in [\rev(v)]$ und $\rev(\rev(v)) = v$ folgt $uv \in L$.
+    
+    Angenommen, $uv \in L$, also $\rev(v)\rev(u) \in L^\rev$.
+    Wähle $X := \equivcl{u}{L}$ und $Y := \equivcl{\rev(v)}{L^\rev}$.
+    Dann $\forall y \in Y: y\rev(u) \in L^\rev$, also $\forall y \in B: \rev(\rev(u))\rev(y) \in L$.
+    Dann $\forall x \in X, y \in Y: x\rev(y) \in L$ und damit $(X, Y) \in R$.
+\end{proof}
+
+\begin{satz}
+    $REG \subsetneq \CAL{\mathrm{Mid}}$
+\end{satz}
+\begin{proof}
+    Sei $L \in REG$. Setze $Q := K(L) \times \Sigma \times K(L^\rev)$. Weil $L$ regulär ist, ist $Q$ endlich.
+    Identifiziere $\Sigma$ mit $\finset{ [\varepsilon] } \times \Sigma \times \finset{ [\varepsilon] }$.
+    Definiere $\delta$ wie folgt:
+    \[
+        \delta(([a_l], a, [a_r]), ([b_l], b, [b_r]), ([c_l], c, [c_r])) := ([a_l a], b, [c c_r])
+    \]
+    
+    Wähle $R$ wie in \cref{lemmaNerodeR}.
+    Definiere $F^+$ wie folgt:
+    \[
+        F^+ := \set{ ([ v ], c, [ w ]) }{ v, w \in \Sigma^*, c \in \Sigma, vcw \in L, ([ vc ], [ w ]) \in R }
+    \]
+    
+    Betrachte $C := (Q, \delta, \Sigma, \#, L', (F^+, t, p)) \in \ECA^{\textrm{Mid}}$.
+    
+    Es bleibt zu zeigen $L' = L$.
+\end{proof}

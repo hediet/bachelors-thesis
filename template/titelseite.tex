@@ -1,0 +1,55 @@
+%% Titelseite
+%% Vorlage $Id: titelseite.tex 61 2012-05-03 13:58:03Z bless $
+
+\def\usesf{}
+\let\usesf\sffamily % diese Zeile auskommentieren für normalen TeX Font
+
+\newsavebox{\Erstgutachter}
+\savebox{\Erstgutachter}{\usesf Prof. Dr.-Ing. R. Vollmar}
+\newsavebox{\Zweitgutachter}
+\savebox{\Zweitgutachter}{\usesf Prof. Dr. Hartmut Prautzsch}
+
+\begin{titlepage}
+\setlength{\unitlength}{1pt}
+\begin{picture}(0,0)(85,770)
+\includegraphics[width=\paperwidth]{logos/KIT_Deckblatt}
+\end{picture}
+
+\thispagestyle{empty}
+
+%\begin{titlepage}
+%%\let\footnotesize\small \let\footnoterule\relax
+\begin{center}
+\hbox{}
+\vfill
+{\usesf
+{\huge\bfseries Vergleich der Sprachklassen verschiedener Typen von Zellularautomaten \par}
+\vskip 1.8cm
+Bachelorarbeit\\
+von\\[2mm]
+\vskip 1cm
+
+{\large\bfseries Henning Dieterichs \\}
+\vskip 1.2cm
+am Institut für Theoretische Informatik \\
+der Fakultät für Informatik\\
+%Universität Karlsruhe (TH)\\[2ex]
+\vskip 3cm
+\begin{tabular}{p{5.5cm}l}
+Erstgutachter: & \usebox{\Erstgutachter} \\
+Zweitgutachter: & \usebox{\Zweitgutachter} \\
+Betreuender~Mitarbeiter: & Dr. Thomas Worsch \\
+\end{tabular}
+\vskip 3cm
+Bearbeitungszeit:\qquad 26.~März~2018 -- 25.~Juli~2018
+}
+\end{center}
+\vfill
+\end{titlepage}
+%% Titelseite Ende
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "thesis"
+%%% End: 

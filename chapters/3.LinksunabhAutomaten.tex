@@ -1,0 +1,130 @@
+\chapter{Linksunabhängige Zellularautomaten}
+\label{chap:LinksunabhAuto}
+
+\begin{satz}
+    \label{zellautoZuLinksunabhaengig}
+    Sei $C = (Q, \delta) \in \CA$ ein Zellularautomat (wie in \cref{fig:NormalZuRechtsUnabh}).
+    Dann gibt es einen links-unabhängigen Zellularautomaten $C' = (Q' \supseteq Q, \delta')$ (wie in \cref{fig:NormalZuRechtsUnabh2}),
+    sodass
+    für $\forall c \in Q^{\Z}, \forall t \in \Nz, \forall i \in \Z$ gilt:
+    \[
+            \Delta_{C'}^{t}(c)_i =
+            \begin{cases}
+                \Delta_C^{\frac{t}{2}}(c)_{i+\frac{t}{2}} & \text{ falls } $t$ \text{ gerade } \\
+                (\Delta_C^{\frac{t - 1}{2}}(c)_{i+\frac{t - 1}{2}}, \Delta_C^{\frac{t-1}{2}}(c)_{i+\frac{t+1}{2}})  & \text{ sonst}
+            \end{cases}
+    \]
+        
+
+    \begin{figure}[h!]
+        \centering
+        \includesvg[width=185pt]{images/NormalZuLinksUnabh_Norm}
+        \caption{Teilweise Ausführung des Automaten $C$}
+        \label{fig:NormalZuRechtsUnabh}
+    \end{figure}
+   \begin{figure}[h!]
+        \centering
+        \includesvg[width=185pt]{images/NormalZuLinksUnabh_Luh}
+        \caption{Teilweise Ausführung des links-unabhängigen Automaten $C'$}
+        \label{fig:NormalZuRechtsUnabh2}
+    \end{figure}
+
+\end{satz}
+\begin{proof}
+    Führe für diesen Beweis folgende Notation ein: ${c'}^{t}_i := \Delta^{t}_{C'}(c)_i$ und $c^t_i := \Delta^{t}_{C}(c)_i$.
+    
+    Setze $Q' := Q \cup Q^2$. Definiere $\delta'$ für $ b, c \in Q$ wie folgt:
+    \[
+        \delta'(\cdot, b, c) := (b, c) \in Q'
+    \]
+    und für $b, c \in Q \times Q$:
+    \[
+        \delta'(\cdot, (b_1, b_2), (c_1, c_2)) := \delta(b_1, b_2, c_2)
+    \]
+    Definiere $\delta(\cdot, b, c)'$ beliebig für alle anderen Fälle. Offensichtlich ist $\delta$ dann links-unabhängig.
+    
+    Sei $c \in Q^{\Z}$. Beweis der Behauptung durch Induktion über $t$. Für $t = 0$ trivial.
+    
+    Sei nun $t > 0, i \in \Z$.
+    
+    1. Fall: $t$ ist ungerade.
+    Dann gilt nach Induktionsannahme
+    \[
+        \forall j \in \Z: {c'}^{t-1}_j = c^{\frac{t-1}{2}}_{j+\frac{t-1}{2}} \in Q
+    \]
+    
+    Und damit
+    \begin{align*}
+        & {c'}^{t}_i \\
+        &= \delta'({c'}^{t-1}_{i-1}, {c'}^{t-1}_i, {c'}^{t-1}_{i+1}) \\
+        &= ({c'}^{t-1}_i, {c'}^{t-1}_{i+1})) \\
+        &= (c^{\frac{t-1}{2}}_{i+\frac{t-1}{2}}, c^{\frac{t-1}{2}}_{i+\frac{t+1}{2}})
+    \end{align*}
+    
+    2. Fall: $t$ ist gerade. Damit $t \geq 2$.
+    Dann gilt nach Induktionsannahme
+    \[
+        \forall j \in \Z: {c'}^{t-1}_j
+            = (c^{\frac{t-2}{2}}_{j+\frac{t-2}{2}}, c^{\frac{t-2}{2}}_{j+\frac{t}{2}}) \in Q \times Q
+    \]
+    
+    Und damit
+    \begin{align*}
+        & {c'}^{t}_i \\
+        &= \delta'({c'}^{t-1}_{i-1}, {c'}^{t-1}_i, {c'}^{t-1}_{i+1}) \\
+        &= \delta'(q,  (c^{\frac{t-2}{2}}_{i+\frac{t-2}{2}}, c^{\frac{t-2}{2}}_{i+\frac{t}{2}}),
+             (c^{\frac{t-2}{2}}_{i+1+\frac{t-2}{2}}, c^{\frac{t-2}{2}}_{i+1+\frac{t}{2}})) \\
+        &= \delta(c^{\frac{t-2}{2}}_{i+\frac{t-2}{2}}, c^{\frac{t-2}{2}}_{i+\frac{t}{2}},
+                c^{\frac{t-2}{2}}_{i+1+\frac{t}{2}}) \\
+        &= c^{\frac{t}{2}}_{i+\frac{t}{2}}
+    \end{align*}
+    
+\end{proof}
+
+\begin{satz}
+    \label{linksunabhaengigZuZellauto}
+    Sei $C = (Q, \delta) \in \CA$ ein links-unabhängiger Zellularautomat (wie in \cref{fig:LinksunabhZuNormal1} gezeigt).
+    Dann gibt es einen Zellularautomaten $C' = (Q' \supseteq Q, \delta')$ (wie in \cref{fig:LinksunabhZuNormal2} gezeigt),
+    sodass für $\forall c \in Q^{\Z}$, $\forall t \in \Nz$, $\forall i \in \Z$ gilt:
+    \[
+        \Delta^t_{C'}(c)_{i} = \Delta^{2t}_C(c)_{i-t}
+    \]
+    
+    \begin{figure}[h!]
+        \centering
+        \includesvg[width=190pt]{images/LinksunabhZuNormal_Luh}
+        \caption{Teilweise Ausführung des links-unabhängigen Automaten $C$}
+        \label{fig:LinksunabhZuNormal1}
+    \end{figure}
+   \begin{figure}[h!]
+        \centering
+        \includesvg[width=190pt]{images/LinksunabhZuNormal_Norm}
+        \caption{Teilweise Ausführung des Automaten $C'$}
+        \label{fig:LinksunabhZuNormal2}
+    \end{figure}
+
+\end{satz}
+\begin{proof}
+    Führe für diesen Beweis folgende Notation ein: ${c'}^{t}_i := \Delta^{t}_{C'}(c)_i$ und $c^t_i := \Delta^{t}_{C}(c)_i$.
+    
+    Da $Q$ nicht leer ist, gibt es ein $q \in Q$.
+    Setze $Q' := Q$ und für $a, b, c \in Q'$:
+    \[
+        \delta'(a, b, c) := \delta(q, \delta(q, a, b), \delta(q, b, c))
+    \]
+    
+    Sei $c \in Q^{\Z}$. Beweis der Behauptung durch Induktion über $t$. Für $t = 0$ trivial. Sei $t > 0$, $i \in \Z$.
+
+    Nach Induktionsannahme gilt $\forall j \in \Z: {c'}^{t-1}_{j+t-1} = c^{2t-2}_j$.
+    
+    Es folgt:
+    \begin{align*}
+        & {c'}^{t}_{j+t} \\
+        &= \delta'({c'}^{t-1}_{j+t-1}, {c'}^{t-1}_{j+t}, {c'}^{t-1}_{j+t+1}) \\
+        &= \delta'(c^{2t-2}_{j}, c^{2t-2}_{j+1}, c^{2t-2}_{j+2}) \\
+        &= \delta(q, \delta(q, c^{2t-2}_{j}, c^{2t-2}_{j+1}), \delta(q, c^{2t-2}_{j+1}, c^{2t-2}_{j+2})) \\
+        &= \delta(q, c^{2t-1}_j, c^{2t-1}_{j+1} ) \\
+        &= c^{2t}_j 
+    \end{align*}
+\end{proof}
+

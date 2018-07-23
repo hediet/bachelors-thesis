@@ -1,0 +1,89 @@
+
+\begin{definition}[Partieller Übergang]
+    Für $M \subseteq \Z$ und $c \in Q_C^\Z$ definiere:
+    \[
+         \prescript{M}{} \! \Delta_C(c)_i :=
+         \begin{cases}
+            \Delta_C(c)_i & \text{falls }i \in M \\
+            c_i & \text{sonst}
+         \end{cases}
+    \]
+    
+    Für $w \in \Pot({\Z})^*$ und $c \in Q_C^\Z$ definiere:
+    \[
+        \Delta^w_C := \prescript{w_{|w|}}{} \! \Delta_C \circ ... \circ \prescript{w_1}{} \! \Delta_C
+    \]
+\end{definition}
+
+\begin{definition}[Asynchroner Zellularautomat]
+    Es sei ein Zellularautomat $C := (Q, \delta, \Sigma, \#, L, (F, F^+, p)) \in \ECA$
+    mit $F \subseteq Q$, $F^+ \subseteq F$ und $p : \Nz \to \Nz$, $p(0) = 0$ gegeben.
+
+    Es bezeichne $F$ die Menge der finalen Zustände, $F^+$ die Menge der akzeptierenden finalen Zustände und
+    $F^- := F \setminus F^+$ die Menge der nicht-akzeptierenden finalen Zustände.
+    $p$ ist eine Funktion, die abhängig von der Länge des Eingabeworts die Position der Zelle
+    angibt, welche anzeigt, ob das Eingabewort akzeptiert wird.
+    
+    Weiter seien $F^+_C$ und $F^-_C$ $\delta_C$-abgeschlossen und es gelte für $\forall w \in \Sigma_C^*$:
+    \[
+        \forall a \in \Pot({\Z})^*: \exists b \in \Pot({\Z})^*:
+            \Delta^{a+b}_C([w])_{{p_C}(|w|)} \in
+            \begin{cases}
+                F_C^+ & \text{ falls } w \in L(C) \\ 
+                F_C^- & \text{ sonst }
+            \end{cases}
+    \]
+    
+    $C$ heißt asynchroner Zellularautomat, falls $L = L'$ mit
+    \[
+        L' := \set{ w \in \Sigma^* }{ \exists a \in \Pot({\Z})^*: \Delta^{a}_C([w])_{{p_C}(|w|)} \in F_C^+  }
+    \]
+\end{definition}
+
+
+\begin{proposition}
+    Sei $C$ ein asynchroner Zellularautomat, $w \in \Sigma^*$.
+    Dann gilt 
+    \[
+            \forall a \in \Pot({\Z})^*: \not\exists b \in \Pot({\Z})^*:
+            \Delta^{a+b}_C([w])_{{p_C}(|w|)} \in
+            \begin{cases}
+                F_C^+ & \text{ falls } w \not\in L(C) \\ 
+                F_C^- & \text{ sonst }
+            \end{cases}
+    \]
+    Damit ist die Akzeptanz unabhängig von der Wahl der zu aktualisierenden Zellen.
+\end{proposition}
+\begin{proof}
+    Folgt aus der Definition von asynchronen Zellularautomaten und der Forderung, dass $F^+_C$ und $F^-_C$ $\delta_C$-abgeschlossen sind.
+\end{proof}
+
+
+\begin{definition}[$k$-uniform]
+    Sei $C$ ein asynchroner Zellularautomat, $k \in \N$.
+    Es bezeichne $\Pot(\Z)_{\leq k}$ die Menge aller Teilmengen von $\Z$, die höchstens $k$ Elemente enthalten.
+    
+    $C$ heißt $k$-uniform, falls für $\forall w \in \Sigma_C^*$ gilt:
+    \[
+        \forall a \in \Pot({\Z})^*: \exists b \in \Pot({\Z})_{\leq k}^*:
+            \Delta^{a+b}_C([w])_{{p_C}(|w|)} \in
+            \begin{cases}
+                F_C^+ & \text{ falls } w \in L(C) \\ 
+                F_C^- & \text{ sonst }
+            \end{cases}
+    \]
+    Mit anderen Worten: Für $k$-uniforme asynchrone Zellularautomaten reicht es, in jedem Schritt maximal
+    $k$ Zellen zu aktualisieren.
+\end{definition}
+
+\begin{satz}
+    Es gibt einen asynchronen Zellularautomaten, der für kein $k \in \N$ $k$-uniform ist.
+\end{satz}
+
+\begin{satz}
+    Jeder $F$-haltende Zellularautomat kann in einen $1$-uniformen asynchronen Zellularautomat umgebaut werden.
+\end{satz}
+
+\begin{satz}
+    SAT kann von einem $1$-uniformen Zellularautomaten in $O(n)$ vielen Schritten gelöst werden.
+\end{satz}

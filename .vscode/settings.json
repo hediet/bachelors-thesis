@@ -1,0 +1,15 @@
+{
+    "highlight.regexes": {
+        "(\\\\(?:section|chapter|subsection))(\\{.*\\})": { // A regex will be created from this string, don't forget to double escape it
+        "regexFlags": "g", // Flags used when building this regex
+          "filterLanguageRegex": "latex", // Apply only if current file's language matches this regex. Requires double escaping
+          "overviewRulerColor": "#ffcc00",
+          "decorations": [ // Decoration options to apply to the capturing groups
+            { "backgroundColor": "#d9ad00", "color": "#1f1f1f"},
+            { "backgroundColor": "#ffcc00", "color": "#1f1f1f", "fontWeight": "bold" 
+              }
+          
+          ]
+        }
+      }
+}
