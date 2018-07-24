@@ -91,6 +91,11 @@ um ein Berechnungsmodell zu bilden. Zunächst werden aber Objekte eingeführt, u
     mit $(Q, \delta) \in \CA$, $\Sigma \subseteq Q$, $\# \in Q \setminus \Sigma$ und $L \subseteq \Sigma^*$ beliebig.
     $S$ ist ein beliebiges Objekt derart, dass die Klasse aller solcher $S$ eine Menge bildet.
     
+    \# wird bei der Einbettung von Wörtern in Konfigurationen als Rand verwendet.
+    Im Gegensatz zu üblichen Definitionen von Zellularautomaten zur Erkennung von Sprachen, die etwa fordern, dass $\#$ passiv oder gar tot ist,
+    gibt es in dieser Definition keine Einschränkungen.
+    Es wird später gezeigt, dass $\#$ immer passiv und in den in dieser Arbeit relevanten Fällen auch tot gewählt werden kann.
+
     Es bezeichne $\ECA$ die Menge aller solcher Tupel. Wegen der Forderung an $S$ ist diese Menge wohldefiniert, aber nicht notwendigerweise abzählbar.
     Durch Spezialisierung der Sprache $L$, die in dieser Definition keiner Einschränkung unterliegt,
     und dem ebenfalls frei wählbaren Objekt $S$ werden im Folgenden verschiedene Typen von Zellularautomaten eingeführt.
@@ -145,33 +150,34 @@ Bisher wurde noch nicht beschrieben, wie Zellularautomaten mit endlichen Wörter
 
 \subsection{Definition \texorpdfstring{$F$}{F}-haltender Zellularautomat}
 
-
+Ausgehend von den eingeführten Objekten kann nun ein erstes Berechnungsmodell zum konkreten Erkennen von Sprachen definiert werden.
 
 \begin{definition}[$F$-haltender Zellularautomat]
     Es sei ein Zellularautomat $C := (Q, \delta, \Sigma, \#, L, (F, F^+, p)) \in \ECA$
     mit $F \subseteq Q$, $F^+ \subseteq F$ und $p : \Nz \to \Nz$, $p(0) = 0$ gegeben.
     
-    Anschaulich gesprochen, repräsentiert $F$ die Menge der finalen Zustände, $F^+$ die Menge der akzeptierenden finalen Zustände und
+    Anschaulich gesprochen repräsentiert $F$ die Menge der finalen Zustände, $F^+$ die Menge der akzeptierenden finalen Zustände und
     $F^- := F \setminus F^+$ die Menge der nicht-akzeptierenden finalen Zustände.
     $p$ ist eine Funktion, die abhängig von der Länge des Eingabeworts die Position der Zelle
     angibt, welche anzeigt, ob das Eingabewort akzeptiert wird.
     
     
-    Für ein Wort $w \in \Sigma^*$ gibt die Funktion $time_{C}$ an, wie viele Schritte der Zellularautomat $C$ braucht, um das Wort $w$ zu akzeptieren:
+    Für ein Wort $w \in \Sigma^*$ gibt die Funktion $\ctime_{C}$ an, wie viele Schritte der Zellularautomat $C$ braucht, um das Wort $w$ zu akzeptieren:
     \[
         \ctime_{C}: \Sigma^* \to \Nz \cup \{ \infty \}, \; w \mapsto \min (\set{ t \in \Nz }{ \Delta_C^t([w])_{p(|w|)} \in F } \cup \{ \infty \})
     \]
     
     Dies lässt sich auf die Wortlänge übertragen:
     \[
-        \operatorname{\cworsttime}_{C}: \Nz \to \Nz \cup \{ \infty \}, \;  n \mapsto \max \set{ \ctime_{C}(w) }{ w \in \Sigma^n }
+        \cworsttime_{C}: \Nz \to \Nz \cup \{ \infty \}, \;  n \mapsto \max \set{ \ctime_{C}(w) }{ w \in \Sigma^n }
     \]
     
-    $C$ heißt $F$-haltend, wenn $L = L'$ mit
+    $C$ heißt \emph{$F$-haltend}, wenn $L = L'$ mit
     \[
         L' := \set{ w \in \Sigma^* }{ 
             \ctime_{C}(w) \neq \infty \wedge \Delta_C^{\ctime_{C}(w)}([w])_{p(|w|)} \in F^+ }
     \]
+    Das $F$ in $F$-haltend ist symbolisch gemeint und bezieht sich nicht auf den Wert der Menge $F$.
     
     Mit folgender Definition des $\ECA$-Funktors $\CAF$ bezeichnet $\ECA^\CAF$ die Menge aller $F$-haltenden Zellularautomaten:
     \[
@@ -192,6 +198,9 @@ Bisher wurde noch nicht beschrieben, wie Zellularautomaten mit endlichen Wörter
 
 \subsection{Definition \texorpdfstring{$t$}{t}-haltender Zellularautomat}
 
+Analog werden die $t$-haltenden Zellularautomaten definiert, bei denen keine finalen Zustände das Ende der Berechnung signalisieren,
+sondern beliebige Funktionen. Auf die Unterschiede zu $F$-haltenden Automaten wird in \cref{sec:Vergleich_t_haltend_F_haltend} eingegangen.
+
 \begin{definition}[$t$-haltender Zellularautomat]
     Gegeben ein Zellularautomat $C := (Q, \delta, \Sigma, \#, L, (F^+, t, p)) \in \ECA$
     mit $F^+ \subseteq Q$ und $t, p: \Nz \to \Nz$, $t(0) = 0$, $p(0) = 0$.
@@ -199,11 +208,12 @@ Bisher wurde noch nicht beschrieben, wie Zellularautomaten mit endlichen Wörter
     die abhängig von der Länge des Eingabeworts angeben,
     wie viele Schritte auszuführen sind \acs{bzw.} welche Zelle entscheidet, ob das Wort zu akzeptieren ist.
     
-    $C$ heißt $t$-haltend, wenn $L = L'$ mit
+    $C$ heißt \emph{$t$-haltend}, wenn $L = L'$ mit
     \[
         L' := \set{ w \in \Sigma^+ }{ \Delta_C^{t(|w|)}([w])_{p(|w|)} \in F^+ }
     \]
-    
+    Das $t$ in $t$-haltend ist symbolisch gemeint und bezieht sich nicht auf die konkrete Funktion $t$.
+
     Mit folgender Definition des $\ECA$-Funktors $\CAT$ bezeichnet $\ECA^\CAT$ die Menge aller $t$-haltender Automaten:
     \[
         \CAT(M \subseteq \ECA) := \set{ C \in M }{ C \text{ ist $t$-haltend} }
@@ -212,11 +222,9 @@ Bisher wurde noch nicht beschrieben, wie Zellularautomaten mit endlichen Wörter
 
 
 
+\subsection{Verschiedene Funktoren}
 
-
-
-
-
+Es werden nun verschiedene Funktoren definiert, über die $t$- oder $F$-haltende Automaten weiter eingeschränkt werden können.
 
 \begin{definition}[$\CALeft$-, $\CAMid$- und $\CARight$-\ECA-Funktoren]
     Ein $t$- oder $F$-haltender Zellularautomat $C$ heißt
@@ -250,6 +258,12 @@ Bisher wurde noch nicht beschrieben, wie Zellularautomaten mit endlichen Wörter
 \end{definition}
 
 \section{Vergleich von \texorpdfstring{$t$}{t}-haltenden und \texorpdfstring{$F$}{F}-haltenden Automaten}
+\label{sec:Vergleich_t_haltend_F_haltend}
+
+Es folgt ein Lemma für $F$-haltende Automaten. Es zeigt, dass solche Automaten stets so umgebaut werden können,
+dass wenn sie einmal einen akzeptierenden oder ablehnenden Zustand einnehmen, diesen nicht mehr verlassen, sich also nicht mehr umentscheiden können.
+Ganz trivial ist das Lemma nicht, schließlich können Zustände aus $F$ auch während der Berechnung in Zellen angenommen werden,
+die von der Funktion $p$ nicht ausgewählt werden.
 
 \begin{lemma}[$F^+$ und $F^-$ können $\delta$-abgeschlossen gewählt werden]
     \label{lemmaAbgeschlosseneMenge}
@@ -275,16 +289,22 @@ Bisher wurde noch nicht beschrieben, wie Zellularautomaten mit endlichen Wörter
     Dann sind die Mengen $F'^+$ und $F'^-$ offensichtlich $\delta$-abgeschlossen.
     
     Sei $w \in \Sigma^*, p \in \Z, t \in N_0$ und $(q, f) := \Delta_{C'}^t([w])_p$.
-    Dann gilt $q = \Delta_{C}^t([w])_p$ und $f \neq 0$ impliziert, dass $\forall k \in \finset{ 0, ..., t }: \Delta_{C}^k([w])_p \not\in F$.
-    
+    Dann gilt $q = \Delta_{C}^t([w])_p$. $(q, f) \not\in F'$ impliziert $f = 0$ und damit, dass $\forall k \in \finset{ 0, ..., t }: \Delta_{C}^k([w])_p \not\in F$.
+    Anderseits folgt aus $(q, f) \in F'$, dass es ein $k \in \finset{0, ...,  t}$ gibt, sodass $\Delta_{C}^k([w])_p \in F$.
+    Da der Automat bei finalen Zuständen stoppt, gilt dann wegen der ersten Überlegung, dass $k = t$.
     Daraus folgt, dass $\ctime_{C} = \ctime_{C'}$ und $L = L'$.
 \end{proof}
 
 
+$t$-haltende Automaten müssen in Abhängigkeit zur Wortlänge stets eine Position und einen Zeitpunkt angeben,
+zu dem feststehen muss, ob das Wort akzeptiert oder abgelehnt werden soll.
+$F$-haltende Automaten haben die Möglichkeit, nicht zu terminieren.
+Da die Funktion zur Wahl des Zeitpunktes bei einem $t$-haltenden Automaten nicht berechenbar sein muss,
+sind $t$-haltende Automaten trotzdem nicht weniger mächtig als $F$-haltende, wie der folgende Satz zeigt.
 
 \begin{satz}[$t$-haltende Automaten sind mindestens so mächtig wie $F$-haltende]
     Sei $C = (Q, \delta, \Sigma, \#, L, (F, F^+, p))$ ein $F$-haltender Zellularautomat.
-    Dann gibt es einen $t$-haltenden Zellularautomat $C'$ mit $L_{C'} = L_C$ und $\forall n \in \Nz: t_{C'}(n) \leq \cworsttime_C(n)$.
+    Dann gibt es einen $t$-haltenden Zellularautomat $C'$ mit $L_{C'} = L_C$, $p_{C'} = p_C$ und $\forall n \in \Nz: t_{C'}(n) \leq \cworsttime_C(n)$.
 \end{satz}
 \begin{proof}
     Wegen~\cref{lemmaAbgeschlosseneMenge} sind \acs{OBdA.} $F^+$ und $F^-$ $\delta$-abgeschlossene Mengen.
@@ -293,29 +313,35 @@ Bisher wurde noch nicht beschrieben, wie Zellularautomaten mit endlichen Wörter
     \[
         t: \Nz \to \Nz, \; n \mapsto \max(\finset{ 0 } \cup \set{ \ctime_C(w) }{ w \in \Sigma^n, \; \ctime_C(w) \neq \infty })
     \]
-    
+
     Wähle $C' := (Q, \delta, \Sigma, \#, L', (F^+, t)) \in \ECA^\CAT$.
-    
     Es gilt offensichtlich $\forall n \in \Nz: t(n) \leq \cworsttime_C(n)$.
     
     Sei $w \in L_C$. Dann gilt $\ctime_C(w) \neq \infty$ und $\Delta_{C}^{\ctime_C(w)}([w])_{p(|w|)} \in F^+$.
     Wegen $t(|w|) \geq \ctime_C(w)$ und weil $F^+$ $\delta$-abgeschlossen ist, folgt $\Delta_{C'}^{t(|w|)}([w])_{p(|w|)} \in F^+$,
     also $w \in L_{C'}$.
     
-    Sei $w \in L(C')$. Dann gilt $f_1 := \Delta_{C'}^{t(|w|)}([w])_{p(|w|)} \in F^+$. Dann ist $\ctime_C(w) \leq t(|w|)$
-    und $f_2 := \Delta_{C}^{\ctime_C(w)}([w])_{p(|w|)} \in F$.
+    Sei $w \in L_{C'}$. Dann gilt $f_1 := \Delta_{C'}^{t(|w|)}([w])_{p(|w|)} \in F^+$.
+    Dann ist $\ctime_C(w) \leq t(|w|)$, da in diesem Fall $t(|w|) = 0 \Rightarrow \ctime_C(w) = 0$.
+    Nach Definition von $\ctime$ folgt $f_2 := \Delta_{C}^{\ctime_C(w)}([w])_{p(|w|)} \in F$.
     Wäre $f_2 \in F^-$, dann wäre auch $f_1 \in F^- = F \setminus F^+$, da auch $F^-$ $\delta$-abgeschlossen ist.
     Also folgt $f_2 \in F^+$. Also $w \in L_{C'}$.
     
-    Es folgt $L_C = L_{C'}$.
-    
+    Insgesamt ergibt sich $L_C = L_{C'}$.
 \end{proof}
+
+\begin{remark}
+    Das $t$ aus dem vorherigen Beweis ist im Allgemeinen tatsächlich auch nicht berechenbar - andernfalls
+    wären semientscheidbare Sprechen stets entscheidbar, da sich Turingmaschinen auf Zellularautomaten reduzieren lassen und umgekehrt.
+\end{remark}
+
+Unter bestimmten Annahmen an die Funktion $t$ zur Zeitauswahl können allerdings $t$-haltende Automaten auch zu $F$-haltenden Automaten umgebaut werden.
 
 \begin{satz}[$F$-haltende Automaten sind unter Annahmen mindestens so mächtig wie $t$-haltende]
     Sei $C$ ein $t$-haltender Zellularautomat.
     Wenn es einen $F$-haltenden Zellularautomaten $X$ gibt
-    mit $|\Sigma_X| = 1$ und $\cworsttime_X = t_C$,
-    dann gibt es auch einen $F$-haltenden Zellularautomat $C'$ mit $L(C) = L(C')$ und $\cworsttime_{C'} = t_C$.
+    mit $p_X = p_C$, $|\Sigma_X| = 1$ und $\cworsttime_X = t_C$,
+    dann gibt es auch einen $F$-haltenden Zellularautomat $C'$ mit $L_{C'} = L_C$, $p_{C'} = p_P$ und $\cworsttime_{C'} = t_C$.
 \end{satz}
 \begin{proof}
     Führe $X$ und $C$ parallel aus, indem $\delta_{C'}$ durch $\delta_X$ und $\delta_C$ auf $Q_{C'} := Q_X \times Q_C$ definiert wird.
@@ -328,6 +354,8 @@ Bisher wurde noch nicht beschrieben, wie Zellularautomaten mit endlichen Wörter
     Der so definierte Automat $C'$ erfüllt die Behauptung.
 \end{proof}
 
+Folgende Proposition zeigt, dass die Annahmen aus dem vorherigen Satz notwendig sind.
+
 \begin{proposition}[$t$-haltende Automaten sind mächtiger als $F$-haltende]
     Es gibt einen $t$-haltenden links-erkennenden Zellularautomaten mit
     $t(n) \in \finset{0, 1}$,
@@ -339,7 +367,7 @@ Bisher wurde noch nicht beschrieben, wie Zellularautomaten mit endlichen Wörter
 \begin{proof}
     Sei $L \subseteq \Sigma^*$ eine nicht-semientscheidbare Sprache und $\mathrm{cod}: \Nz \to \Sigma^*$ eine berechenbare surjektive Funktion.
     Dann ist $L' := \set{ w \in \Sigma^* }{ \mathrm{cod}(|w|) \in L }$ auch nicht-semientscheidbar.
-    Setze $t(n) := 1_{cod(n) \in L}$.
+    Setze $t(n) := 1_{cod(n) \in L}$ und $p(n) := 1$.
     Konstruiere $t$-haltenden Zellularautomat mit $\Sigma \cap F^+ = \emptyset$ und $\delta(\cdot, \cdot, \cdot) \in F^+$.
     Dieser Automat erkennt dann offensichtlich $L'$.
 \end{proof}
@@ -357,8 +385,13 @@ Bisher wurde noch nicht beschrieben, wie Zellularautomaten mit endlichen Wörter
 
 \section{Nützliche Eigenschaften}
 
+Die folgenden zwei Sätze sind äußerst wichtig, um den Rand von Zellularautomaten in den Griff zu kriegen.
+Üblicherweise wird schon in der Definition von Zellularautomaten ein toter Rand gefordert, was einige elegante Konstruktionen verhindert.
+Es wird zunächst gezeigt, dass der Rand ohne Beschränkung der Allgemeinheit passiv und initial gewählt werden kann.
+
 \begin{satz}[Wahl eines passiven und initialen Randes]
-    Sei $C = (Q, \delta, \Sigma, \#, L, (F, F^+, p)) \in \ECA^\CAF$. Dann kann $C$ so zu $C'$ mit $L(C) = L(C')$ umgebaut werden, dass $\#_{C'}$ ein passiver und initialer Zustand ist.
+    Sei $C = (Q, \delta, \Sigma, \#, L, (F, F^+, p)) \in \ECA^\CAF$.
+    Dann kann $C$ so zu $C'$ mit $L(C) = L(C')$ umgebaut werden, dass $\#_{C'}$ ein passiver und initialer Zustand ist.
     Gleichzeitig bleibt dabei die Links- \acs{bzw.} Rechts-Unabhängigkeit von $\delta_C$ erhalten.
 \end{satz}
 \begin{proof}
@@ -428,7 +461,12 @@ Bisher wurde noch nicht beschrieben, wie Zellularautomaten mit endlichen Wörter
     In allen Fällen gilt dann $c^{t+1}_i = \#'$.
 \end{proof}
 
-\begin{satz}[Wahl eines toten Randes bei Linearzeitzellularautomaten]
+Für Linearzeit-Zellularautomaten kann der Rand sogar ohne Beschränkung der Allgemeinheit tot gewählt werden.
+Da ein toter Rand einen Speicherverbrauch nach sich zieht, der nur linear von der Wortlänge abhängt, folgt aus den Platzhierarchie-Sätzen über Turingmaschinen,
+dass der Rand für allgemeine Zellularautomaten nicht tot gewählt werden kann:
+Schließlich können Zellularautomaten von Turingmaschinen mit polynomiellen Mehraufwand für Zeit und Platz simuliert werden.
+
+\begin{satz}[Wahl eines toten Randes bei Linearzeit-Zellularautomaten]
     \label{satzRauteTot}
     Sei $C \in \CAM{\CALeft, \CALT}$ ein Linearzeit-Zellularautomat.
     Dann kann $C$ ohne Veränderung der Laufzeit so zu $C'$ mit $L(C) = L(C')$ umgebaut werden, dass $\#_{C'}$ ein toter Zustand ist.
@@ -525,7 +563,7 @@ Bisher wurde noch nicht beschrieben, wie Zellularautomaten mit endlichen Wörter
     \end{comment}
 \end{proof}
 
-
+Der folgende praktische Satz besagt, dass es auf endlich viele Ausnahmen nicht ankommt.
 \begin{satz}
     \label{endlichVieleAusnahmen}
     Sei $C$ ein Zellularautomat,
