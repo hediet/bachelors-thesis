@@ -16,7 +16,7 @@
     $q_a$ meint dabei den aktuellen Zustand des simulierten Automaten, $q_{a-1}$ den Zustand des vorherigen Schrittes (sofern dieser existiert) und $q_0$ den Zustand der simulierten Zelle in der Anfangskonfiguration.
     Diese Notation lässt sich auf die erste Komponente von $Q'$ und dann $Q$ übertragen. Die zweite Komponente eines Elements $q \in Q' \setminus \finset{ \perp }$ wird mit $q_t$ und die dritte mit $q_{t'}$ bezeichnet. $q_t$ speichert \enquote{grob}, wieviele Schritte im simulierten Automaten für diese Zelle schon berechnet wurden. $q_{t'}$ speichert diese Zahl exakt und dient nur zur Beweisführung. Da die Komponente $q_{t'}$
     nach Konstruktion nicht relevant für das sichtbare Verhalten des Automaten sein wird, existiert ein äquivalenter Automat, der ohne diese Komponente auskommt. Dessen Zustandsmenge ist dann endlich.
-    Für $q \in Q$ bezeichne mit $q_q$ die erste Komponente und mit $q_m$ die zweite.
+    Für $q \in Q$ bezeichne $q_q$ die erste Komponente und $q_m$ die zweite.
     
     Definiere zunächst $\delta': {Q'}^3 \to Q'$ für $a, b, c \in Q'$ für den Fall $\perp \in \finset{ a, b, c }$:
     \[
@@ -129,12 +129,42 @@
         \mathrm{st}_o(t, i) :=
         \begin{cases}
             t' &
-                \text{falls } f(\Delta_M^{t'}(c_M)_i) = o
-                \text{ für } t' := \max \set{ k \in \finset{0, ..., t} }{ f(\Delta_M^{k}(c_M)_i) \neq \mathrm{step} }
+                \text{falls } f(\Delta_M^{t'}(c_M)_i) = o \\
+                & \text{ für } t' := \max \set{ k \in \finset{0, ..., t} }{ f(\Delta_M^{k}(c_M)_i) \neq \mathrm{step} }
             \\
             \infty & \text{sonst}
         \end{cases}
     \]
+    Offensichtlich gilt $o_1 = o_2$, falls $st_{o_1}(t, i) \neq \infty \land st_{o_2}(t, i) \neq \infty$ für $o_1, o_2 \in \mathrm{Op}$.
+    
+    \newcommand{\setq}{\scriptsize $\mathrm{set}$}
+    \newcommand{\setp}{\scriptsize $\mathrm{set}'$}
+    
+    \begin{figure}[h!]
+        \begin{center}
+        \includesvg[width=360pt]{images/SichtbareStartzustandszeit}
+        \end{center}
+        \caption{Sichtbare Startkonfiguration}
+        \label{fig:SichtbareStartkonfiguration}
+        
+        Ein (gelb oder grün markiertes) \enquote{$\mathrm{set}$} in der Abbildung bedeutet,
+        dass der Automat $M$ über $f$ an entsprechender Position und zum entsprechenden Zeitpunkt
+        einen $\mathrm{set}(q)$-Befehl an $A$ übermittelt (das konkret gewählte $q$ ist für dieses Beispiel egal).
+        Ein \enquote{$\mathrm{set}'$} bedeutet, dass ein toter Zustand $q$ aus $P$ gesetzt wird.
+        Die sichtbare Startzustandszeit $st_{\mathrm{set}(q)}(1, 6)$ ist in der Abbildung $\infty$ für alle $q$,
+        während $st_{\mathrm{set}(q)}(2, 5) = 1$ gilt für einen entsprechenden Zustand $q$.
+        Die fünf- und sechseckigen Zustände (in grün) reflekterien die sichtbare Startkonfiguration aus
+        Sicht des viereckigen Zustandes (blau gefärbt, in der Abbildung $t = 4$ und $i = 3$).
+        Die Sechsecke stellen dabei die von $c(t,i)_j$ eingefügten Rauten dar.
+        Der viereckige Zustand reflektiert einen Zustand des simulierten Automaten für einen Zeitpunkt,
+        zu dem die so eingefügten Rauten allerdings noch keinen Einfluss nehmen konnten.
+        Dieser Zeitpunkt kann also nur zwischen $0$ und $2$ liegen. Tatsächlich kann die Konstruktion
+        nur einen Schritt simulieren, da der von $(t, i)$ sichtbare Startzustand für die Zelle $2$ erst zum Zeitpunkt $3$ erfolgt.
+        Das eingezeichnete, rechts-unendliche Intervall kennzeichnet die von $(t, i)$ aus sichtbaren aktiven Zellen.
+        Da \enquote{$\mathrm{set}'$} bei $t = 3$ und $i = 5$ von $(t, i)$ aus nicht sichtbar ist,
+        spielt der gesetzte Zustand aus $P$ an dieser Stelle keine Rolle.
+        
+    \end{figure}
     
     Definiere die von $(t, i)$ aus sichtbare Startkonfiguration $c_{M, f, \#}(t, i)_j := c(t, i)$
     für $\# \in Q_C$, $t \in \Nz$ und $p \in \Z$ wie folgt:
@@ -161,13 +191,15 @@
     \[
         A(t, i) := \finset{ \mathrm{dL}(t, i), ..., \mathrm{dR}(t, i)}
     \]
+    
+    \cref{fig:SichtbareStartkonfiguration} veranschaulicht die eingeführten Definitionen.
 \end{definition}
 
 \section{Korrektheit und Eigenschaften}
 
 \begin{satz}[Korrektheit der erweiterten Nakamura-Konstruktion]
     Es seien $M, C \in \CA$, $f$ und $P$ wie in \cref{erweiterteNakamuraKonstruktion} und eine Konfiguration $c_M: \Z \to Q_M$ gegeben.
-    Sei $c$ die Auffassung von $c_M$ als Konfiguration von $A := A(M, f, C, P)$.
+    Sei $c$ die Auf"|fassung von $c_M$ als Konfiguration von $A := A(M, f, C, P)$.
     
     Es gelten folgende Aussagen für $t \in \Nz$, $i \in \Z$:
     
@@ -201,13 +233,22 @@
     \end{enumerate}
 \end{satz}
 \begin{proof}
-    
+    \begin{enumerate}
+        \item Offensichtlich.
+        \item Kann induktiv leicht gezeigt werden.
+            Beim Rücksetzen durch $\mathrm{set}(q)$ werden benachbarte Zellen ebenfalls auf ihren Startzustand zurückgesetzt, um diese Invariante zu erhalten.
+        \item
+            In dieser Arbeit wird aus Zeitgründen auf einen formalen Beweis dieser Aussage verzichtet.
+            Die Komplexität der Definition dar Konstruktion zieht sehr viele Fallunterscheidungen nach sich,
+            die ohne geschickte Beweisführung nicht mehr nachvollziehbar sind.
+            Der Leser überzeuge sich anhand von Beispielen von der Richtigkeit dieser Aussage.
+    \end{enumerate}
 \end{proof}
 
 \begin{satz}[Zeitbedarf der erweiterten Nakamura-Konstruktion in einfachen Fällen]
     \label{timeNakamuraConstruction}
     Es seien $M, C \in \CA$, $f$ und $P$ wie in \cref{erweiterteNakamuraKonstruktion} und eine Konfiguration $c_M: \Z \to Q_M$ gegeben.
-    Sei außerdem $c$ die Auffassung von $c_M$ als Konfiguration von $A := A(M, f, C, P)$.
+    Sei außerdem $c$ die Auf"|fassung von $c_M$ als Konfiguration von $A := A(M, f, C, P)$.
     
     Für $t \in \Nz$, $i \in \Z$ und $q := (\Delta_{A}^t(c)_i)_q$ setze:
     \[
@@ -254,3 +295,11 @@
             \]
      \end{enumerate}
 \end{satz}
+\begin{proof}
+    \begin{enumerate}
+        \item
+        \item
+        \item 
+        
+    \end{enumerate}
+\end{proof}

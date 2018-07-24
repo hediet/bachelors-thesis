@@ -237,7 +237,7 @@ Es werden nun verschiedene Funktoren definiert, über die $t$- oder $F$-haltende
 
 
 \begin{definition}[$\mathrm{time}$-, $\mathrm{\CART}$-, $\mathrm{\CALT}$- und $\mathrm{Mid}$-\ECA-Funktoren]
-
+    \label{def:ZeitFunktoren}
     Sei $F \subseteq {\Nz}^{\Nz}$ eine Menge von Funktionen. Definiere:
     \[
         \mathrm{time}(F)(M \subseteq \ECA) := \set{ C \in \CAF(M) }{ \cworsttime_C \in F } \; \union \; \set{ C \in \CAT(M) }{ t_C \in F }
@@ -252,6 +252,17 @@ Es werden nun verschiedene Funktoren definiert, über die $t$- oder $F$-haltende
     \end{itemize}   
 \end{definition}
 
+Realzeit-Zellularautomaten werden über $t$-haltende Automaten definiert, da ein
+$F$-haltender Automat bei einem Wort $w$ als Eingabe offensichtlich nicht in Zeit $|w|-1$ halten kann -
+die erste Zelle sieht zu diesem Zeitpunkt noch nicht das Ende des Wortes.
+$t$-haltende Automaten hingegen können bestimmte Eigenschaften eines Wortes $w$ in Zeit $|w|-1$ erkennen
+und erkennen diese Eigenschaft damit gleichzeitig auch für alle Präfixe.
+
+Linearzeit-Zellularautomaten werden über $F$-haltende Automaten definiert,
+da in der Menge $O(n)$ unberechenbare Funktionen enthalten sind.
+$F$-haltende Automaten müssen selbstständig ihr Berechnungsende angeben, sodass
+unberechenbare Zeiteinschränkungen nicht problematisch werden.
+Diese Thematik wird in \cref{sec:Vergleich_t_haltend_F_haltend} weiter untersucht.
 
 \begin{definition}[$\LOCA$- und $\ROCA$-\ECA-Funktoren]
     Der $\LOCA$ \acs{bzw.} $\ROCA$ Funktor wählt diejenigen links- \acs{bzw.} rechts-erkennenden Automaten aus, deren Zustandsübergangsfunktion links- \acs{bzw.} rechts-unabhängig ist.
@@ -335,7 +346,7 @@ sind $t$-haltende Automaten trotzdem nicht weniger mächtig als $F$-haltende, wi
     wären semientscheidbare Sprechen stets entscheidbar, da sich Turingmaschinen auf Zellularautomaten reduzieren lassen und umgekehrt.
 \end{remark}
 
-Unter bestimmten Annahmen an die Funktion $t$ zur Zeitauswahl können allerdings $t$-haltende Automaten auch zu $F$-haltenden Automaten umgebaut werden.
+Unter bestimmten Annahmen an die Funktion $t$ zur Zeitauswahl können allerdings $t$-haltende Automaten auch zu $F$-haltenden Automaten umgebaut werden. Die Funktion $t(n) := n - 1$ aus \cref{def:ZeitFunktoren} erfüllt diese Annahmen nicht, wohl aber die Funktion $t(n) := n$.
 
 \begin{satz}[$F$-haltende Automaten sind unter Annahmen mindestens so mächtig wie $t$-haltende]
     Sei $C$ ein $t$-haltender Zellularautomat.
@@ -462,9 +473,9 @@ Es wird zunächst gezeigt, dass der Rand ohne Beschränkung der Allgemeinheit pa
 \end{proof}
 
 Für Linearzeit-Zellularautomaten kann der Rand sogar ohne Beschränkung der Allgemeinheit tot gewählt werden.
-Da ein toter Rand einen Speicherverbrauch nach sich zieht, der nur linear von der Wortlänge abhängt, folgt aus den Platzhierarchie-Sätzen über Turingmaschinen,
+Da ein toter Rand einen Speicherverbrauch nach sich zieht, der nur linear von der Wortlänge abhängt, folgt aus den Platzhierarchie-Sätzen für Turingmaschinen,
 dass der Rand für allgemeine Zellularautomaten nicht tot gewählt werden kann:
-Schließlich können Zellularautomaten von Turingmaschinen mit polynomiellen Mehraufwand für Zeit und Platz simuliert werden.
+Schließlich können sich Zellularautomaten und Turingmaschinen mit polynomiellen Mehraufwand für Zeit und Platz gegenseitig simulieren.
 
 \begin{satz}[Wahl eines toten Randes bei Linearzeit-Zellularautomaten]
     \label{satzRauteTot}
@@ -563,7 +574,8 @@ Schließlich können Zellularautomaten von Turingmaschinen mit polynomiellen Meh
     \end{comment}
 \end{proof}
 
-Der folgende praktische Satz besagt, dass es auf endlich viele Ausnahmen nicht ankommt.
+Der folgende praktische Satz besagt, dass es auf endlich viele Ausnahmen in Sprachen nicht ankommt.
+Insbesondere kann damit der Fall ignoriert werden, dass Sprachen das leere Wort enhalten können.
 \begin{satz}
     \label{endlichVieleAusnahmen}
     Sei $C$ ein Zellularautomat,
