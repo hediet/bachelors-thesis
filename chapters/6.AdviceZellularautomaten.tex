@@ -5,122 +5,172 @@ Dieses Kapitel beschäftigt sich damit, inwiefern die Mächtigkeit bestimmter Kl
 wenn der Automat zusätzlich zum Eingabewort ein vom Eingabewort abhängiges Unterstützungswort (im Folgenden Advice genannt) erhält.
 Insbesondere wird gezeigt, dass bestimmte solcher Klassen unter Zuhilfenahme ausgewählter Advices abgeschlossen sind.
 Solche Advices heißen dann verträglich bezüglich dieser Klasse.
-Diese Abschlusseigenschaft ist nützlich, um die Konstruktion einiger Realzeit-Zellularautomaten zu vereinfachen.
+Diese Abschlusseigenschaft ist nützlich, um die Konstruktion einiger Echtzeit-Zellularautomaten zu vereinfachen und um besser verstehen zu können,
+wie mächtig Echtzeit-Zellularautomaten sind.
 
 \section{Definition}
 
-\begin{definition}
-    Ein $\Sigma$-$\Gamma$-Advice (Hinweis) $\mathcal{A}$ ist eine Abbildung
-        $\mathcal{A}: \Sigma^* \to \Pot(\Gamma^*)$ mit $\forall w \in \Sigma^*: \mathcal{A}(w) \subseteq \Sigma^{|w|}$.
-    Wenn $\forall w \in \Sigma^*: |\mathcal{A}(w)| = 1$, kann $\mathcal{A}$ auch
-    als Abbildung $\mathcal{A} : \Sigma^* \to \Gamma^*$ aufgefasst werden.
-\end{definition}
+Es wird zunächst definiert, was ein Advice ist.
 
 \begin{definition}
-    Definiere injektive Funktion $\comp: (\Sigma \times \Gamma)^* \to (\Sigma^* \times \Gamma^*)$
+    Ein \emph{$\Sigma$-$\Gamma$-Advice} (Hinweis) $\advA$ ist eine Abbildung
+        $\advA: \Sigma^* \to \Pot(\Gamma^*)$ mit $\forall w \in \Sigma^*: \advA(w) \subseteq \Sigma^{|w|}$.
+    
+    Wenn $\forall w \in \Sigma^*: |\advA(w)| = 1$, kann $\advA$ auch
+    als Abbildung $\advA : \Sigma^* \to \Gamma^*$ aufgefasst werden.
+    $\advA$ heißt dann \emph{deterministisch}.
+
+    Ein Hinweis kann eine ganze Menge von Unterstützungswörtern bereitstellen.
+    In diesem Fall wird ein Wort akzeptiert,
+    wenn der Automat das Eingabewort mit Unterstützung irgendeines der bereitgestellten Wörter akzeptiert.
+\end{definition}
+
+Um zu beschreiben, wann ein Automat mithilfe eines Advices ein Wort akzeptiert oder ablehnt,
+müssen zunächst die Funktionen $\splitw$ und $\joinw$ definiert werden.
+
+\begin{definition}
+    Definiere injektive Funktion $\splitw: (\Sigma \times \Gamma)^* \to (\Sigma^* \times \Gamma^*)$
     um ein Wort über zwei Alphabete in zwei Wörter über je ein Alphabet zu zerlegen:
     \[
-        \forall v \in \Sigma^*, w \in \Gamma^{|v|}: \comp(\Spvek{v_1; w_1}...\Spvek{v_{|v|}; w_{|v|}}) := \Spvek{v; w}
+        \forall v \in \Sigma^*, w \in \Gamma^{|v|}: \splitw(\Spvek{v_1; w_1}...\Spvek{v_{|v|}; w_{|v|}}) := \Spvek{v; w}
     \]
     
-    Definiere $\comb: \comp((\Sigma \times \Gamma)^*) \to (\Sigma \times \Gamma)^*$,
+    Definiere $\joinw: \splitw((\Sigma \times \Gamma)^*) \to (\Sigma \times \Gamma)^*$,
     um zwei Wörter über je ein Alphabet zu einem Wort über zwei Alphabete zusammenzufügen:
     \[
-        \comb(w) := \comp^{-1}(w)
+        \joinw(w) := \splitw^{-1}(w)
     \]
-    
 \end{definition}
 
 \begin{exmp}
     \[
-        \comp(\Spvek{\chr{1}; \chr{a}}\Spvek{\chr{2}; \chr{b}}\Spvek{\chr{3}; \chr{c}}) = \Spvek{\chr{123}; \chr{abc}}
+        \splitw(\Spvek{\chr{1}; \chr{a}}\Spvek{\chr{2}; \chr{b}}\Spvek{\chr{3}; \chr{c}}) = \Spvek{\chr{123}; \chr{abc}}
     \]
     
     \[
-        \comb(\Spvek{\chr{123}; \chr{abc}}) = \Spvek{\chr{1}; \chr{a}}\Spvek{\chr{2}; \chr{b}}\Spvek{\chr{3}; \chr{c}}
+        \joinw(\Spvek{\chr{123}; \chr{abc}}) = \Spvek{\chr{1}; \chr{a}}\Spvek{\chr{2}; \chr{b}}\Spvek{\chr{3}; \chr{c}}
     \]        
 \end{exmp}
 
+Jetzt kann definiert werden, welche Auswirkung ein Advice auf einen Zellularautomaten hat.
+
 \begin{definition}
-    Es sei ein Advice $\mathcal{A}$ und ein Zellularautomat $C \in \ECA$ gegeben. Mit Unterstützung des Advices $\mathcal{A}$ kann $C$ nun folgende Sprache erkennen:
+    Es sei ein Advice $\advA$ und ein Zellularautomat $C \in \ECA$ gegeben.
+    Mit Unterstützung des Advices $\advA$ kann $C$ nun folgende Sprache erkennen:
     \[
-         L_{\mathcal{A}, C} := \set{ w \in \Sigma^*}{\exists v \in \mathcal{A}(w): \comb(\Spvek{w; v}) \in L(C)}
+         L_{\advA, C} := \set{ w \in \Sigma^*}{\exists v \in \advA(w): \joinw(\Spvek{w; v}) \in L(C)}
     \]
     
-    Für $M(\mathcal{A}) := \set{ \comb(\Spvek{ w; v}) }
-        { w \in \Sigma^* \land v \in \mathcal{A}(w) }$
-    kann $L_{\mathcal{A}, C}$ auch wie folgt aufgefasst werden:
+    Für $M(\advA) := \set{ \joinw(\Spvek{ w; v}) }
+        { w \in \Sigma^* \land v \in \advA(w) }$
+    kann $L_{\advA, C}$ auch wie folgt aufgefasst werden:
     \[
-        L_{\mathcal{A}, C} = \comp(
-            L(C) \cap M(\mathcal{A})
+        L_{\advA, C} = \splitw(
+            L(C) \cap M(\advA)
         )_1
     \]
     
-    Folgender $\ECA$-Funktor stellt einer Klasse von Zellularautomaten ein gegebenes Advice zur Verfügung:
+    Folgender $\ECA$-Funktor stellt einer Klasse von Zellularautomaten einen gegebenen Advice zur Verfügung:
     \[
-        \orakel(\mathcal{A})(M \subseteq \ECA) := \set{ (Q_C, \delta_C, \Sigma, \#_C, L_{\mathcal{A}, C}, (S_C, C))} { C \in M, \; \Sigma_C = \Sigma \times \Gamma }
+        \orakel(\advA)(M \subseteq \ECA) :=
+            \set{ (Q_C, \delta_C, \Sigma, \#_C, L_{\advA, C}, (S_C, C))} { C \in M, \; \Sigma_C = \Sigma \times \Gamma }
+    \]
+\end{definition}
+
+Eine Fragestellung, die sich bei solchen Advices zwingend auftut, ist, ob ein gegebener Advice eine Klasse von Zellularautomaten echt mächtiger macht.
+Die folgende Definition führt dafür einen entsprechenden Begriff ein.
+
+\begin{definition}[$\advA$ ist $M$-verträglich]
+    Sei $M \subseteq \ECA$ eine Menge von Zellularautomaten und $\advA$ ein Advice.
+    $\advA$ heißt $M$-verträglich, falls gilt:
+    \[
+        \mathcal{L}(M) = \mathcal{L}(M^\advA)
     \]
 \end{definition}
 
 \section{Ergebnisse}
 
-\begin{satz}
-    Seien $\mathcal{A}_1$ und $\mathcal{A}_2$ zwei Advices.
-    Definiere $(\mathcal{A}_1 \cup \mathcal{A}_2)(w) := \mathcal{A}_1(w) \cup \mathcal{A}_2(w)$ und 
-    $(\mathcal{A}_1 \cap \mathcal{A}_2)(w) := \mathcal{A}_1(w) \cap \mathcal{A}_2(w)$.
-    
-    Sind $\mathcal{A}_1$ und $\mathcal{A}_2$ $\CAM{\CART, \CALeft}$-verträglich, so sind
-    auch $\mathcal{A}_1 \cup \mathcal{A}_2$ und $\mathcal{A}_1 \cap \mathcal{A}_2$
-    $\CAM{\CART, \CALeft}$-verträglich.
-\end{satz}
+Offensichtlich verringert ein Advice die Mächtigkeit \enquote{wohlgeformter} Klassen von Zellularautomaten nicht, wie im folgenden Satz formalisiert. Der Satz gilt nicht für beliebige Klassen, da sich zum Beispiel das Alphabet ändert und in der Konstruktion entsprechend gewählt werden muss. Mithilfe von \cref{lemmaIgnoriereAdvice} muss zum Zeigen der Verträglichkeit eines Advices immer nur die Inklusion \enquote{$\supseteq$} beachtet werden.
+
+\begin{lemma}
+    \label{lemmaIgnoriereAdvice}
+    Sei ein Advice $\advA$ und eine Menge
+    $F \subseteq {\Nz}^{\Nz}$ von Funktionen gegeben.
+    Dann gilt: $\mathcal{L}(\CAM{ \mathrm{time}(F), \CALeft }) \subseteq  \mathcal{L}(\CAM{ \mathrm{time}(F), \CALeft, \orakel(\advA)})$.
+\end{lemma}
 \begin{proof}
-    Es werden entsprechend zwei Ausführungen simuliert - je eine auf einem 
-    
+    Der Advice kann ignoriert werden, indem $\Sigma \times \Gamma$ auf $\Sigma$ reduziert wird.
 \end{proof}
+
+Der nächste Satz zeigt ein Advice, das vermutlich nicht Echtzeit-Zellularautomaten-verträglich ist.
 
 \begin{satz}
     Sei $(\Sigma \cup \finset{\Box}) ^2 \subseteq \Gamma, \Box \not\in \Sigma$.
-    Definiere den \enquote{Komprimierungs}-Advice $\mathcal{A}_K$:
+    Definiere den Komprimierungs-Advice $\advA_K$:
     \[
-        \mathcal{A}_K(w) := 
+        \advA_K(w) := 
                   \Spvek{w_1; w_2} \Spvek{w_3; w_4} ... \Spvek{w_{|w-1|}; w_{|w|}}
                         \; \Spvek{\Box; \Box}^\frac{|w|}{2}
     \]
     Falls $|w|$ ungerade, setze $w := w\Box$.
-    Unter dem Advice $\mathcal{A}_K$ fällt Realzeit mit Linearzeit zusammen:
+    Unter dem Advice $\advA_K$ fällt Echtzeit mit Linearzeit zusammen:
     \[
-        \CAL{\CART, \CALeft, \orakel({\mathcal{A}})} = \CAL{\CALT, \CALeft}
+        \CAL{\CART, \CALeft, \orakel({\advA})} = \CAL{\CALT, \CALeft}
     \]
 \end{satz}
 \begin{proof}
-    Die Inklusion \enquote{$\subseteq$} ist klar.
+    Die Inklusion \enquote{$\subseteq$} ist klar: Offensichtlich ist $\advA_K$ $\CAL{\CALT, \CALeft}$-verträglich.
     Sei $L \in \CAL{\CALT, \CALeft}$.
     Nach \cref{linSpeedup} existiert ein Zellularautomat $C$, der $L$ in $2n$ Schritten erkennt.
     Der Automat $C' := S_2(C)$ aus \cref{factorSpeedupConstruction}
     erkennt $L$ dann in $n$ Schritten auf der komprimierten Konfiguration $S_2([w])$.
-    Da die komprimierte Konfiguration durch das Advice bereitgestellt wird, kann $L$ mithilfe des Advices in Echtzeit erkannt werden.
+    Da die komprimierte Konfiguration durch den Advice bereitgestellt wird, kann $L$ mithilfe des Advices in Echtzeit erkannt werden.
 \end{proof}
 
+Der Nicht-Determinismus wird in diesem Kapitel nicht wirklich ausgenutzt - die meisten hier vorgestellten Advices sind deterministisch.
+Trotzdem soll der folgende Zusammenhang nicht vorenthalten werden.
+
+\begin{satz}
+    Seien $\advA_1$ und $\advA_2$ zwei Advices.
+    Definiere $(\advA_1 \cup \advA_2)(w) := \advA_1(w) \cup \advA_2(w)$ und 
+    $(\advA_1 \cap \advA_2)(w) := \advA_1(w) \cap \advA_2(w)$.
+    
+    Sind $\advA_1$ und $\advA_2$ $\CAM{\CART, \CALeft}$-verträglich, so sind
+    auch $\advA_1 \cup \advA_2$ und $\advA_1 \cap \advA_2$
+    $\CAM{\CART, \CALeft}$-verträglich.
+\end{satz}
+\begin{proof}
+    Die Inklusion \enquote{$\subseteq$} der Verträglichkeit ist mit \cref{lemmaIgnoriereAdvice} klar.
+    Wähle $\mathbin{\oplus} \in \finset{ \cup, \cap }$.
+    Sei $L \in \CAL{\CART, \CALeft, \advA_1 \mathbin{\oplus} \advA_2}$.
+    Es existieren nun die Echtzeit-Zellularautomaten $C$ mit $L_{\advA_1 \mathbin{\oplus} \advA_2, C} = L$, $C_1$ mit $L_{C_1} = L_{\advA_1, C}$ und $C_2$ mit $L_{C_2} = L_{\advA_2, C}$.
+    
+    Offensichtlich gilt für beide Wahlen von $\mathbin{\oplus}$ dann
+    $L_{\advA_1 \mathbin{\oplus} \advA_2, C} = L_{\advA_1, C} \mathbin{\oplus} L_{\advA_2, C} = L_{C_1} \mathbin{\oplus} L_{C_2}$.
+    Da Echtzeit-Zellularautomaten unter Vereinigung und Schnitt abgeschlossen sind, folgt die Behauptung.
+\end{proof}
+
+Der Satz lässt sich auf eine endliche Menge von Vereinigungen \acs{bzw.} Schnitten fortführen.
 
 \begin{comment}
     \begin{satz}
         Sei $(\Sigma \cup \finset{\Box}) ^2 \subseteq \Gamma, \Box \not\in \Sigma$.
         
         \begin{enumerate}
-            \item  $\mathcal{A}_1(w) := \Gamma^{|w|}$
+            \item  $\advA_1(w) := \Gamma^{|w|}$
         \end{enumerate}
         
         Es gilt jeweils:
         \[
-            \CAL{\CART, \orakel({\mathcal{A}_i})} = \CAL{\CALT, \orakel({\mathcal{A}_i})}
+            \CAL{\CART, \orakel({\advA_i})} = \CAL{\CALT, \orakel({\advA_i})}
         \]
         
     \end{satz}
 
     \begin{definition}
-        Seien $\mathcal{A}_1$ und $\mathcal{A}_2$ zwei Orakel, $M \subseteq \ECA$ (falls nicht angegeben, $M := \ECA^\CART$).
+        Seien $\advA_1$ und $\advA_2$ zwei Orakel, $M \subseteq \ECA$ (falls nicht angegeben, $M := \ECA^\CART$).
         \[
-            \mathcal{A}_1 \leq_M \mathcal{A}_2 \; :\Leftrightarrow \; \mathcal{L}(M^{\orakel(\mathcal{A}_1)}) \subseteq \mathcal{L}(M^{\orakel(\mathcal{A}_2)})
+            \advA_1 \leq_M \advA_2 \; :\Leftrightarrow \; \mathcal{L}(M^{\orakel(\advA_1)}) \subseteq \mathcal{L}(M^{\orakel(\advA_2)})
         \]        
     \end{definition}
     
@@ -130,53 +180,36 @@ Diese Abschlusseigenschaft ist nützlich, um die Konstruktion einiger Realzeit-Z
     
 \end{comment}
 
+Die folgende Überlegung zeigt, dass die Fragestellung, ob Linearzeit mit Echtzeit zusammenfällt,
+auch für Advice-Zellularautomaten interessant ist.
 \begin{satz}
-    Sei $\mathcal{A}$ ein Advice mit $\CAL{\CART, \CALeft, \orakel({\mathcal{A}})} \neq \CAL{\CALT, \CALeft, \orakel({\mathcal{A}})}$.
+    Sei $\advA$ ein Advice mit $\CAL{\CART, \CALeft, \orakel({\advA})} \neq \CAL{\CALT, \CALeft, \orakel({\advA})}$.
     Dann $\CAL{\CART, \CALeft} \neq \CAL{\CALT, \CALeft}$.
 \end{satz}
 \begin{proof}
-    Angenommen $\CAL{\CART, \CALeft, \orakel({\mathcal{A}})} \neq \CAL{\CALT, \CALeft, \orakel({\mathcal{A}})}$.
+    Angenommen $\CAL{\CART, \CALeft, \orakel({\advA})} \neq \CAL{\CALT, \CALeft, \orakel({\advA})}$.
     
-    Wegen $\CAL{\CART, \CALeft, \orakel({\mathcal{A}})} \subseteq \CAL{\CALT, \CALeft, \orakel({\mathcal{A}})}$
-    gibt es laut Annahme ein $L \in \CAL{\CALT, \CALeft, \orakel({\mathcal{A}})} \setminus \CAL{\CART, \CALeft, \orakel({\mathcal{A}})}$.
+    Wegen $\CAL{\CART, \CALeft, \orakel({\advA})} \subseteq \CAL{\CALT, \CALeft, \orakel({\advA})}$
+    gibt es laut Annahme ein $L \in \CAL{\CALT, \CALeft, \orakel({\advA})} \setminus \CAL{\CART, \CALeft, \orakel({\advA})}$.
     Dann gibt es einen Automaten $C \in \CAM{\CALT, \CALeft}$ mit
     
     \[
-        L = L_{\mathcal{A}, C} = \set{ w \in \Sigma^*}{\exists v \in \mathcal{A}(w): \comb(\Spvek{w; v}) \in L(C)}
+        L = L_{\advA, C} = \set{ w \in \Sigma^*}{\exists v \in \advA(w): \joinw(\Spvek{w; v}) \in L(C)}
     \]
     
     Angenommen, es gäbe einen Automaten $C' \in \CAM{\CART, \CALeft}$ mit $L_{C'} = L_C$.
-    Dann $L_{\mathcal{A}, C} = \set{ w \in \Sigma^*}{\exists v \in \mathcal{A}(w): \comb(\Spvek{w; v}) \in L(C')} = L_{\mathcal{A}, C'}$ und damit
-    $L \in \CAL{\CART, \CALeft, \orakel({\mathcal{A}})}$.
+    Dann $L_{\advA, C} = \set{ w \in \Sigma^*}{\exists v \in \advA(w): \joinw(\Spvek{w; v}) \in L(C')} = L_{\advA, C'}$ und damit
+    $L \in \CAL{\CART, \CALeft, \orakel({\advA})}$.
     Widerspruch zur Annahme! Also $L(C) \in \CAL{\CALT, \CALeft} \setminus \CAL{\CART, \CALeft}$.
 \end{proof}
 
 
 \section{\texorpdfstring{$\CAM{\CART, \CALeft}$}{CA\^RT-L}-verträgliche Advices}
 
-\begin{definition}[$\mathcal{A}$ ist $M$-verträglich]
-    Sei $M \subseteq \ECA$ eine Menge von Zellularautomaten und $\mathcal{A}$ ein Advice.
-    $\mathcal{A}$ heißt $M$-verträglich, falls gilt:
-    \[
-        \mathcal{L}(M) = \mathcal{L}(M^\mathcal{A})
-    \]
-\end{definition}
-
-\begin{satz}
-    \label{lemmaIgnoriereAdvice}
-    Sei ein Advice $\mathcal{A}$ und eine Menge 
-    $F \subseteq {\Nz}^{\Nz}$ von Funktionen gegeben.
-    Dann gilt: $\mathcal{L}(\CAM{ \mathrm{time}(F), \CALeft }) \subseteq  \mathcal{L}(\CAM{ \mathrm{time}(F), \CALeft, \orakel(\mathcal{A})})$.
-\end{satz}
-\begin{proof}
-    Der Advice kann ignoriert werden, indem $\Sigma \times \Gamma$ auf $\Sigma$ reduziert wird.
-\end{proof}
-
-
-
-
-
-
+In diesem Kapitel werden eine Reihe von Advices vorgestellt, die sich als Echtzeit-verträglich herausgestellt haben.
+Die meisten hier vorgestellten Advices verwenden $\B$ als Advice-Alphabet
+und markieren damit ausgewählte Zeichen des Eingabeworts.
+Einfache Markierungen werden durch die im folgenden definierte Funktion erreicht.
 
 \begin{definition}
     Seien $k, n \in \Nz$ zwei Zahlen. Die Funktion $\mathrm{ones}$ gibt ein Wort der Länge $n$ zurück, sodass die $k$ ersten Zeichen Einsen sind.
@@ -194,6 +227,8 @@ Diese Abschlusseigenschaft ist nützlich, um die Konstruktion einiger Realzeit-Z
     \]        
 \end{exmp}
 
+Eine Reihe einfacher Advices stützt sich auf Berechnungen in endlich vielen Schritten.
+Dazu muss zunächst definiert werden, was es heißt, wenn ein Zellularautomat eine Funktion berechnet.
 \begin{definition}
     Sei $\Gamma$ ein endliches Alphabet.
     Ein $F$-haltender Zellularautomat $C \in \ECA^\CAF$ berechnet eine Funktion $f: \Sigma^* \to \Gamma^*$, wenn
@@ -204,41 +239,42 @@ Diese Abschlusseigenschaft ist nützlich, um die Konstruktion einiger Realzeit-Z
     gilt.
 \end{definition}
 
+Der folgende Satz zeigt gleich die Echtzeit-Verträglichkeit einer ganzen Klasse von Advices.
 \begin{satz}
     \label{lemmaEinfachesOrakel}
-    Wenn $\mathcal{A}: \Sigma^* \to \Gamma^*$ eine Funktion ist mit $\forall w \in \Sigma^*: |f(w)| = |w|$,
+    Wenn $\advA: \Sigma^* \to \Gamma^*$ eine Funktion ist mit $\forall w \in \Sigma^*: |f(w)| = |w|$,
     die von einem $F$-haltenden Zellularautomaten $B$ mit
     $\ctime_C(\cdot) = k$ und $k \in \Nz$ berechnet wird,
-    dann ist $\mathcal{A}$ $\CAM{\CART, \CALeft}$-verträglich.
+    dann ist $\advA$ $\CAM{\CART, \CALeft}$-verträglich.
 \end{satz}
 \begin{proof}
     Die Inklusion \enquote{$\subseteq$} der $\CAM{\CART, \CALeft}$-Verträglichkeit folgt durch ~\cref{lemmaIgnoriereAdvice}.
     
-    Sei nun $L \in \CAL{\CART, \CALeft, \orakel({\mathcal{A}})}$, $\bar{C} \in \CAM{\CART, \CALeft, \orakel({\mathcal{A}})}$ sodass $L_{\bar{C}} = L$.
-    Sei $C := C_{\bar{C}}$ der zugrundeliegende $\Sigma \times \Gamma$ erkennende Zellularautomat,
-    der mithilfe des Advices $\mathcal{A}$ die Sprache $L$ in Realzeit erkennt.
+    Sei also $L \in \CAL{\CART, \CALeft, \orakel({\advA})}$ und $C$
+    der Echtzeit-Zellularautomat mit $L_{C, \advA} = L$.
     
     Es gibt einen Zellularautomaten $I$, der in $k$ Schritten die Identität berechnet. Folglich gibt es einen Zellularautomaten $A$, der die Funktion $f: \Sigma^* \to (\Sigma \times \Gamma)^*$ mit
-    $f(w) = \comb(\Spvek{w; f(w)})$ in $k$ Schritten berechnet, in dem $I$ und $B$ für $k$ Schritte parallel ausgeführt werden.
+    $f(w) = \joinw(\Spvek{w; f(w)})$ in $k$ Schritten berechnet, in dem $I$ und $B$ für $k$ Schritte parallel ausgeführt werden.
     
-    Konstruiere den Automaten $C'$ durch Hintereinanderausführung der Automaten $A$ und $C$.
+    Konstruiere den Automaten $C'$ durch Hintereinanderausführung der Automaten $A$ und $C$ - dies ist möglich, da $k$ fest ist und nicht von der Eingabe abhängt.
     Für ein Wort $w \in \Sigma^*$ braucht der Automat $C'$ $k + |w|$ viele Schritte und es gilt $L_{C'} = L$.
     
-    Nach \cref{satzRealzeitSpeedup} gibt es nun einen Automaten $C'' \in \CAM{\CART, \CALeft}$
+    Nach \cref{satzEchtzeitSpeedup} gibt es nun einen Automaten $C'' \in \CAM{\CART, \CALeft}$
     mit $L_{C''} = L_{C'}$.
     Also $L \in \CAL{\CART, \CALeft}$.
 \end{proof}
 
+Mit \cref{lemmaEinfachesOrakel} kann nun leicht die Echtzeit-Verträglichkeit einiger konkreter Advices gezeigt werden.
 \begin{corollary}
     Sei $\Gamma = \B$, $k \in \Nz$.
     Folgende Advices sind $\CAM{\CART, \CALeft}$-verträglich:
     \begin{enumerate}
-        \item $\mathcal{A}_1(w) := \mathrm{ones}(k, |w|)$ 
-        \item $\mathcal{A}_2(w) := \mathrm{ones}(k, |w|)^{\mathrm{Rev}}$
+        \item $\advA_1(w) := \mathrm{ones}(k, |w|)$ 
+        \item $\advA_2(w) := \mathrm{ones}(k, |w|)^{\mathrm{Rev}}$
     \end{enumerate}
 \end{corollary}
 \begin{proof}
-    Die Funktionen $\mathcal{A}_i$ können offensichtlich
+    Die Funktionen $\advA_i$ können offensichtlich
     von einem $F$-haltenden Zellularautomat in $k$ Schritten berechnet werden.
     Mit ~\cref{lemmaEinfachesOrakel} folgt die Behauptung.
 \end{proof}
@@ -258,14 +294,14 @@ Diese Abschlusseigenschaft ist nützlich, um die Konstruktion einiger Realzeit-Z
 
 \begin{comment}
     \begin{satz}
-        Für $\mathcal{A}(w) := a_1...a_{|w|} \in \B^*$ mit \[
+        Für $\advA(w) := a_1...a_{|w|} \in \B^*$ mit \[
            a_i :=
            \begin{cases}
              \chr{1} & \text{falls } \exists j \in \Nz: i = 2^j \\
              \chr{0} & \text{sonst}
            \end{cases}
         \]
-        gilt $\CAL{\CART, \orakel({\mathcal{A}})} = \CAL{\CART}$.
+        gilt $\CAL{\CART, \orakel({\advA})} = \CAL{\CART}$.
     \end{satz}
     
     
@@ -491,64 +527,70 @@ Diese Abschlusseigenschaft ist nützlich, um die Konstruktion einiger Realzeit-Z
         \]        
         
     \end{proof}
-
 \end{comment}
 
+
+Es hat sich herausgestellt, dass die im folgenden definierte Eigenschaft auf viele Advices zutrifft.
+Wird sie als Annahme gefordert, können ohne Beschränkung der Allgemeinheit weitere Eigenschaften angenommen werden - 
+dies zeigt \cref{wrtRealtimeLengthIdealAdvice}.
+
 \begin{definition}[Präfixstabil]
-    Ein Advice $\mathcal{A}$ heißt präfixstabil, wenn für alle $w, s \in \Sigma^*$ gilt:
+    Ein Advice $\advA$ heißt präfixstabil, wenn für alle $w, s \in \Sigma^*$ gilt:
     \[
-        \mathcal{A}(w) =
-        \set{ v[1, ..., |w|] } { v \in \mathcal{A}(ws) }
+        \advA(w) =
+        \set{ v[1, ..., |w|] } { v \in \advA(ws) }
     \]
 \end{definition}
 
 \begin{lemma}
     \label{wrtRealtimeLengthIdealAdvice}
     
-    Sei $\mathcal{A}$ ein präfixstabiles Advice, $k \in \N$ und $L \in \CAL{\CART, \CALeft, \orakel({\mathcal{A}})}$.
+    Sei $\advA$ ein präfixstabiler Advice, $k \in \N$ und $L \in \CAL{\CART, \CALeft, \orakel({\advA})}$.
     Dann gilt für $L(k)$ aus \cref{wrtRealtimeLengthIdeal}:
     \[
-        L(k) \in \CAL{\CART, \CALeft, \orakel({\mathcal{A}})}
+        L(k) \in \CAL{\CART, \CALeft, \orakel({\advA})}
     \]
     
     Sei $\mathcal{M}_k$ die Menge alle Sprachen, deren Wortlängen Vielfache von k sind.
     Es gilt dann folgende Implikation:
     \begin{align*}
-        \CAL{\CART, \CALeft, \orakel({\mathcal{A}})} \cap \mathcal{M}_k  & = \CAL{\CART, \CALeft} \cap \mathcal{M}_k \\
+        \CAL{\CART, \CALeft, \orakel({\advA})} \cap \mathcal{M}_k  & = \CAL{\CART, \CALeft} \cap \mathcal{M}_k \\
         \Rightarrow
-        \CAL{\CART, \CALeft, \orakel({\mathcal{A}})} & = \CAL{\CART, \CALeft}
+        \CAL{\CART, \CALeft, \orakel({\advA})} & = \CAL{\CART, \CALeft}
     \end{align*}
 \end{lemma}
 \begin{proof}
     Analog zum Beweis von \cref{wrtRealtimeLengthIdeal}:
-    Da $\mathcal{A}$ präfixstabil ist, können Zeichen am Ende des Wortes gelöscht werden, ohne dass sich
-    das Advice auf dem übrig gebliebenen Teil des Wortes ändert.
+    Da $\advA$ präfixstabil ist, können Zeichen am Ende des Wortes gelöscht werden, ohne dass sich
+    der Advice auf dem übrig gebliebenen Teil des Wortes ändert.
     
-    Ist nun $L \in \CAL{\CART, \CALeft, \orakel({\mathcal{A}})}$,
-    gilt $L(k) \in \CAL{\CART, \CALeft, \orakel({\mathcal{A}})} \cap \mathcal{M}_k$
+    Ist nun $L \in \CAL{\CART, \CALeft, \orakel({\advA})}$,
+    gilt $L(k) \in \CAL{\CART, \CALeft, \orakel({\advA})} \cap \mathcal{M}_k$
     und damit auch
     $L(k) \in \CAL{\CART, \CALeft} \cap \mathcal{M}_k$.
     Mit \cref{wrtRealtimeLengthIdeal} folgt dann $L \in \CAL{\CART, \CALeft}$.
 \end{proof}
 
+\cref{thmAdviceMain} ist eine der zentralen Erkenntnisse dieser Arbeit.
+Es macht eine Aussage über die 
 
 \begin{theorem}
     \label{thmAdviceMain}
     Sei $H = (Q, \delta) \in \CA$ ein Zellularautomat mit $\Sigma \subseteq Q$.
-    Der folgende Advice $\mathcal{A}_H$ ist $\CAM{\CART, \CALeft}$-verträglich:
+    Der folgende Advice $\advA_H$ ist $\CAM{\CART, \CALeft}$-verträglich:
     \[
-        \mathcal{A}_H(w) := v \in Q^{|w|} \text{ mit } v_i := \Delta_A^{i-1}([w])_1 \\
+        \advA_H(w) := v \in Q^{|w|} \text{ mit } v_i := \Delta_A^{i-1}([w])_1 \\
     \]
 \end{theorem}
 \begin{proof}
     Die Inklusion \enquote{$\subseteq$} der $\CAM{\CART, \CALeft}$-Verträglichkeit folgt durch ~\cref{lemmaIgnoriereAdvice}.
-    Sei nun $L \in \CAL{\CART, \CALeft, \orakel({\mathcal{A}_H})}$.
-    Da $\mathcal{A}_H$ präfixstabil ist, kann wegen \cref{wrtRealtimeLengthIdealAdvice} und \cref{endlichVieleAusnahmen}
+    Sei nun $L \in \CAL{\CART, \CALeft, \orakel({\advA_H})}$.
+    Da $\advA_H$ präfixstabil ist, kann wegen \cref{wrtRealtimeLengthIdealAdvice} und \cref{endlichVieleAusnahmen}
     \ac{OBdA.} angenommen werden,
     dass die Wortlängen von $L$ alle Vielfache von $3$ sind und dass $L$ nicht das leere Wort enthält.
 
-    Es existiert also ein Echtzeit-Zellularautomat $C$ mit $L_{\mathcal{A}, C} = L$. Nach \cref{satzRauteTot} kann der Rand von $C$ tot gewählt werden.
-    Sei $w \in \Sigma^*$ mit $|w| \in 3\N$, $c := [w]$, $v := \mathcal{A}_H(w)$ und $c' := [\comb(\Spvek{ w; v})]$.
+    Es existiert also ein Echtzeit-Zellularautomat $C$ mit $L_{\advA, C} = L$. Nach \cref{satzRauteTot} kann der Rand von $C$ tot gewählt werden.
+    Sei $w \in \Sigma^*$ mit $|w| \in 3\N$, $c := [w]$, $v := \advA_H(w)$ und $c' := [\joinw(\Spvek{ w; v})]$.
     Nach \cref{CAgfSpeedup} gibt es einen Automaten $C_1$ und eine Funktion $f_1$, sodass für $i \in \N$ gilt:
     \[
         f_1(\Delta_{C_2}^{2i+1}(c)_i) = (\Delta_C^{3i-3}(c)_1, \Delta_C^{3i-2}(c)_1, \Delta_C^{3i-1}(c)_1)
@@ -600,9 +642,9 @@ Diese Abschlusseigenschaft ist nützlich, um die Konstruktion einiger Realzeit-Z
 
 \begin{corollary}
     Sei $L \in \CAL{\CART, \CALeft}$.
-    Der folgende Advice $\mathcal{A}_L$ ist $\CAM{\CART, \CALeft}$-verträglich:
+    Der folgende Advice $\advA_L$ ist $\CAM{\CART, \CALeft}$-verträglich:
     \[
-        \mathcal{A}_L(w) := v \in \B^{|w|} \text{ mit } v_i :=
+        \advA_L(w) := v \in \B^{|w|} \text{ mit } v_i :=
         \begin{cases}
             1 & \text{ falls } w_{[1...i]} \in L \\
             0 & \text{ sonst }
@@ -625,9 +667,9 @@ Diese Abschlusseigenschaft ist nützlich, um die Konstruktion einiger Realzeit-Z
 
 
 \begin{satz}
-    Der folgende Advice $\mathcal{A}$ ist $\CAM{\CART, \CALeft}$-verträglich:
+    Der folgende Advice $\advA$ ist $\CAM{\CART, \CALeft}$-verträglich:
     \[
-        \mathcal{A}(w) := \mathrm{ones}(2^{\lfloor \log_2{|w|} \rfloor - 1}, |w|) \in \B^*
+        \advA(w) := \mathrm{ones}(2^{\lfloor \log_2{|w|} \rfloor - 1}, |w|) \in \B^*
     \]
 \end{satz}
 \begin{proof}

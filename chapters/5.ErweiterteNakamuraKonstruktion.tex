@@ -84,7 +84,8 @@
     Dies ist offensichtlich nur möglich, wenn
     die Nachbarzellen Informationen zum aktuellen Schritt gespeichert haben.
     
-    Andernfalls, wenn die Nachbarzellen nur Informationen zum letzten Schritt gespeichert haben, greift Fall drei und zu aktualisierende Zelle berechnet den aktuellen Schritt neu.
+    Andernfalls, wenn die Nachbarzellen nur Informationen zum letzten Schritt gespeichert haben,
+    greift Fall drei und die zu aktualisierende Zelle berechnet den aktuellen Schritt neu.
     Dies ist wichtig, falls sich Zellen zurücksetzen.
     
     Im vierten Fall setzt die Zelle die Simulation
@@ -136,6 +137,7 @@
         \end{cases}
     \]
     Offensichtlich gilt $o_1 = o_2$, falls $st_{o_1}(t, i) \neq \infty \land st_{o_2}(t, i) \neq \infty$ für $o_1, o_2 \in \mathrm{Op}$.
+    Setze $st_{\mathrm{set}}(t, i) := \min \set{ st_{\mathrm{set}(q)}(t, i)}{ q \in Q_C }$.
     
     \newcommand{\setq}{\scriptsize $\mathrm{set}$}
     \newcommand{\setp}{\scriptsize $\mathrm{set}'$}
@@ -149,10 +151,10 @@
         
         Ein (gelb oder grün markiertes) \enquote{$\mathrm{set}$} in der Abbildung bedeutet,
         dass der Automat $M$ über $f$ an entsprechender Position und zum entsprechenden Zeitpunkt
-        einen $\mathrm{set}(q)$-Befehl an $A$ übermittelt (das konkret gewählte $q$ ist für dieses Beispiel egal).
+        einen $\mathrm{set}(q)$-Befehl an $A$ übermittelt (das konkret gewählte $q$ ist für dieses Beispiel egal, taucht aber als entsprechend gewähltes $q$ in der sichtbaren Startzustandskonfiguration wieder auf).
         Ein \enquote{$\mathrm{set}'$} bedeutet, dass ein toter Zustand $q$ aus $P$ gesetzt wird.
-        Die sichtbare Startzustandszeit $st_{\mathrm{set}(q)}(1, 6)$ ist in der Abbildung $\infty$ für alle $q$,
-        während $st_{\mathrm{set}(q)}(2, 5) = 1$ gilt für einen entsprechenden Zustand $q$.
+        Die sichtbare Startzustandszeit $st_{\mathrm{set}}(1, 6)$ ist in der Abbildung $\infty$,
+        während $st_{\mathrm{set}}(2, 5) = 1$ gilt.
         Die fünf- und sechseckigen Zustände (in grün) reflekterien die sichtbare Startkonfiguration aus
         Sicht des viereckigen Zustandes (blau gefärbt, in der Abbildung $t = 4$ und $i = 3$).
         Die Sechsecke stellen dabei die von $c(t,i)_j$ eingefügten Rauten dar.
@@ -179,13 +181,10 @@
     \]
     
     Definiere die von $(t, i)$ aus sichtbare tote rechte Zelle $\mathrm{dR}(t, i)$ und linke Zelle $\mathrm{dL}(t, i)$:
-    \[
-        \mathrm{dR}(t, i) := \min (\set{ j \in \Z}{j \geq i \land c(t, i)_j \in P} \cup \finset{ \infty })
-    \]
-    und
-    \[
-        \mathrm{dL}(t, i) := \max (\set{ j \in \Z}{j \leq i \land c(t, i)_j \in P} \cup \finset{ -\infty })
-    \]
+    \begin{align*}
+        \mathrm{dR}(t, i) & := \min (\set{ j \in \Z}{j \geq i \land c(t, i)_j \in P} \cup \finset{ \infty }) \\
+        \mathrm{dL}(t, i) & := \max (\set{ j \in \Z}{j \leq i \land c(t, i)_j \in P} \cup \finset{ -\infty })
+    \end{align*}
     
     Definiere damit die von $(t, i)$ aus sichtbaren aktiven Zellen $A(t, i)$:
     \[
@@ -198,6 +197,7 @@
 \section{Korrektheit und Eigenschaften}
 
 \begin{satz}[Korrektheit der erweiterten Nakamura-Konstruktion]
+    \label{nakamura_korrektheit}
     Es seien $M, C \in \CA$, $f$ und $P$ wie in \cref{erweiterteNakamuraKonstruktion} und eine Konfiguration $c_M: \Z \to Q_M$ gegeben.
     Sei $c$ die Auf"|fassung von $c_M$ als Konfiguration von $A := A(M, f, C, P)$.
     
@@ -259,9 +259,9 @@
             }
     \]
     \begin{enumerate}
-        \item
+        \item \label{timeNakamuraConstruction_1}
             Für $q \neq \perp$ gilt $q_{t'} \leq \mathrm{tc}(t, i)$.
-        \item
+        \item \label{timeNakamuraConstruction_2}
             Für $q \neq \perp$ gilt sogar  $q_{t'} = \mathrm{tc}(t, i)$, falls für alle $k \in \finset{-\hat{t}, ..., \hat{t} } \cap A(t, i)$ gilt:
             \[
                 t_1(t, k) > t_2(t, k)
@@ -276,15 +276,15 @@
             \[
                 t_2(t, k) := st_{\mathrm{set}}(t - |k|, i + k)
             \]
-        \item
+        \item \label{timeNakamuraConstruction_3}
             Sei $c': \Z \to Q_C$ eine Konfiguration von $C$ und $n$ so, dass $c'_i \neq \# \Leftrightarrow i \in \finset{ 1, ..., n }$.
-            Angenommen, $P \subseteq \finset{ \# } $ und für $i \in \Z$ und $t \in \Nz$ gelte:
+            Angenommen, $P \subseteq \finset{ \# } $ und für $i \in \Z$ und $t \in \Nz$ gelte wie in \cref{fig:NakamuraZeit} dargestellt:
             \[
                 f(\Delta_M^t(c_M)_i) =
                 \begin{cases}
-                    \mathrm{reset} & \text{falls } t = 0 \text{ und } i \in \finset{1, .., n} \\
-                    \mathrm{set}(c'_i) & \text{falls } t = 0 \text{ und } i \not\in \finset{1, .., n} \\
-                    \mathrm{set}(c'_i) & \text{falls } i \in \finset{1, ..., n} \text{ und } t = 2 * i + 1 \\
+                    \mathrm{reset} & \text{falls } t = 0 \text{ und } i \in \finset{1, ..., n} \\
+                    \mathrm{set}(c'_i) & \text{falls } t = 0 \text{ und } i \not\in \finset{1, ..., n} \\
+                    \mathrm{set}(c'_i) & \text{falls } i \in \finset{1, ..., n} \text{ und } t = 2i + 1 \\
                     \mathrm{step} & \text{sonst}
                 \end{cases}
             \]
@@ -296,10 +296,63 @@
      \end{enumerate}
 \end{satz}
 \begin{proof}
-    \begin{enumerate}
-        \item
-        \item
-        \item 
-        
-    \end{enumerate}
+    \begin{itemize}
+        \item[\ref{timeNakamuraConstruction_1},] % hack
+         \ref{timeNakamuraConstruction_2}
+            Wie in \cref{nakamura_korrektheit} wird auch für diese Aussagen
+            auf einen formalen Beweis verzichtet.
+            Die Bedingungen in \ref{timeNakamuraConstruction_2} stellen sicher,
+            dass das Neusetzen von Zuständen erst nach einem Zurücksetzen passiert
+            und dass das Zurücksetzen ausreichend früh geschieht, sodass benachbarte Zellen
+            in ihrer Simulation auf das Neusetzen warten.
+            Warten sie nämlich nicht, müssen sie ebenfalls zurückgesetzt werden und die Simulation läuft langsamer ab.
+            
+        \item[\ref{timeNakamuraConstruction_3}] Folgt aus \ref{timeNakamuraConstruction_2}.
+
+            \newcommand{\nreset}{\scriptsize $\mathrm{reset}$}
+            \newcommand{\setq}{\scriptsize $\mathrm{set}$}
+            \begin{figure}[h!]
+                \begin{center}
+                \includesvg[width=210pt]{images/NakamuraZeit}
+                \end{center}
+                \caption{Simulierte Zeit im Vergleich zur Simulationszeit}
+                \label{fig:NakamuraZeit}
+                Die Abbildung ist analog zu \cref{fig:SichtbareStartkonfiguration} zu verstehen.
+                Viereckige Zustände (in gelb) geben dabei an,
+                dass für eine simulierte Zelle der nächste Zustand berechnet wurde.
+                Die Zahl eines Zustands gibt an, wie viele Schritte für diese Zelle schon simuliert wurden.
+                Nicht in jedem Simulations-Schritt kann auch ein simulierter Schritt berechnet werden,
+                da die dafür notwendigen Startzustände erst zu einem späteren Simulations-Zeitpunkt gesetzt werden.
+            \end{figure}
+    
+            Es gilt offensichtlich: 
+            \[
+                st_\mathrm{set}(t, i) =
+                    \begin{cases}
+                        0 & \text{falls } t \not\in \finset{1, ..., n} \\
+                        \infty & \text{sonst, falls } t \leq 2i \\
+                        2i + 1 & \text{sonst}
+                    \end{cases}
+            \]
+            
+            Sei $\hat{t} \in \finset{0, ..., n}$ so, dass
+            $t \in \finset{3\hat{t} + 3, ..., 3\hat{t} + 5}$.
+            Sei außerdem $k \in \finset{-\hat{t}, ..., \hat{t}}$.
+            
+            \begin{itemize}
+                \item[1. Fall:] $-\hat{t} \leq k \leq -1$.
+                    
+                    Dann $\mathrm{st}_{\mathrm{set}}(t-|k|, 1+k) = 0 \leq t - \hat{t}$.
+                    
+                \item[2. Fall:] $0 \leq k \leq \hat{t}$.
+                
+                    Da $t \geq 3\hat{t}+3$, folgt $t-|k| > 2k+2$ und
+                    damit $\mathrm{st}_{\mathrm{set}}(t-|k|, 1+k) = 2k+3 \leq 2\hat{t} + 3 \leq t - \hat{t}$.
+                    
+                    Da $t \leq 3\hat{t} + 5$, folgt $t-|\hat{t}+1| \leq 2(\hat{t}+1)+2$ und
+                    damit $\mathrm{st}_{\mathrm{set}}(t-|k|, 1+k) = \infty$.
+            \end{itemize}
+            
+            Also $\mathrm{tc}(t, i) = \hat{t} = \lfloor \frac{t}{3} \rfloor - 1$ wodurch mit \cref{nakamura_korrektheit} die Behauptung folgt - schließlich ist $c'$ die einzig sichtbare Konfiguration.
+    \end{itemize}
 \end{proof}

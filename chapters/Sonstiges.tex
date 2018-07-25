@@ -33,7 +33,7 @@
     mit $k := \lceil \log_2(|w|) \rceil$. $\oplus$ bezeichne die bitweise XOR-Operation.
 
     
-    Definiere $L_1 := \{ w \in (\bin \times \bin)^* \; | \; \exists (\mathit{ptr}, \mathit{data}) = \comp(w): \mathit{data}_{f(\mathit{ptr}) + 1} = \chr{1}  \}$.
+    Definiere $L_1 := \{ w \in (\bin \times \bin)^* \; | \; \exists (\mathit{ptr}, \mathit{data}) = \splitw(w): \mathit{data}_{f(\mathit{ptr}) + 1} = \chr{1}  \}$.
 \end{definition}
 
 \begin{satz} $L_1$ ist nicht kontextfrei.\end{satz}

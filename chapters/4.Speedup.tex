@@ -1,10 +1,20 @@
 \chapter{Speedup-Konstruktionen}
 \label{chap:SpeedupKonstr}
 
+Bei der Fragestellung, wie Linearzeit-Zellularautomaten zu Echtzeit-Zellularautomaten verhalten,
+ist es essentiell, zu untersuchen, inwiefern sich Zellularautomaten beschleunigen lassen.
+Sogenannte Speedup-Sätze für Zellularautomaten sind schon einige bekannt (siehe \cite{Kutrib2009, MAZOYER199259}).
+Um dem Formalismus dieser Arbeit gerecht zu werden, werden einige dieser Sätze in diesem Kapitel neu bewiesen \acs{bzw.} verallgemeinert.
+In \cref{chap:AdvAuto} und \cref{chap:EingeschrAuto} werden die hier vorgestellten Speedup-Konstruktionen wieder aufgegriffen.
+
 \section{Speedup um konstant viele Schritte}
 
-\begin{definition}[1-Schritt-Speedup-Konstruktion]
+Ein zentraler Speedup-Satz zeigt, dass Zellularautomaten um einen Schritt beschleunigt werden können,
+wenn Annahmen über den Rand getroffen werden können. \cref{satzRauteTot} zeigt, dass wir diese Annahmen treffen dürfen.
+Eine Besonderheit der hier vorgestellten Konstruktion ist, dass sie in einem gewissen Rahmen passive Zustände erhält.
+Das wird in \cref{chap:EingeschrAuto} wieder aufgegriffen.
 
+\begin{definition}[1-Schritt-Speedup-Konstruktion]
     Sei $(Q, \delta) \in \CA$ ein Zellularautomat.
     Definiere den Zellularautomaten $Sp(C) := (Q', \delta')$ mit $Q' := Q \times (Q^Q \cup \finset{ \perp })$.
     Identifiziere $Q$ mit $Q \times \finset{ \perp }$.
@@ -105,8 +115,11 @@
     \end{enumerate}
 \end{proof}
 
+Rekursiv lässt sich mithilfe des gezeigten Satzes ein Zellularautomat um konstant viele Schritte beschleunigen.
+Wird \cref{satzRauteTot} ausgenutzt, lässt sich die folgende Aussage zeigen.
+
 \begin{satz}[$k$-Schritt Speedup]
-    \label{satzRealzeitSpeedup}
+    \label{satzEchtzeitSpeedup}
     Es gilt:
     \[
         \CAL{\CART, \CALeft} =
@@ -150,7 +163,8 @@
 \end{proof}
 
 
-Mithilfe der Speedup-Sätze kann nun gezeigt werden, dass \acs{OBdA.} Wortlängen einer \CAM{\CART, \CALeft}-Sprache Vielfache einer beliebigen Zahl $k \in \N$ sind:
+Mithilfe der Speedup-Sätze kann beispielsweise nun einfach gezeigt werden,
+dass Wortlängen einer \CAM{\CART, \CALeft}-Sprache \acs{OBdA.} Vielfache einer beliebigen Zahl $k \in \N$ sind:
 \begin{satz}
     \label{wrtRealtimeLengthIdeal}
     Sei $L \subseteq \Sigma^*$ eine Sprache, $\chr{x} \not\in \Sigma$, $k \in \N$.
@@ -192,12 +206,23 @@ Mithilfe der Speedup-Sätze kann nun gezeigt werden, dass \acs{OBdA.} Wortlänge
     falls $C$ und $X$ akzeptieren.
     Dieser Automat $C'$ akzeptiert nun $L(k)$ in $n-1+k-1$
     vielen Schritten.
-    Da $k$ fest ist, garantiert \cref{satzRealzeitSpeedup}
+    Da $k$ fest ist, garantiert \cref{satzEchtzeitSpeedup}
     nun die Existenz eines $L(k)$-erkennenden Echtzeitautomaten.
 \end{proof}
 
 
-\section{Speedup für linksunabhängige Zellularautomaten}
+\section{Speedup von Echtzeit-Zellularautomaten}
+
+Im vorherigen Abschnitt wurde gezeigt, dass Zellularautomaten,
+die nur eine konstante Anzahl Schritte von Echtzeit entfernt sind,
+auf Echtzeit beschleunigt werden können.
+In diesem Kapitel wird gezeigt, dass sich Echtzeit-Zellularautomaten in gewisser Hinsicht auch beschleunigen lassen.
+Offensichtlich ist die Zeiteinschränkung von Echtzeit-Zellularautomaten bereits minimal:
+Wenn ein Wort $w$ in weniger als $|w|-1$ Schritten erkannt wird, kann das letzte Zeichen des Eingabewortes nicht zur Akzeptanz beitragen.
+Allerdings lässt sich die Anzahl benötigter Schritte tatsächlich weiter verringern,
+wenn dafür die Position der Zelle, die Akzeptanz oder Ablehnung signalisiert, in Richtung Mitte wandert.
+
+Zunächst wird aber das folgende Lemma benötigt.
 
 \begin{lemma}
     \label{linksunabhaengigSpeedup}
@@ -345,6 +370,7 @@ Mithilfe der Speedup-Sätze kann nun gezeigt werden, dass \acs{OBdA.} Wortlänge
     Damit ist auch der Induktionsschritt gezeigt und der Beweis vollendet.
 \end{proof}
 
+Damit lässt sich dann der folgende Satz zeigen.
 
 \begin{satz}
     \label{CAgfSpeedup}
@@ -360,16 +386,16 @@ Mithilfe der Speedup-Sätze kann nun gezeigt werden, dass \acs{OBdA.} Wortlänge
         f(\Delta_{C_1}^{2i+1}(c)_i) = (\Delta_C^{3i-3}(c)_1, \Delta_C^{3i-2}(c)_1, \Delta_C^{3i-1}(c)_1)
     \]
     
-    \cref{fig:RealzeitSpeedup} zeigt die Zustands-Abhängigkeiten der Automaten zueinander.
+    \cref{fig:EchtzeitSpeedup} zeigt die Zustands-Abhängigkeiten der Automaten zueinander.
     Die Kreise stellen die Zustände der Ausführung des Automaten $C$ dar, die Sechsecke zeigen das Bild von $g_1$ bzw. $g_2$
     der Zustände von $C'''$ und die Fünfecke das Bild von $f$ der Zustände von $C_1$. Die eingezeichneten Pfeile
     zeigen, wodurch sich die Zustände ergeben.
     
     \begin{figure}[H]
         \centering
-        \includesvg[width=175pt]{images/RealzeitSpeedup}
+        \includesvg[width=175pt]{images/EchtzeitSpeedup}
         \caption{Visualisierung der Ausführung der Automaten $C$ (Zustände rund), $C'''$ (Zustände sechseckig) und $C_1$ (Zustände fünfeckig)}
-        \label{fig:RealzeitSpeedup}
+        \label{fig:EchtzeitSpeedup}
     \end{figure}
 \end{satz}
 \begin{proof}
@@ -378,8 +404,8 @@ Mithilfe der Speedup-Sätze kann nun gezeigt werden, dass \acs{OBdA.} Wortlänge
     \[
         \Delta_{C'}^{t}(c)_i =
         \begin{cases}
-            \Delta_C^{\frac{t}{2}}(c)_{i+\frac{t}{2}} & \text{ falls } $t$ \text{ gerade } \\
-            (\Delta_C^{\frac{t - 1}{2}}(c)_{i+\frac{t - 1}{2}}, \Delta_C^{\frac{t-1}{2}}(c)_{i+\frac{t+1}{2}})  & \text{ sonst}
+            \Delta_C^{\frac{t}{2}}(c)_{i+\frac{t}{2}} & \text{ falls } $t$ \text{ gerade, } \\
+            (\Delta_C^{\frac{t - 1}{2}}(c)_{i+\frac{t - 1}{2}}, \Delta_C^{\frac{t-1}{2}}(c)_{i+\frac{t+1}{2}})  & \text{ sonst.}
         \end{cases}
     \]
     
@@ -416,15 +442,12 @@ Mithilfe der Speedup-Sätze kann nun gezeigt werden, dass \acs{OBdA.} Wortlänge
         = & (\Delta_C^{3p-1}(c)_1, \Delta_C^{3p}(c)_1)
     \end{align*}
 
-    Anhand von \cref{fig:RealzeitSpeedup} ist nun ersichtlich, wie $C_1$ und $f$ konstruiert werden müssen.
+    Anhand von \cref{fig:EchtzeitSpeedup} ist nun ersichtlich, wie $C_1$ und $f$ konstruiert werden müssen.
 \end{proof}
 
+\section{Speedup um einen Faktor durch Komprimierung}
 
-
-
-
-
-\section{Speedup um einen Faktor durch Kompression}
+Wenn das Eingabewort komprimiert werden darf, lässt sich ein noch viel stärkerer Speedup-Satz zeigen.
 
 \begin{definition}[Speedup-Konstruktion $S_k(C)$, $S_k(c)$, $\gamma_q$]
     \label{factorSpeedupConstruction}
@@ -454,7 +477,6 @@ Mithilfe der Speedup-Sätze kann nun gezeigt werden, dass \acs{OBdA.} Wortlänge
     $\gamma_q(a) := \Delta^{k-1}_C(c(q, \epsilon, a))_1$.
 \end{definition}
 
-
 \begin{satz}[Korrektheit der Speedup-Konstruktion]
     \label{factorSpeedupConstructionCorrectness}
     Es sei ein Zellularautomat $C := (Q, \delta) \in \CA$, ein $k \in \N$ und eine Konfiguration $c: \Z \to Q$ gegeben.
@@ -472,14 +494,14 @@ Mithilfe der Speedup-Sätze kann nun gezeigt werden, dass \acs{OBdA.} Wortlänge
     Die Aussage kann durch einfaches Nachrechnen gezeigt werden, auf das an dieser Stelle verzichtet wird.
 \end{proof}
 
+Die Konstruktion aus \cref{factorSpeedupConstruction} kann beispielsweise verwendet werden, um folgenden Satz zu beweisen.
 
-
-\begin{satz}
+\begin{theorem}
     \label{linSpeedup}
     $\CAL{\CALT, \CALeft} = \CAL{\CAT, \CALeft, \mathrm{time}(\finset{ n \mapsto 2n }) }$
-\end{satz}
+\end{theorem}
 \begin{proof}
-    Siehe Ibarra, Speedup-Theorem. Referenz folgt.
-    \cite{MAZOYER199259}
+    Mithilfe der in \cref{chap:ErweiterteNakamuraKonstr} und \cref{factorSpeedupConstruction} vorgestellten Konstruktionen kann das Theorem leicht bewiesen werden.
+    Alternative Beweise finden sich in \cite{MAZOYER199259} und \cite{IBARRA1988225}
 \end{proof}
 

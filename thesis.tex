@@ -15,6 +15,7 @@
 \usepackage{float}
 \usepackage{cleveref}
 \usepackage[ngerman]{babel}
+\usepackage{enumitem}
 
 %% ---------------- end of usepackages -------------
 
@@ -23,7 +24,7 @@
  pdfauthor={Henning Dieterichs},
  pdftitle={Vergleich der Sprachklassen verschiedener Typen von Zellularautomaten}
  pdfsubject={Zellularautomaten},
- pdfkeywords={Zellularautomaten, Realzeit, Speedup}
+ pdfkeywords={Zellularautomaten, Echtzeit, Speedup}
 }
 
 % Macros, nicht unbedingt notwendig
@@ -70,7 +71,8 @@
 \renewenvironment{proof}{\begin{Proof}[\bfseries\proofname]}{\end{Proof}}
 \renewcommand\qedsymbol{$\square$}
 
-\renewcommand{\labelenumi}{\Roman{enumi}.}
+\renewcommand{\labelenumi}{(\Roman{enumi})}
+\renewcommand{\theenumi}{(\Roman{enumi})}
 
 \graphicspath{{images/}}
 

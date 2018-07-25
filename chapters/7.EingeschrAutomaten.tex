@@ -18,16 +18,16 @@
 \section{Ergebnisse}
 
 \begin{satz}[$k$-Schritt Speedup für eingeschränkte Zellularautomaten]
-    \label{satzEingeschraenktRealzeitSpeedup}
+    \label{satzEingeschraenktEchtzeitSpeedup}
     Sei $d$ eine Funktion $d: \Nz \to \N$. Es gilt:
     \[
         \CAL{\CART, \CALeft, \CARestr(d)} = \CAL{\CAT, \CALeft, \mathrm{time}(\set{ n \mapsto \max \finset{0,  n + k - 1} }{ k \in \Nz }), \CARestr(d)}
     \]
 \end{satz}
 \begin{proof}
-    Siehe Beweis von \cref{satzRealzeitSpeedup}:
+    Siehe Beweis von \cref{satzEchtzeitSpeedup}:
     \cref{satzRauteTot} erhält passive \#-enthaltende Mengen und 
-    in der Konstruktion des Automaten $C'$ in \cref{satzRealzeitSpeedup}
+    in der Konstruktion des Automaten $C'$ in \cref{satzEchtzeitSpeedup}
     kann $\Sigma_C \times \finset{\chr{0}}$ mit sich selbst und
     $q \in \Sigma_C \times \finset{\chr{1}}$ mit $\phi_{\#}(q)$ identifiziert werden, ohne dass der Beweis seine Gültigkeit verliert.
     Die Zelle am rechten Rand ist schließlich immer Element von $q \in \Sigma_C \times \finset{\chr{1}}$.
@@ -51,7 +51,7 @@
     Sei $C \in \CAM{\CART, \CALeft, \CARestr(d)}$ für ein $d: \Nz \to \N$. Definiere die Funktion $f_{C, k}: \Sigma^* \to Q_C^*$
     wie in \cref{fig:RestrAutomata_fCk} gezeigt:
     \[
-        f_{C, k}(v) := w[1..\min(k+1, |v|)] \; \text{ mit } \; w := \Delta_C^{\max(0, |v|-k-1)}(  \comb(\Spvek{ v; \mathrm{ones}(k, |v|)^{Rev} })  )
+        f_{C, k}(v) := w[1..\min(k+1, |v|)] \; \text{ mit } \; w := \Delta_C^{\max(0, |v|-k-1)}(  \joinw(\Spvek{ v; \mathrm{ones}(k, |v|)^{Rev} })  )
     \]
     
     \begin{figure}[h!]
@@ -83,11 +83,11 @@
     Wegen $\max(0, |v_{i \in \finset{1,2}}|-k-1) = 0$ folgt $v_1 = v_2$, also gilt offensichtlich $v_1 \sim_{k,d,L} v_2$.
     
     Seien nun \acs{OBdA.} $|v_1|, |v_2| > k$.
-    Setze $u_{i \in \finset{1, 2}} := \comb(\Spvek{ wv_i; d^*(wv_i) })$
+    Setze $u_{i \in \finset{1, 2}} := \joinw(\Spvek{ wv_i; d^*(wv_i) })$
     und $c^t_i := \Delta_C^{t}( u_i )$.
     
     Es gilt wegen der Forderung nach passiven Zuständen (rote Markierung in \cref{fig:RestrAutomata_fCk_Equiv}, graue Zellen sind passiv): 
-    \[(c_1^{|v_1|-k-1})_{[1..|w|]} = \comb(\Spvek{ w; \chr{0}^{|w|} }) = (c_2^{|v_2|-k-1})_{[1..|w|]}\]
+    \[(c_1^{|v_1|-k-1})_{[1..|w|]} = \joinw(\Spvek{ w; \chr{0}^{|w|} }) = (c_2^{|v_2|-k-1})_{[1..|w|]}\]
     
     Und es gilt (blaue Markierung in \cref{fig:RestrAutomata_fCk_Equiv}): 
     \[(c_1^{|v_1|-k-1})_{[|w|+1..|w|+k+1]} = |f_{C, k}(v_1)| = |f_{C, k}(v_2)| = (c_2^{|v_2|-k-1})_{[|w|+1..|w|+k+1]}\]

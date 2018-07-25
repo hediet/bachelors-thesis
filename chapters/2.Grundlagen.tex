@@ -22,10 +22,10 @@ bezeichnen $A_T$, $B_T$, ..., $Z_T$ die Komponenten des Tupels $T$. Es gilt dann
 Für eine Fallunterscheidung
 \[
     x = \begin{cases}
-        1 & \text{falls } A \\
-        2 & \text{sonst, falls } B \\
-        3 & \text{sonst, falls } C \\
-        4 & \text{sonst}
+        1 & \text{falls } A, \\
+        2 & \text{sonst, falls } B, \\
+        3 & \text{sonst, falls } C, \\
+        4 & \text{sonst.}
     \end{cases}
 \]
 meint ein \enquote{sonst}, dass alle darüberstehenden Fälle nicht zutreffen.
@@ -127,8 +127,8 @@ Bisher wurde noch nicht beschrieben, wie Zellularautomaten mit endlichen Wörter
        [w]: \Z \to Q, \;
        [w](p) :=
        \begin{cases} 
-          w_p & p \geq 1 \land p \leq |w| \\
-          \# & \text{sonst}
+          w_p & p \geq 1 \land p \leq |w|, \\
+          \# & \text{sonst.}
        \end{cases}
    \]
 \end{definition}
@@ -243,7 +243,7 @@ Es werden nun verschiedene Funktoren definiert, über die $t$- oder $F$-haltende
         \mathrm{time}(F)(M \subseteq \ECA) := \set{ C \in \CAF(M) }{ \cworsttime_C \in F } \; \union \; \set{ C \in \CAT(M) }{ t_C \in F }
     \]
     
-    Mit folgenden Definitionen ist $\CAM{\CALeft, \CART}$ \acs{bzw.} $\CAM{\CALeft, \CALT}$ die Menge der links-erkennenden Realzeit- \acs{bzw.} Linearzeit-Zellularautomaten:
+    Mit folgenden Definitionen ist $\CAM{\CALeft, \CART}$ \acs{bzw.} $\CAM{\CALeft, \CALT}$ die Menge der links-erkennenden Echtzeit- \acs{bzw.} Linearzeit-Zellularautomaten:
 
     \begin{itemize}
         \item $\mathrm{\CART} := \mathrm{time}(\finset{n \mapsto n - 1}) \circ \CAT$
@@ -252,7 +252,7 @@ Es werden nun verschiedene Funktoren definiert, über die $t$- oder $F$-haltende
     \end{itemize}   
 \end{definition}
 
-Realzeit-Zellularautomaten werden über $t$-haltende Automaten definiert, da ein
+Echtzeit-Zellularautomaten werden über $t$-haltende Automaten definiert, da ein
 $F$-haltender Automat bei einem Wort $w$ als Eingabe offensichtlich nicht in Zeit $|w|-1$ halten kann -
 die erste Zelle sieht zu diesem Zeitpunkt noch nicht das Ende des Wortes.
 $t$-haltende Automaten hingegen können bestimmte Eigenschaften eines Wortes $w$ in Zeit $|w|-1$ erkennen
@@ -289,10 +289,10 @@ die von der Funktion $p$ nicht ausgewählt werden.
     \[
        \delta'((a, f_a), (b, f_b), (c, f_c)) :=
        \begin{cases}
-         (\delta(a, b, c), f_b)  & \text{falls } f_b \neq 0 \\
-         (\delta(a, b, c), {-1}) & \text{falls } f_b = 0 \text{ und } \delta(a, b, c) \in F^- \\
-         (\delta(a, b, c), {1}) & \text{falls } f_b = 0 \text{ und }  \delta(a, b, c) \in F^+ \\
-         (\delta(a, b, c), {0}) & \text{sonst}
+         (\delta(a, b, c), f_b)  & \text{falls } f_b \neq 0, \\
+         (\delta(a, b, c), {-1}) & \text{falls } f_b = 0 \text{ und } \delta(a, b, c) \in F^-, \\
+         (\delta(a, b, c), {1}) & \text{falls } f_b = 0 \text{ und }  \delta(a, b, c) \in F^+, \\
+         (\delta(a, b, c), {0}) & \text{sonst.}
        \end{cases}
     \]
     
@@ -343,7 +343,7 @@ sind $t$-haltende Automaten trotzdem nicht weniger mächtig als $F$-haltende, wi
 
 \begin{remark}
     Das $t$ aus dem vorherigen Beweis ist im Allgemeinen tatsächlich auch nicht berechenbar - andernfalls
-    wären semientscheidbare Sprechen stets entscheidbar, da sich Turingmaschinen auf Zellularautomaten reduzieren lassen und umgekehrt.
+    wären semientscheidbare Sprachen stets entscheidbar, da sich Turingmaschinen auf Zellularautomaten reduzieren lassen und umgekehrt.
 \end{remark}
 
 Unter bestimmten Annahmen an die Funktion $t$ zur Zeitauswahl können allerdings $t$-haltende Automaten auch zu $F$-haltenden Automaten umgebaut werden. Die Funktion $t(n) := n - 1$ aus \cref{def:ZeitFunktoren} erfüllt diese Annahmen nicht, wohl aber die Funktion $t(n) := n$.
@@ -412,8 +412,8 @@ Es wird zunächst gezeigt, dass der Rand ohne Beschränkung der Allgemeinheit pa
     \[
         q^p := 
         \begin{cases}
-            q & \text{falls } q \neq \perp \\
-            p & \text{sonst}
+            q & \text{falls } q \neq \perp, \\
+            p & \text{sonst.}
         \end{cases}
     \]
     
@@ -423,9 +423,9 @@ Es wird zunächst gezeigt, dass der Rand ohne Beschränkung der Allgemeinheit pa
        \begin{cases}
          \Spvek{  \delta(a_1 ^ {x}, b_1 ^ {x}, c_1 ^ {x}); \delta(x, x, x)  } 
          & \text{falls }
-         \finset{x} = \finset{a_2, b_2, c_2} \setminus \finset{ \perp } \\
+         \finset{x} = \finset{a_2, b_2, c_2} \setminus \finset{ \perp }, \\
          \#'
-         & \text{sonst}
+         & \text{sonst.}
        \end{cases}
     \]
     Falls $\delta$ links-unabhängig ist, streiche $a_2$ aus der Menge in obiger Definition.
@@ -441,8 +441,8 @@ Es wird zunächst gezeigt, dass der Rand ohne Beschränkung der Allgemeinheit pa
     \[
         \Delta_{C'}^t([w])_i = \begin{cases}
             \Spvek{\Delta_C^t([w])_i; \Delta^t_{C}([\varepsilon])} &
-                \text{falls } -t_r < i \leq t_l + |w| \\
-            \#' & \text{sonst}
+                \text{falls } -t_r < i \leq t_l + |w|, \\
+            \#' & \text{sonst.}
         \end{cases}
     \]
     
@@ -460,9 +460,9 @@ Es wird zunächst gezeigt, dass der Rand ohne Beschränkung der Allgemeinheit pa
     Angenommen, $i + 1 > t_l + |w|$. Dann $((c^t_{i+1})_1)^x = \Delta^t_{C}([\varepsilon]) = \Delta^t_{C}([w])_{i+1}$.
     Ansonsten $((c^t_{i+1})_1)^x = \Delta^t_C([w])_{i+1}$.
     
-    Analog gilt für $i = -t_r$, $i = t + 1 + |w|$ und alle anderen $i$ im angenommenen Intervall $(c^t_{i})^x = \Delta^t_C([w])_i$
+    Analog gilt für $i = -t_r$, $i = t + 1 + |w|$ und alle anderen $i$ im angenommenen Intervall $(c^t_{i})^x = \Delta^t_C([w])_i$.
     
-    Folglich $c^{t+1}_i = \Spvek{\Delta^{t+1}_C([w])_i; \Delta^{t+1}_{C}([\varepsilon])}$
+    Folglich gilt $c^{t+1}_i = \Spvek{\Delta^{t+1}_C([w])_i; \Delta^{t+1}_{C}([\varepsilon])}$.
     
     Angenommen, $i \leq -(t+1)_r$. Dann folgt mit der Induktionsannahme $c^t_{i} = c^t_{i-1} = \#'$.
     Außerdem gilt $c^t_{i+1} = \#'$ oder $\delta$ ist rechts-unabhängig.
@@ -495,7 +495,7 @@ Schließlich können sich Zellularautomaten und Turingmaschinen mit polynomielle
         q_i^c :=
         \begin{rcases}
             \begin{dcases}
-                c & \text{falls } q = \# \\
+                c & \text{falls } q = \#, \\
                 q(i) & \text{sonst.}
             \end{dcases}
         \end{rcases}
@@ -506,14 +506,21 @@ Schließlich können sich Zellularautomaten und Turingmaschinen mit polynomielle
     
     \begin{alignat*}{2}
         & \delta'(a, \#, c) & := & \; \# \\
-        & \delta'(a, b, c)(i \in K) & := &
+        & (\delta'(a, b, c))(i \in K) & := &
         \begin{cases}
-            \delta(a_i^{b(i - 1)}, b(i), c_i^{b(i + 1)}) & \text{falls } i \text{ gerade ist.} \\
+            \delta(a_i^{b(i - 1)}, b(i), c_i^{b(i + 1)}) & \text{falls } i \text{ gerade ist,} \\
             \delta(c_i^{b(i - 1)}, b(i), a_i^{b(i + 1)}) & \text{sonst.}
         \end{cases}
     \end{alignat*}
     
-    Bette $c \in \Sigma$ in $Q'$ ein durch $\phi(c)(i \in K) := \begin{cases} c & \text{ falls } i = 0 \\ \#_C & \text { sonst.} \end{cases}$, $\phi(c) \in Q'$.
+    Bette $c \in \Sigma$ durch $\phi(c)$ wie folgt in $Q'$ ein:
+    \[
+        (\phi(c))(i \in K) :=
+        \begin{cases}
+            c & \text{ falls } i = 0, \\
+            \#_C & \text { sonst.}
+        \end{cases}
+    \]
     Setze $F' := \set{ q \in Q_C^K }{ q(0) \in F }$
     und $F'^+ := \set{ q \in Q_C^K }{ q(0) \in F^+ }$.
     
@@ -521,8 +528,8 @@ Schließlich können sich Zellularautomaten und Turingmaschinen mit polynomielle
     
     Setze $f_{n \in \Nz}(i \in \Z) :=
     \begin{cases} 
-        ((i - 1) \; \mathrm{mod} \; n) + 1  & \textrm{ falls } (i \; \mathrm{mod} \; 2n) \leq n \\
-        n - ((i - 1) \; \mathrm{mod} \; n)  & \textrm{ sonst}
+        ((i - 1) \; \mathrm{mod} \; n) + 1  & \textrm{ falls } (i \; \mathrm{mod} \; 2n) \leq n, \\
+        n - ((i - 1) \; \mathrm{mod} \; n)  & \textrm{ sonst.}
     \end{cases}$
     .
     \newline
@@ -586,7 +593,7 @@ Insbesondere kann damit der Fall ignoriert werden, dass Sprachen das leere Wort 
     Offensichtlich sind dann $M_1 := L \cap M$ und $M_2 := (\Sigma^* \setminus L) \cap M$ auch endlich.
     $M_1$ und $M_2$ sind disjunkt und ihre Vereinigung ist genau $M$.
     $M_1$ enthält die Wörter, die $L$ hat, aber $L_C$ möglicherweise nicht, während $M_2$ die Wörter enthält, die $L$ nicht hat, $L_C$ aber möglicherweise schon.
-    Da endliche Sprachen regulär sind und reguläre Sprache von Echtzeit-Zellularautomaten erkannt werden können,
+    Da endliche Sprachen regulär sind und reguläre Sprachen von Echtzeit-Zellularautomaten erkannt werden können,
     existieren Zellularautomaten $C_1$ und $C_2$ mit $L_{C_1} = M_1$ und $L_{C_2} = M_2$.
     Akzeptiert weder $C_1$ noch $C_2$ ein Wort $w$, dann akzeptiert es $C$ genau dann, wenn $w \in L$.
     Werden also die Automaten $C$, $C_1$ und $C_2$ parallel ausgeführt, kann leicht ein Echtzeit-Zellularautomat $C'$ konstruiert werden mit $L_{C'} = L$.

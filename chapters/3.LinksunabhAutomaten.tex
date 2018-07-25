@@ -1,8 +1,17 @@
-\chapter{Linksunabhängige Zellularautomaten}
+\chapter{Links-unabhängige Zellularautomaten}
 \label{chap:LinksunabhAuto}
 
+Zellen in links-unabhängigen Zellularautomaten hängen in ihrer Berechnung nicht von ihrem linken Nachbarn ab.
+Informationen können sich also nur nach links verbreiten. Diese Einschränkung vereinfacht bestimmte Konstruktionen, was in \cref{chap:AdvAuto} ausgenutzt wird.
+In diesem Kapitel werden Zusammenhänge zwischen unbeschränkten und linksunabhängigen Zellularautomaten gezeigt.
+Ähnliche Zusammenhänge werden in \cite{Choffrut1984} gezeigt.
 
+Es ist allgemein bekannt,
+dass $\CAL{\CART, \CALeft, \LOCA}$ eine strikte Teilmenge von $\CAL{\CART, \CALeft}$ ist und
+dass $\CAL{\CALT, \CALeft, \LOCA}$ mit $\CAL{\CART, \CARight}$ zusammenfällt (siehe \cite{Kutrib2009}).
 
+Der erste Satz zeigt, dass unbeschränkte Zellularautomaten zu einem linksunabhängigen Automaten
+umgebaut werden können. Dabei verschiebt sich die Berechnung räumlich nach links und wird um den Faktor 2 langsamer.
 \begin{satz}
     \label{zellautoZuLinksunabhaengig}
     Sei $C = (Q, \delta) \in \CA$ ein Zellularautomat (wie in \cref{fig:NormalZuRechtsUnabh}).
@@ -12,12 +21,11 @@
     \[
             \Delta_{C'}^{t}(c)_i =
             \begin{cases}
-                \Delta_C^{\frac{t}{2}}(c)_{i+\frac{t}{2}} & \text{ falls } $t$ \text{ gerade } \\
-                (\Delta_C^{\frac{t - 1}{2}}(c)_{i+\frac{t - 1}{2}}, \Delta_C^{\frac{t-1}{2}}(c)_{i+\frac{t+1}{2}})  & \text{ sonst}
+                \Delta_C^{\frac{t}{2}}(c)_{i+\frac{t}{2}} & \text{ falls } $t$ \text{ gerade, } \\
+                (\Delta_C^{\frac{t - 1}{2}}(c)_{i+\frac{t - 1}{2}}, \Delta_C^{\frac{t-1}{2}}(c)_{i+\frac{t+1}{2}})  & \text{ sonst.}
             \end{cases}
     \]
         
-
     \begin{figure}[h!]
         \centering
         \includesvg[width=185pt]{images/NormalZuLinksUnabh_Norm}
@@ -83,6 +91,10 @@
     
 \end{proof}
 
+Der nächste Satz zeigt die andere Richtung: Links-unabhängige Zellularautomaten können
+wieder zu einem Automaten ohne Einschränkung umgebaut werden. Das allein überrascht nicht, schließlich
+sind Links-unabhängige Automaten eine Spezialisierung der Zellularautomaten ohne Einschränkung.
+Interessant ist jedoch, dass sich dabei die Berechnung nach rechts verschieben und um den Faktor 2 beschleunigen lässt.
 \begin{satz}
     \label{linksunabhaengigZuZellauto}
     Sei $C = (Q, \delta) \in \CA$ ein links-unabhängiger Zellularautomat (wie in \cref{fig:LinksunabhZuNormal1} gezeigt).
@@ -130,3 +142,5 @@
     \end{align*}
 \end{proof}
 
+Mit beiden Sätzen zusammen kann ein Automat zunächst zu einem linksunabhängigen Automaten umgebaut,
+dann transformiert und wieder zurück umgebaut werden. Dies wird in \cref{CAgfSpeedup} aus dem nächsten Kapitel ausgenutzt.
