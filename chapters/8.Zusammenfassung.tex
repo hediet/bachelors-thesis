@@ -2,11 +2,21 @@
 
 Wie erwartet, konnte die usprüngliche Fragestellung, ob Echtzeit mit Linearzeit zusammenfällt,
 nicht weiter geklärt werden - das Problem bleibt offen.
-Allerdings hat \ref{chap:AdvAuto} gezeigt, dass Echtzeit-Zellularautomaten erstaunlich mächtig sind
-und mit \ref{thmAdviceMain} ein Werkzeug zur Verfügung gestellt, mit dem Echtzeit-Zellularautomaten
-in gewisser Hinsicht hintereinandergeschaltet werden können.
-Linearzeit-Zellularautomaten sind offensichtlich abgeschlossen unter Komposition von Linearzeit-Berechnungen -
-\ref{thmAdviceMain} liefert einen Ersatz für Echtzeit-Zellularautomaten.
 
+Allerdings hat \cref{chap:AdvAuto} gezeigt, dass Echtzeit-Zellularautomaten erstaunlich mächtig sind
+und mit \cref{thmAdviceMain} ein bemerkenswertes Werkzeug zur Verfügung gestellt,
+mit dem Echtzeit-Zellularautomaten in gewisser Hinsicht hintereinandergeschaltet werden können,
+ohne dabei in den Bereich der Linearzeit zu geraten.
+Es wurden Advices aufgezeigt, für die es lohnenswert sein könnte, sie weiter auf Echtzeit-Verträglichkeit zu untersuchen.
 
+Die Erweiterte Nakamura-Konstruktion aus \cref{chap:ErweiterteNakamuraKonstr} hat sich durch seine Rücksetz-Funktionalität
+von Startzuständen ebenfalls als sehr praktisches Werkzeug zum asynchronen Simulieren von Automaten in Echtzeit herausgestellt.
+Detailliertere Korrektheitsbeweise der Konstruktion stehen allerdings noch aus.
 
+\cref{chap:EingeschrAuto} hat gezeigt, dass sich Echtzeit-Zellularautomaten
+durch Vorgabe von passiven Zellen in der Eingabe bis hin zu regulären Sprachen einschränken lassen.
+Es bleibt offen, für welche Einschränkungen sich eine Hierarchie in den jeweiligen Sprachklassen ergibt.
+\cref{d1WenigerAlsd2} zeigt, dass Automaten, die stärkeren Einschränkungen unterliegen, bestimmte Sprachen
+nicht mehr erkennen können.
+\cref{einschraenkungUnentscheidbar} zeigt allerdings, dass mitunter die stärksten Einschränkungen
+plötzlich unentscheidbare Sprachen erkennen lassen, die weniger starke Einschränkungen noch ausgeschlossen haben.

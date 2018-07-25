@@ -103,6 +103,7 @@ Offensichtlich verringert ein Advice die Mächtigkeit \enquote{wohlgeformter} Kl
 \end{proof}
 
 Der nächste Satz zeigt ein Advice, das vermutlich nicht Echtzeit-Zellularautomaten-verträglich ist.
+Wäre es Echtzeit-Zellularautomaten-verträglich, wäre auch Realzeit genauso mächtig wie Linearzeit.
 
 \begin{satz}
     Sei $(\Sigma \cup \finset{\Box}) ^2 \subseteq \Gamma, \Box \not\in \Sigma$.
@@ -120,14 +121,14 @@ Der nächste Satz zeigt ein Advice, das vermutlich nicht Echtzeit-Zellularautoma
 \end{satz}
 \begin{proof}
     Die Inklusion \enquote{$\subseteq$} ist klar: Offensichtlich ist $\advA_K$ $\CAL{\CALT, \CALeft}$-verträglich.
-    Sei $L \in \CAL{\CALT, \CALeft}$.
+    Sei nun $L \in \CAL{\CALT, \CALeft}$.
     Nach \cref{linSpeedup} existiert ein Zellularautomat $C$, der $L$ in $2n$ Schritten erkennt.
     Der Automat $C' := S_2(C)$ aus \cref{factorSpeedupConstruction}
     erkennt $L$ dann in $n$ Schritten auf der komprimierten Konfiguration $S_2([w])$.
     Da die komprimierte Konfiguration durch den Advice bereitgestellt wird, kann $L$ mithilfe des Advices in Echtzeit erkannt werden.
 \end{proof}
 
-Der Nicht-Determinismus wird in diesem Kapitel nicht wirklich ausgenutzt - die meisten hier vorgestellten Advices sind deterministisch.
+Nicht-deterministische Advices werden in diesem Kapitel nicht weiter untersucht.
 Trotzdem soll der folgende Zusammenhang nicht vorenthalten werden.
 
 \begin{satz}
@@ -191,7 +192,7 @@ auch für Advice-Zellularautomaten interessant ist.
     
     Wegen $\CAL{\CART, \CALeft, \orakel({\advA})} \subseteq \CAL{\CALT, \CALeft, \orakel({\advA})}$
     gibt es laut Annahme ein $L \in \CAL{\CALT, \CALeft, \orakel({\advA})} \setminus \CAL{\CART, \CALeft, \orakel({\advA})}$.
-    Dann gibt es einen Automaten $C \in \CAM{\CALT, \CALeft}$ mit
+    Dann gibt es einen Automaten $C \in \CAM{\CALT, \CALeft}$, sodass gilt:
     
     \[
         L = L_{\advA, C} = \set{ w \in \Sigma^*}{\exists v \in \advA(w): \joinw(\Spvek{w; v}) \in L(C)}
@@ -210,6 +211,7 @@ In diesem Kapitel werden eine Reihe von Advices vorgestellt, die sich als Echtze
 Die meisten hier vorgestellten Advices verwenden $\B$ als Advice-Alphabet
 und markieren damit ausgewählte Zeichen des Eingabeworts.
 Einfache Markierungen werden durch die im folgenden definierte Funktion erreicht.
+Diese Funktion wird auch in \cref{chap:EingeschrAuto} wieder aufgegriffen.
 
 \begin{definition}
     Seien $k, n \in \Nz$ zwei Zahlen. Die Funktion $\mathrm{ones}$ gibt ein Wort der Länge $n$ zurück, sodass die $k$ ersten Zeichen Einsen sind.
@@ -239,7 +241,7 @@ Dazu muss zunächst definiert werden, was es heißt, wenn ein Zellularautomat ei
     gilt.
 \end{definition}
 
-Der folgende Satz zeigt gleich die Echtzeit-Verträglichkeit einer ganzen Klasse von Advices.
+Der folgende Satz zeigt gleich die Echtzeit-Verträglichkeit einer ganzen Klasse von \enquote{einfachen} Advices.
 \begin{satz}
     \label{lemmaEinfachesOrakel}
     Wenn $\advA: \Sigma^* \to \Gamma^*$ eine Funktion ist mit $\forall w \in \Sigma^*: |f(w)| = |w|$,
@@ -530,7 +532,7 @@ Mit \cref{lemmaEinfachesOrakel} kann nun leicht die Echtzeit-Verträglichkeit ei
 \end{comment}
 
 
-Es hat sich herausgestellt, dass die im folgenden definierte Eigenschaft auf viele Advices zutrifft.
+Es hat sich herausgestellt, dass die im folgenden definierte Eigenschaft auf viele interessante Advices zutrifft.
 Wird sie als Annahme gefordert, können ohne Beschränkung der Allgemeinheit weitere Eigenschaften angenommen werden - 
 dies zeigt \cref{wrtRealtimeLengthIdealAdvice}.
 
@@ -571,8 +573,13 @@ dies zeigt \cref{wrtRealtimeLengthIdealAdvice}.
     Mit \cref{wrtRealtimeLengthIdeal} folgt dann $L \in \CAL{\CART, \CALeft}$.
 \end{proof}
 
-\cref{thmAdviceMain} ist eine der zentralen Erkenntnisse dieser Arbeit.
-Es macht eine Aussage über die 
+Das folgende \cref{thmAdviceMain} ist eine der zentralen Erkenntnisse dieser Arbeit.
+Es macht eine Aussage über die Echtzeit-Verträglichkeit von Advices,
+die sich auf bestimmte Art durch beliebige Zellularautomaten ergeben.
+\cref{folgerungThmMainAdv} zeigt, wie mit diesem Theorem Echtzeit-Zellularautomaten
+in gewisser Hinsicht hintereinandergeschaltet werden können.
+
+Zum Beweis werden Sätze aus allen vorangegangen Kapitel verwendet.
 
 \begin{theorem}
     \label{thmAdviceMain}
@@ -586,7 +593,7 @@ Es macht eine Aussage über die
     Die Inklusion \enquote{$\subseteq$} der $\CAM{\CART, \CALeft}$-Verträglichkeit folgt durch ~\cref{lemmaIgnoriereAdvice}.
     Sei nun $L \in \CAL{\CART, \CALeft, \orakel({\advA_H})}$.
     Da $\advA_H$ präfixstabil ist, kann wegen \cref{wrtRealtimeLengthIdealAdvice} und \cref{endlichVieleAusnahmen}
-    \ac{OBdA.} angenommen werden,
+    \acs{OBdA.} angenommen werden,
     dass die Wortlängen von $L$ alle Vielfache von $3$ sind und dass $L$ nicht das leere Wort enthält.
 
     Es existiert also ein Echtzeit-Zellularautomat $C$ mit $L_{\advA, C} = L$. Nach \cref{satzRauteTot} kann der Rand von $C$ tot gewählt werden.
@@ -606,11 +613,11 @@ Es macht eine Aussage über die
     \[
         f(\Delta_M^t(c)_i) =
         \begin{cases}
-            \mathrm{reset} & \text{falls } t = 0 \text{ und } i \in \finset{1, .., n} \\
-            \mathrm{set}(\#\#\#) & \text{falls } t = 0 \text{ und } i \not\in \finset{1, .., n} \\
+            \mathrm{reset} & \text{falls } t = 0 \text{ und } i \in \finset{1, .., n}, \\
+            \mathrm{set}(\#\#\#) & \text{falls } t = 0 \text{ und } i \not\in \finset{1, .., n}, \\
             \mathrm{set}(s_i)
-                & \text{falls } i \in \finset{1, ..., n} \text{ und } t = 2 * i + 1 \\
-            \mathrm{step} & \text{sonst}
+                & \text{falls } i \in \finset{1, ..., n} \text{ und } t = 2 * i + 1, \\
+            \mathrm{step} & \text{sonst.}
         \end{cases}
     \]
     Wobei $s_i$ für $i \in \Z$ wie folgt definiert ist:
@@ -626,7 +633,8 @@ Es macht eine Aussage über die
     \]
     
     Damit gilt aber gerade $s = S_3(c')$ wobei $S_3(c')$ die komprimierte $c'$-Konfiguration aus \cref{factorSpeedupConstruction} ist.
-    Setze $S := S_3(C)$ auf die Speedup-Konstuktion, die drei Schritte in einem simuliert. Setze nun $A := A(M, f, S, \finset{\#})$.
+    Setze $S := S_3(C)$ auf die Speedup-Konstuktion, die drei Schritte in einem simuliert.
+    Setze nun $A := A(M, f, S, \finset{\#})$ aus \cref{erweiterteNakamuraKonstruktion}.
     Dann gilt nach \cref{timeNakamuraConstruction}:
     \[
         (\Delta^{ |w| }_A(c)_1)_a = \Delta_S^{n - 1}(s)
@@ -641,6 +649,7 @@ Es macht eine Aussage über die
 \end{proof}
 
 \begin{corollary}
+    \label{folgerungThmMainAdv}
     Sei $L \in \CAL{\CART, \CALeft}$.
     Der folgende Advice $\advA_L$ ist $\CAM{\CART, \CALeft}$-verträglich:
     \[
@@ -665,6 +674,9 @@ Es macht eine Aussage über die
     folgt mit \cref{thmAdviceMain} die Behauptung.
 \end{proof}
 
+Wenn $L_1$ also eine Echtzeit-Sprache ist und mit $\advA_{L_1}$ gezeigt werden kann,
+dass $L_2$ eine Echtzeit-Sprache ist, dann ist auch der Advice $\advA_{L_2}$ Echtzeit-verträglich
+und kann beispielsweise dazu benutzt werden, um zu zeigen, dass eine Sprache $L_3$ von einem Echtzeit-Zellularautomaten erkannt werden kann!
 
 \begin{satz}
     Der folgende Advice $\advA$ ist $\CAM{\CART, \CALeft}$-verträglich:
@@ -675,3 +687,23 @@ Es macht eine Aussage über die
 \begin{proof}
     
 \end{proof}
+
+\section{Ausblick}
+
+Folgende Advices wurden außerdem noch auf Echtzeit-Verträglichkeit untersucht:
+\begin{itemize}
+    \item $\advA_1(w) := v \in \B^{|w|}$ mit $v_i = \chr{1} \Leftrightarrow i = \lfloor \frac{|w|}{2} \rfloor$
+    \item $\advA_2(w) := v \in \B^{|w|}$ mit $v \in \chr{0}^*\chr{1}\chr{0}^*$
+    \item $\advA_3(w) := \B^{|w|}$
+\end{itemize}
+Wie diese Advices Echtzeit-Zellularautomaten erweitern, ist aber nicht klar geworden.
+$\advA_3$ hilft Echtzeit-Zellularautomaten sogar \acs{ggf.} NP-schwere Probleme zu lösen.
+Wenn $\advA_3$ Echtzeit-verträglich ist, so ist es auch $\advA_2$.
+Wenn $\advA_2$ Echtzeit-verträglich ist, so ist es auch $\advA_1$.
+
+Da bei $\advA_1$ Echtzeit mit Linearzeit für unäre Sprachen zusammenfällt und die Markierung
+der Mitte ein äußerst schwieriges Unterfangen darstellt, vermutet der Autor, dass schon $\advA_1$ nicht
+Echtzeit-verträglich ist.
+Interessant ist auch die Frage, ob $\advA_2$ Echtzeit-verträglich ist, wenn angenommen wird,
+dass $\advA_1$ Echtzeit-verträglich ist, \acs{bzw.} allgemeiner, ob unter dieser Annahme
+Realzeit mit Linearzeit zusammenfällt.
