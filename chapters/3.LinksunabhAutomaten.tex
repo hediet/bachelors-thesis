@@ -10,7 +10,7 @@ Es ist allgemein bekannt,
 dass $\CAL{\CART, \CALeft, \LOCA}$ eine strikte Teilmenge von $\CAL{\CART, \CALeft}$ ist und
 dass $\CAL{\CALT, \CALeft, \LOCA}$ mit $\CAL{\CART, \CARight}$ zusammenfällt (siehe \cite{Kutrib2009}).
 
-Der erste Satz zeigt, dass unbeschränkte Zellularautomaten zu einem linksunabhängigen Automaten
+Der erste Satz zeigt, dass unbeschränkte Zellularautomaten zu einem links-unabhängigen Automaten
 umgebaut werden können. Dabei verschiebt sich die Berechnung räumlich nach links und wird um den Faktor 2 langsamer.
 \begin{satz}
     \label{zellautoZuLinksunabhaengig}
@@ -51,7 +51,7 @@ umgebaut werden können. Dabei verschiebt sich die Berechnung räumlich nach lin
     \[
         \delta'(\cdot, (b_1, b_2), (c_1, c_2)) := \delta(b_1, b_2, c_2)
     \]
-    Definiere $\delta(\cdot, b, c)'$ beliebig für alle anderen Fälle. Offensichtlich ist $\delta$ dann links-unabhängig.
+    Definiere $\delta'(\cdot, b, c)$ beliebig für alle anderen Fälle. Offensichtlich ist $\delta'$ dann links-unabhängig.
     
     Sei $c \in Q^{\Z}$. Beweis der Behauptung durch Induktion über $t$. Für $t = 0$ trivial.
     
@@ -104,13 +104,13 @@ Interessant ist jedoch, dass sich dabei die Berechnung nach rechts verschieben u
         \Delta^t_{C'}(c)_{i} = \Delta^{2t}_C(c)_{i-t}
     \]
     
-    \begin{figure}[h!]
+    \begin{figure}[!ht]
         \centering
         \includesvg[width=190pt]{images/LinksunabhZuNormal_Luh}
         \caption{Teilweise Ausführung des links-unabhängigen Automaten $C$}
         \label{fig:LinksunabhZuNormal1}
     \end{figure}
-   \begin{figure}[h!]
+   \begin{figure}[!ht]
         \centering
         \includesvg[width=190pt]{images/LinksunabhZuNormal_Norm}
         \caption{Teilweise Ausführung des Automaten $C'$}
@@ -142,5 +142,5 @@ Interessant ist jedoch, dass sich dabei die Berechnung nach rechts verschieben u
     \end{align*}
 \end{proof}
 
-Mit beiden Sätzen zusammen kann ein Automat zunächst zu einem linksunabhängigen Automaten umgebaut,
+Mit beiden Sätzen zusammen kann ein Automat zunächst zu einem links-unabhängigen Automaten umgebaut,
 dann transformiert und wieder zurück umgebaut werden. Dies wird in \cref{CAgfSpeedup} aus dem nächsten Kapitel ausgenutzt.

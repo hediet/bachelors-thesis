@@ -88,13 +88,13 @@ um Zellularautomaten so umzubauen, dass sie auch asynchron korrekt ausgeführt w
         \delta'(a, b, c) := 
         \begin{cases}
             \Spvek{(b_0, b_0, b_0), 0, 0}
-            & \text{ falls } b_0 \in P \text{ und } b_t = 0, \\
+            & \text{falls } b_0 \in P \text{ und } b_t = 0, \\
             \Spvek{(\delta(a^t, b^t, c^t), b^t, b_0), t, b_{t'} + 1}
-            & \text{ sonst, falls } \perp \not\in \finset{ a^t, c^t } \text{ für } t := s(b_t), \\
+            & \text{sonst, falls} \perp \not\in \finset{ a^t, c^t } \text{ für } t := s(b_t), \\
             \Spvek{(\delta(a^t, b^t, c^t), b^t, b_0), t, b_{t'}}
-            & \text{ sonst, falls } \perp \not\in \finset{a^t, c^t} \text{ für } t := b_t, \\
+            & \text{sonst, falls} \perp \not\in \finset{a^t, c^t} \text{ für } t := b_t, \\
             \Spvek{(\delta(a_0, b_0, c_0), b_0, b_0), 1, 1}
-            & \text{ sonst.}
+            & \text{sonst.}
         \end{cases}
     \]
     
@@ -142,7 +142,7 @@ um Zellularautomaten so umzubauen, dass sie auch asynchron korrekt ausgeführt w
     \]
 \end{definition}
 
-Um über die Korrektheit der Konstruktion zu sprechen, sind vorerst noch weitere Definitionen nötig.
+Um über die Korrektheit der Konstruktion sprechen zu können, sind vorerst noch weitere Definitionen nötig.
 
 \begin{definition}[Sichtbare Startzustandszeit $st_o(t, i)$ und Startkonfiguration $c(t, i)$, sichtbare aktiven Zellen $A(t, i)$]
     Es seien $M, C \in \CA$, $f$ und $P$ wie in \cref{erweiterteNakamuraKonstruktion} und eine Konfiguration $c_M: \Z \to Q_M$ gegeben.

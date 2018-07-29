@@ -268,7 +268,7 @@ Diese Thematik wird in \cref{sec:Vergleich_t_haltend_F_haltend} weiter untersuch
     Der $\LOCA$ \acs{bzw.} $\ROCA$ Funktor wählt diejenigen links- \acs{bzw.} rechts-erkennenden Automaten aus, deren Zustandsübergangsfunktion links- \acs{bzw.} rechts-unabhängig ist.
 \end{definition}
 
-\section{Vergleich von \texorpdfstring{$t$}{t}-haltenden und \texorpdfstring{$F$}{F}-haltenden Automaten}
+\section[Vergleich von \texorpdfstring{$t$}{t}-haltenden und \texorpdfstring{$F$}{F}-haltenden Automaten]{Vergleich von $t$-haltenden und $F$-haltenden\\ Automaten}
 \label{sec:Vergleich_t_haltend_F_haltend}
 
 Es folgt ein Lemma für $F$-haltende Automaten. Es zeigt, dass solche Automaten stets so umgebaut werden können,
@@ -297,7 +297,7 @@ die von der Funktion $p$ nicht ausgewählt werden.
     \]
     
     Setze $F' := Q \times \finset{{-1}, 1}$ und $F'^+ := Q \times \finset{1}$.
-    Dann sind die Mengen $F'^+$ und $F'^-$ offensichtlich $\delta$-abgeschlossen.
+    Dann sind die Mengen $F'^+$ und $F'^-$ offensichtlich $\delta'$-abgeschlossen.
     
     Sei $w \in \Sigma^*, p \in \Z, t \in N_0$ und $(q, f) := \Delta_{C'}^t([w])_p$.
     Dann gilt $q = \Delta_{C}^t([w])_p$. $(q, f) \not\in F'$ impliziert $f = 0$ und damit, dass $\forall k \in \finset{ 0, ..., t }: \Delta_{C}^k([w])_p \not\in F$.
@@ -400,7 +400,7 @@ Die folgenden zwei Sätze sind äußerst wichtig, um den Rand von Zellularautoma
 Üblicherweise wird schon in der Definition von Zellularautomaten ein toter Rand gefordert, was einige elegante Konstruktionen verhindert.
 Es wird zunächst gezeigt, dass der Rand ohne Beschränkung der Allgemeinheit passiv und initial gewählt werden kann.
 
-\begin{satz}[Wahl eines passiven und initialen Randes]
+\begin{satz}[Wahl eines passiven und initialen Randes]~\newline
     Sei $C = (Q, \delta, \Sigma, \#, L, (F, F^+, p)) \in \ECA^\CAF$.
     Dann kann $C$ so zu $C'$ mit $L(C) = L(C')$ umgebaut werden, dass $\#_{C'}$ ein passiver und initialer Zustand ist.
     Gleichzeitig bleibt dabei die Links- \acs{bzw.} Rechts-Unabhängigkeit von $\delta_C$ erhalten.
@@ -424,7 +424,7 @@ Es wird zunächst gezeigt, dass der Rand ohne Beschränkung der Allgemeinheit pa
          \Spvek{  \delta(a_1 ^ {x}, b_1 ^ {x}, c_1 ^ {x}); \delta(x, x, x)  } 
          & \text{falls }
          \finset{x} = \finset{a_2, b_2, c_2} \setminus \finset{ \perp }, \\
-         \#'
+         \#_{C'}
          & \text{sonst.}
        \end{cases}
     \]
@@ -442,7 +442,7 @@ Es wird zunächst gezeigt, dass der Rand ohne Beschränkung der Allgemeinheit pa
         \Delta_{C'}^t([w])_i = \begin{cases}
             \Spvek{\Delta_C^t([w])_i; \Delta^t_{C}([\varepsilon])} &
                 \text{falls } -t_r < i \leq t_l + |w|, \\
-            \#' & \text{sonst.}
+            \#_{C'} & \text{sonst.}
         \end{cases}
     \]
     
@@ -464,12 +464,12 @@ Es wird zunächst gezeigt, dass der Rand ohne Beschränkung der Allgemeinheit pa
     
     Folglich gilt $c^{t+1}_i = \Spvek{\Delta^{t+1}_C([w])_i; \Delta^{t+1}_{C}([\varepsilon])}$.
     
-    Angenommen, $i \leq -(t+1)_r$. Dann folgt mit der Induktionsannahme $c^t_{i} = c^t_{i-1} = \#'$.
-    Außerdem gilt $c^t_{i+1} = \#'$ oder $\delta$ ist rechts-unabhängig.
-    Angenommen, $i > (t+1)_l + |w|$. Auch dann gilt nach Induktionsannahme $c^t_{i} = c^t_{i+1} = \#'$.
-    Analog gilt dann $c^t_{i-1} = \#'$ oder $\delta$ ist links-unabhängig.
+    Angenommen, $i \leq -(t+1)_r$. Dann folgt mit der Induktionsannahme $c^t_{i} = c^t_{i-1} = \#_{C'}$.
+    Außerdem gilt $c^t_{i+1} = \#_{C'}$ oder $\delta$ ist rechts-unabhängig.
+    Angenommen, $i > (t+1)_l + |w|$. Auch dann gilt nach Induktionsannahme $c^t_{i} = c^t_{i+1} = \#_{C'}$.
+    Analog gilt dann $c^t_{i-1} = \#_{C'}$ oder $\delta$ ist links-unabhängig.
     
-    In allen Fällen gilt dann $c^{t+1}_i = \#'$.
+    In allen Fällen gilt dann $c^{t+1}_i = \#_{C'}$.
 \end{proof}
 
 Für Linearzeit-Zellularautomaten kann der Rand sogar ohne Beschränkung der Allgemeinheit tot gewählt werden.
@@ -525,14 +525,14 @@ Schließlich können sich Zellularautomaten und Turingmaschinen mit polynomielle
     und $F'^+ := \set{ q \in Q_C^K }{ q(0) \in F^+ }$.
     
     Es bleibt nun die Korrektheit dieser Konstruktion zu zeigen.
-    
-    Setze $f_{n \in \Nz}(i \in \Z) :=
-    \begin{cases} 
-        ((i - 1) \; \mathrm{mod} \; n) + 1  & \textrm{ falls } (i \; \mathrm{mod} \; 2n) \leq n, \\
-        n - ((i - 1) \; \mathrm{mod} \; n)  & \textrm{ sonst.}
-    \end{cases}$
-    .
-    \newline
+    Definiere dazu die Funktion $f_n: \Z \to \finset{ 1, ..., n }$ für $n \in \N$:
+    \[
+        f_n(i) :=
+        \begin{cases} 
+            ((i - 1) \; \mathrm{mod} \; n) + 1  & \textrm{ falls } (i \; \mathrm{mod} \; 2n) \leq n, \\
+            n - ((i - 1) \; \mathrm{mod} \; n)  & \textrm{ sonst.}
+        \end{cases}
+    \]
     
     Folgende Tabelle zeigt einige Werte von $f_4$:
     \begin{center}

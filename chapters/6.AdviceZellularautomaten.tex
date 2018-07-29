@@ -103,7 +103,7 @@ Offensichtlich verringert ein Advice die Mächtigkeit \enquote{wohlgeformter} Kl
 \end{proof}
 
 Der nächste Satz zeigt ein Advice, das vermutlich nicht Echtzeit-Zellularautomaten-verträglich ist.
-Wäre es Echtzeit-Zellularautomaten-verträglich, wäre auch Realzeit genauso mächtig wie Linearzeit.
+Wäre es Echtzeit-Zellularautomaten-verträglich, wäre auch Echtzeit genauso mächtig wie Linearzeit.
 
 \begin{satz}
     Sei $(\Sigma \cup \finset{\Box}) ^2 \subseteq \Gamma, \Box \not\in \Sigma$.
@@ -188,10 +188,9 @@ auch für Advice-Zellularautomaten interessant ist.
     Dann $\CAL{\CART, \CALeft} \neq \CAL{\CALT, \CALeft}$.
 \end{satz}
 \begin{proof}
-    Angenommen $\CAL{\CART, \CALeft, \orakel({\advA})} \neq \CAL{\CALT, \CALeft, \orakel({\advA})}$.
-    
-    Wegen $\CAL{\CART, \CALeft, \orakel({\advA})} \subseteq \CAL{\CALT, \CALeft, \orakel({\advA})}$
-    gibt es laut Annahme ein $L \in \CAL{\CALT, \CALeft, \orakel({\advA})} \setminus \CAL{\CART, \CALeft, \orakel({\advA})}$.
+    Angenommen $\mathcal{L}_1 := \CAL{\CART, \CALeft, \orakel({\advA})} \neq \CAL{\CALT, \CALeft, \orakel({\advA})} =: \mathcal{L}_2$.
+    Wegen $\mathcal{L}_1 \subseteq \mathcal{L}_2$
+    gibt es laut Annahme ein $L \in \mathcal{L}_2 \setminus \mathcal{L}_1$.
     Dann gibt es einen Automaten $C \in \CAM{\CALT, \CALeft}$, sodass gilt:
     
     \[
@@ -200,12 +199,12 @@ auch für Advice-Zellularautomaten interessant ist.
     
     Angenommen, es gäbe einen Automaten $C' \in \CAM{\CART, \CALeft}$ mit $L_{C'} = L_C$.
     Dann $L_{\advA, C} = \set{ w \in \Sigma^*}{\exists v \in \advA(w): \joinw(\Spvek{w; v}) \in L(C')} = L_{\advA, C'}$ und damit
-    $L \in \CAL{\CART, \CALeft, \orakel({\advA})}$.
+    $L \in \mathcal{L}_1$.
     Widerspruch zur Annahme! Also $L(C) \in \CAL{\CALT, \CALeft} \setminus \CAL{\CART, \CALeft}$.
 \end{proof}
 
 
-\section{\texorpdfstring{$\CAM{\CART, \CALeft}$}{CA\^RT-L}-verträgliche Advices}
+\section{\texorpdfstring{$\CAM{\CART, \CALeft}$}{CA-RT-L}-verträgliche Advices}
 
 In diesem Kapitel werden eine Reihe von Advices vorgestellt, die sich als Echtzeit-verträglich herausgestellt haben.
 Die meisten hier vorgestellten Advices verwenden $\B$ als Advice-Alphabet
@@ -268,6 +267,7 @@ Der folgende Satz zeigt gleich die Echtzeit-Verträglichkeit einer ganzen Klasse
 
 Mit \cref{lemmaEinfachesOrakel} kann nun leicht die Echtzeit-Verträglichkeit einiger konkreter Advices gezeigt werden.
 \begin{corollary}
+    \label{bestimmteEinfacheAdvices}
     Sei $\Gamma = \B$, $k \in \Nz$.
     Folgende Advices sind $\CAM{\CART, \CALeft}$-verträglich:
     \begin{enumerate}
@@ -645,7 +645,7 @@ Zum Beweis werden Sätze aus allen vorangegangen Kapitel verwendet.
     \]
     
     Mit entsprechender Wahl der akzeptierenden Zustände und einem konstanten Speedup von einem Schritt
-    folgt damit $L \in \CAL{\CART, \CALeft}$.
+    durch \cref{satzEchtzeitSpeedup} folgt damit $L \in \CAL{\CART, \CALeft}$.
 \end{proof}
 
 \begin{corollary}
@@ -678,15 +678,49 @@ Wenn $L_1$ also eine Echtzeit-Sprache ist und mit $\advA_{L_1}$ gezeigt werden k
 dass $L_2$ eine Echtzeit-Sprache ist, dann ist auch der Advice $\advA_{L_2}$ Echtzeit-verträglich
 und kann beispielsweise dazu benutzt werden, um zu zeigen, dass eine Sprache $L_3$ von einem Echtzeit-Zellularautomaten erkannt werden kann!
 
+Die nächste Frage, die sich auftut, ist, ob es interessante Echtzeit-verträgliche Advices gibt, die nicht präfixstabil sind.
+Diese Advices können offensichtlich nicht durch \cref{thmAdviceMain} konstruiert werden, da $\advA_H$ für jede Wahl von $H$ präfixstabil ist.
+$\advA_2$ aus \cref{bestimmteEinfacheAdvices} ist tatsächlich nicht präfixstabil und Echtzeit-verträglich, aber auch nicht besonders
+spannend.
+Der folgende Satz zeigt beschreibt ein \enquote{spannendes}, Echtzeit-verträgliches und nicht-präfixstabiles Advice.
+Tatsächlich ist der im folgenden beschriebene Advice der Grund, warum die erweiterte Nakamura-Konstruktion aus \cref{chap:ErweiterteNakamuraKonstr} die Rücksetz-Funktionalität besitzt.
+
 \begin{satz}
+    \label{expMidAdv}
     Der folgende Advice $\advA$ ist $\CAM{\CART, \CALeft}$-verträglich:
     \[
         \advA(w) := \mathrm{ones}(2^{\lfloor \log_2{|w|} \rfloor - 1}, |w|) \in \B^*
     \]
 \end{satz}
 \begin{proof}
+    Wegen \cref{folgerungThmMainAdv} kann angenommen werden,
+    dass die Zellen des Eingabewortes, deren Position eine Zweierpotenz ist, markiert sind (in \cref{fig:ExpMidAdvice} durch rote Vierecke zu sehen).
+    Die Idee ist nun, diese markierten Zellen als Signal für eine neue Mitte zu verwenden.
+    Offensichtlich müssen frühere Berechnungen, die von anderen \enquote{Mitten} ausgegangen sind,
+    zurückgesetzt und neu gestartet werden.
+    Um für die Simulation genügend Zeit zu haben, wird dazu der Ausgangsautomat nun unabhängig zwei Mal mithilfe der in \cref{chap:ErweiterteNakamuraKonstr} vorgestellten Konstruktion simuliert.
+    In der Abbildung \cref{fig:ExpMidAdvice} werden die Setz-Befehle
+    für die eine Simulation durch grüne Ovale und für die andere durch blaue dargestellt.
+    In allen anderen Zuständen wird jeweils versucht, einen Simulationsschritt durchzuführen.
+    Die markierten Zellen setzen dann jeweils abwechselnd den einen oder den anderen simulierten Automaten
+    zurück und markieren jeweils eine Mitte mit größerer Position.
+    Die erste Zelle verwendet für das Akzeptanzverhalten dann jeweils die eine oder die andere Simulation.
+    Da sich die Abstände jeweils verdoppeln, reicht die Zeit aus.
     
+    \begin{figure}[h!]
+        \begin{center}
+            \newcommand{\setq}{\scriptsize $\mathrm{set}$}
+            \includesvg[width=310pt]{images/ExpSimulation}
+        \end{center}
+        \caption{Visualisierung der Ausführung}
+        \label{fig:ExpMidAdvice}
+    \end{figure}
 \end{proof}
+
+Auf eine formale Beschreibung der Konstruktion \acs{bzw.} einen formalen Beweis der Korrektheit wurde
+hier aus Verständlichkeits-, Umfangs- und Zeitgründen verzichtet. Da viele Überlegungen in \cref{expMidAdv} gesteckt wurden
+und dies insbesondere die Rücksetz-Funktionalität der erweiterten Nakamura-Konstruktion begründet hat,
+wurde der Satz trotzdem aufgeführt.
 
 \section{Ausblick}
 
@@ -696,7 +730,7 @@ Folgende Advices wurden außerdem noch auf Echtzeit-Verträglichkeit untersucht:
     \item $\advA_2(w) := v \in \B^{|w|}$ mit $v \in \chr{0}^*\chr{1}\chr{0}^*$
     \item $\advA_3(w) := \B^{|w|}$
 \end{itemize}
-Wie diese Advices Echtzeit-Zellularautomaten erweitern, ist aber nicht klar geworden.
+Wie diese Advices Echtzeit-Zellularautomaten erweitern, ist nicht klar geworden.
 $\advA_3$ hilft Echtzeit-Zellularautomaten sogar \acs{ggf.} NP-schwere Probleme zu lösen.
 Wenn $\advA_3$ Echtzeit-verträglich ist, so ist es auch $\advA_2$.
 Wenn $\advA_2$ Echtzeit-verträglich ist, so ist es auch $\advA_1$.

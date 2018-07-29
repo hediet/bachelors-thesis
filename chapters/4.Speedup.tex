@@ -1,7 +1,7 @@
 \chapter{Speedup-Konstruktionen}
 \label{chap:SpeedupKonstr}
 
-Bei der Fragestellung, wie Linearzeit-Zellularautomaten zu Echtzeit-Zellularautomaten verhalten,
+Bei der Fragestellung, wie sich Linearzeit-Zellularautomaten zu Echt\-zeit-Zell\-u\-lar\-au\-to\-ma\-ten verhalten,
 ist es essentiell, zu untersuchen, inwiefern sich Zellularautomaten beschleunigen lassen.
 Sogenannte Speedup-Sätze für Zellularautomaten sind schon einige bekannt (siehe \cite{Kutrib2009, MAZOYER199259}).
 Um dem Formalismus dieser Arbeit gerecht zu werden, werden einige dieser Sätze in diesem Kapitel neu bewiesen \acs{bzw.} verallgemeinert.
@@ -386,16 +386,17 @@ Damit lässt sich dann der folgende Satz zeigen.
         f(\Delta_{C_1}^{2i+1}(c)_i) = (\Delta_C^{3i-3}(c)_1, \Delta_C^{3i-2}(c)_1, \Delta_C^{3i-1}(c)_1)
     \]
     
-    \cref{fig:EchtzeitSpeedup} zeigt die Zustands-Abhängigkeiten der Automaten zueinander.
-    Die Kreise stellen die Zustände der Ausführung des Automaten $C$ dar, die Sechsecke zeigen das Bild von $g_1$ bzw. $g_2$
-    der Zustände von $C'''$ und die Fünfecke das Bild von $f$ der Zustände von $C_1$. Die eingezeichneten Pfeile
-    zeigen, wodurch sich die Zustände ergeben.
-    
     \begin{figure}[H]
-        \centering
-        \includesvg[width=175pt]{images/EchtzeitSpeedup}
-        \caption{Visualisierung der Ausführung der Automaten $C$ (Zustände rund), $C'''$ (Zustände sechseckig) und $C_1$ (Zustände fünfeckig)}
+        \begin{center}
+            \includesvg[width=175pt]{images/EchtzeitSpeedup}
+        \end{center}
+        \caption{Visualisierung der Ausführung der Automaten $C$, $C'''$ und $C_1$}
         \label{fig:EchtzeitSpeedup}
+        
+        Es werden die Zustands-Abhängigkeiten der Automaten zueinander gezeigt.
+        Die Kreise stellen die Zustände der Ausführung des Automaten $C$ dar, die Sechsecke zeigen das Bild von $g_1$ bzw. $g_2$
+        der Zustände von $C'''$ und die Fünfecke das Bild von $f$ der Zustände von $C_1$. Die eingezeichneten Pfeile
+        zeigen, wodurch sich die Zustände ergeben.
     \end{figure}
 \end{satz}
 \begin{proof}
