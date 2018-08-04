@@ -245,7 +245,7 @@ Der folgende Satz zeigt gleich die Echtzeit-Verträglichkeit einer ganzen Klasse
     \label{lemmaEinfachesOrakel}
     Wenn $\advA: \Sigma^* \to \Gamma^*$ eine Funktion ist mit $\forall w \in \Sigma^*: |f(w)| = |w|$,
     die von einem $F$-haltenden Zellularautomaten $B$ mit
-    $\ctime_C(\cdot) = k$ und $k \in \Nz$ berechnet wird,
+    $\ctime_B(\cdot) = k$ und $k \in \Nz$ berechnet wird,
     dann ist $\advA$ $\CAM{\CART, \CALeft}$-verträglich.
 \end{satz}
 \begin{proof}
@@ -586,7 +586,7 @@ Zum Beweis werden Sätze aus allen vorangegangen Kapitel verwendet.
     Sei $H = (Q, \delta) \in \CA$ ein Zellularautomat mit $\Sigma \subseteq Q$.
     Der folgende Advice $\advA_H$ ist $\CAM{\CART, \CALeft}$-verträglich:
     \[
-        \advA_H(w) := v \in Q^{|w|} \text{ mit } v_i := \Delta_A^{i-1}([w])_1 \\
+        \advA_H(w) := v \in Q^{|w|} \text{ mit } v_i := \Delta_A^{i-1}([w])_1
     \]
 \end{theorem}
 \begin{proof}
